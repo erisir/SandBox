@@ -1,0 +1,144 @@
+C51 COMPILER V9.00   PWM                                                                   11/06/2016 00:22:08 PAGE 1   
+
+
+C51 COMPILER V9.00, COMPILATION OF MODULE PWM
+OBJECT MODULE PLACED IN PWM.obj
+COMPILER INVOKED BY: C:\Keil\C51\BIN\C51.EXE hardware\PWM.c BROWSE DEBUG OBJECTEXTEND PRINT(.\PWM.lst) OBJECT(PWM.obj)
+
+line level    source
+
+   1          
+   2          /*------------------------------------------------------------------*/
+   3          /* --- STC MCU International Limited -------------------------------*/
+   4          /* --- STC 1T Series MCU RC Demo -----------------------------------*/
+   5          /* --- Mobile: (86)13922805190 -------------------------------------*/
+   6          /* --- Fax: 86-0513-55012956,55012947,55012969 --------------------*/
+   7          /* --- Tel: 86-0513-55012928,55012929,55012966 ---------------------*/
+   8          /* --- Web: www.GXWMCU.com -----------------------------------------*/
+   9          /* --- QQ:  800003751 ----------------------------------------------*/
+  10          /* If you want to use the program or the program referenced in the  */
+  11          /* article, please specify in which data and procedures from STC    */
+  12          /*------------------------------------------------------------------*/
+  13          
+  14          #include    <reg52.h>
+  15          #include    "PWM.h"
+  16          
+  17          
+  18          /*************  功能说明    **************
+  19          
+  20          本程序演示使用定时器做软件PWM。
+  21          
+  22          定时器0做16位自动重装，中断，从T0CLKO高速输出PWM。
+  23          
+  24          本例程是使用STC15F/L系列MCU的定时器T0做模拟PWM的例程。
+  25          
+  26          PWM可以是任意的量程。但是由于软件重装需要一点时间，所以PWM占空比最小为32T/周期，最大为(周期-32T)/周期, T为
+             -时钟周期。
+  27          
+  28          PWM频率为周期的倒数。假如周期为6000, 使用24MHZ的主频，则PWM频率为4000HZ。
+  29          
+  30          ******************************************/
+  31          
+  32          #define     MAIN_Fosc       24576000L      //定义主时钟
+  33          
+  34          
+  35          
+  36          typedef     unsigned char   u8;
+  37          typedef     unsigned int    u16;
+  38          typedef     unsigned long   u32;
+  39          
+  40          sfr P3M1  = 0xB1;   //P3M1.n,P3M0.n     =00--->Standard,    01--->push-pull
+  41          sfr P3M0  = 0xB2;   //                  =10--->pure input,  11--->open drain
+  42          sfr AUXR  = 0x8E;
+  43          sfr INT_CLKO = 0x8F;
+  44          
+  45          sbit    P_PWM = P3^5;       //定义PWM输出引脚。
+  46          //sbit  P_PWM = P1^4;       //定义PWM输出引脚。STC15W204S
+  47          
+  48          u16     pwm;                //定义PWM输出高电平的时间的变量。用户操作PWM的变量。
+  49          
+  50          u16     PWM_high,PWM_low;   //中间变量，用户请勿修改。
+  51          
+  52          void    delay_ms(unsigned char ms);
+  53           
+  54          
+C51 COMPILER V9.00   PWM                                                                   11/06/2016 00:22:08 PAGE 2   
+
+  55          
+  56          /******************** 主函数**************************/
+  57          void PWMn_init()
+  58          {
+  59   1          P_PWM = 0;
+  60   1          P3M1 &= ~(1 << 5);  //P3.5 设置为推挽输出
+  61   1          P3M0 |=  (1 << 5);
+  62   1      
+  63   1      //  P1M1 &= ~(1 << 4);  //P1.4 设置为推挽输出   STC15W204S
+  64   1      //  P1M0 |=  (1 << 4);
+  65   1      
+  66   1          TR0 = 0;        //停止计数
+  67   1          ET0 = 1;        //允许中断
+  68   1          PT0 = 1;        //高优先级中断
+  69   1          TMOD &= ~0x03;  //工作模式,0: 16位自动重装
+  70   1          AUXR |=  0x80;  //1T
+  71   1          TMOD &= ~0x04;  //定时
+  72   1          INT_CLKO |=  0x01;  //输出时钟
+  73   1      
+  74   1          TH0 = 0;
+  75   1          TL0 = 0;
+  76   1          TR0 = 1;    //开始运行
+  77   1      
+  78   1          EA = 1;
+  79   1      
+  80   1          pwm = PWM_DUTY/ 10;    //给PWM一个初值，这里为10%占空比
+  81   1          LoadPWM(pwm);           //计算PWM重装值
+  82   1      
+  83   1       
+  84   1      }
+  85          
+  86           
+  87          /**************** 计算PWM重装值函数 *******************/
+  88          void    LoadPWM(u16 i)
+  89          {
+  90   1          u16 j;
+  91   1      
+  92   1         // if(i > PWM_HIGH_MAX)        i = PWM_HIGH_MAX;   //如果写入大于最大占空比数据，则强制为最大占空比。
+  93   1         // if(i < PWM_HIGH_MIN)        i = PWM_HIGH_MIN;   //如果写入小于最小占空比数据，则强制为最小占空比。
+  94   1          j = 65536UL - PWM_DUTY + i; //计算PWM低电平时间
+  95   1          i = 65536UL - i;            //计算PWM高电平时间
+  96   1          EA = 0;
+  97   1          PWM_high = i;   //装载PWM高电平时间
+  98   1          PWM_low  = j;   //装载PWM低电平时间
+  99   1          EA = 1;
+ 100   1      }
+ 101          
+ 102          /********************* Timer0中断函数************************/
+ 103          void timer0_int (void) interrupt 1
+ 104          {
+ 105   1          if(P_PWM)
+ 106   1          {
+ 107   2              TH0 = (u8)(PWM_low >> 8);   //如果是输出高电平，则装载低电平时间。
+ 108   2              TL0 = (u8)PWM_low;
+ 109   2          }
+ 110   1          else
+ 111   1          {
+ 112   2              TH0 = (u8)(PWM_high >> 8);  //如果是输出低电平，则装载高电平时间。
+ 113   2              TL0 = (u8)PWM_high;
+ 114   2          }
+ 115   1      }
+ 116          
+C51 COMPILER V9.00   PWM                                                                   11/06/2016 00:22:08 PAGE 3   
+
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     99    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      6    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

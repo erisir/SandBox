@@ -1,12 +1,15 @@
+/*file name
+#include "public.h"
+*/
 #ifndef _PUBLIC_H_ 
 #define _PUBLIC_H_
-
-/////////////////////////////////////////////////
-#define u8 unsigned char;
-#define u16 unsigned int;
-#define u32 unsigned long;
-/////////////////////////////////////////////////
-void UartFunction(unsigned char *rec);
-unsigned char checksumCalc(unsigned char rec[]);
-
+ 
+typedef  unsigned char u8 ;
+typedef  unsigned int u16;
+typedef  unsigned long u32;
+ 
+ 
+void Delay100ms();
+//void Delay1000ms();
+ 
 #endif

@@ -1,21 +1,32 @@
-/********************************************************************
-本程序只供学习使用，未经作者许可，不得用于其它任何用途
-程序结构参考 安徽师范大学  Lyzhangxiang的EasyHW OS结构设计
-uart1.h
-作者：bg8wj
-建立日期: 2010.10.23
-版本：V1.0
 
-Copyright(C) bg8wj
-/********************************************************************/
-#ifndef _UART1_H_ 
-#define _UART1_H_
-extern void UartInit();
-extern void UartInit1();
-extern void send_char_com(unsigned char ch);
-extern void send_string_com(unsigned char *str);
-void UartFunction(unsigned char *rec);
-void send_int_com(unsigned int v);
-unsigned char checksumCalc(unsigned char rec[]);
+#include "../user/public.h"
+
+#ifndef __Uart1_H__
+#define __Uart1_H__
+
+#define _U_SetVotage	 '0'
+#define _U_SetPTerm      '1'
+#define _U_SetITerm      '2'
+#define _U_SetDTerm	     '3'
+#define _U_SetDura       '4'
+#define _U_SetPWMVal     '5'
+#define _U_GetVotage     '6'
+#define _U_SetTClose     '7'
+#define _U_SetTOpen      '8'
+#define _U_SetTPID       '9'
+#define _U_SetVotageTimes 'a'
+#define _U_SetVotageChanel 'b'
+
+void Uart1Init(); 
+void SendData(unsigned   char dat);
+void SendString(unsigned   char *s);
+void SendInt(unsigned long   int v);
+unsigned char checksumCalc(unsigned   char rec[]); 
+void parseCMD(); 
+bit  cmd_ready();
+ 
+ 
+void SendInt1(unsigned int setV,unsigned int pwm);
+ 
 
 #endif

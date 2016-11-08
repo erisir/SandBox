@@ -1,21 +1,7 @@
-#ifndef __adc_H_
-#define __adc_H_
+unsigned long int GetADCResult(unsigned char ch,unsigned int ADC_smooth_window);
+void InitADC();
+void GetPosition();
+void SetVotageTimes(unsigned int v);
+void SetVotageChanel(unsigned int v);
+unsigned long int getCurrentVoatage();
 
-
-#define uint unsigned int
-#define uchar unsigned char
-#define	u32 unsigned long int
-
-void  ADC_Init();
-void  ADC_start();
-void  keyFunction(uint key_value);
-void  Delay(uint z); 	// —” ±
-void  GetPosition();
-uint  Get_ADC_ResultReq(char ch,uint getADCCounter);
-void  SetTClose();
-void  SetTOpen();
-void  SetTPID();
-void  SetVotageTimes(v_data);
-u32   AD1674_Read();
-void Delay1000ms();
-#endif

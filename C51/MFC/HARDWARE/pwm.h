@@ -1,15 +1,10 @@
-#ifndef __PWM_H_
-#define __PWM_H_
 
-#define U8 unsigned char
 
-void PWM_Initial(void);
-void PWM_clock(U8 clock);
-void PMW_mode(void);
-void DelayMs(char ms);
-void PWM_start(U8 module,U8 mode);
-void PWM0_set (unsigned char a);
-void PWM1_set (unsigned char a);
-void PWM1_set9 (unsigned int a);
+#define     PWM_DUTY        20000            //定义PWM的周期，数值为时钟周期数，假如使用24.576MHZ的主频，则PWM频率为6000HZ。
 
-#endif
+#define     PWM_HIGH_MIN    32              //限制PWM输出的最小占空比。用户请勿修改。
+#define     PWM_HIGH_MAX    (PWM_DUTY-PWM_HIGH_MIN) //限制PWM输出的最大占空比。用户请勿修改。
+
+extern unsigned int PWM_high;               //PWM空比寄存器，即PWM输出高电平的PCA时钟脉冲个数（占空比写入变量）。
+void LoadPWM(unsigned int high);
+void PWMn_init();

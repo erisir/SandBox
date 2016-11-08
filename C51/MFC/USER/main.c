@@ -1,40 +1,52 @@
-#include <reg52.h>
-#include "lcd1602.h"
-#include "pwm.h"
-#include "key.h"
-#include "adc.h"
-#include "pid.h"
-#include "Uart1.h"
 
-/****************************硬件接口定义***********************************
-  PWM:模块0对应P1.3,模块1对应P1.4  [0为手动控制口，1位PID反馈控制口】
-  lcd:sbit RS = P2^3; sbit RW = P2^4; sbit E  = P2^5;  DBPort  P0 //数据端口
-  adc:P1^0,P1^1两路采集
-  key:KeyPort P3【以后扩展使用】 ，sbit KEY3	= P2^6;   KEY4	= P2^7;
-****************************************************************************/
+#include <STC15F2K60S2.H>
+#include "public.h"
+#include "../hardware/Uart1.h"
+#include "../hardware/ADC.h"
+#include "../hardware/PWM.h"
+#include "../hardware/PID.h"
 
+void sysInit();
 
-void main(void)
+void main()
 {
-	EA=1;                   //总中断开		
-	UartInit1();		   //串口
-	send_string_com("UartInit OK!");
-	//PIDInit();			   //PID
-	//PWM_Initial();		   //PWM 
-	DelayMs(250);	
-	//ADC_Init();			   //ADC
-	/*
-	lcd1602_init();
-	hz_lcdDis(0,4,"Welcome!");
-	lcd_Write_com(0x01);	//清屏
-	hz_lcdDis(0,0,"S          Q");
-	hz_lcdDis(1,0,"G          d");
-	
-	*/
-	ADC_Init();
-	ADC_start();
-
-
- }
-
+ 	EA = 1;
+	sysInit(); 
+    Uart1Init();
+	SendString("Uart Init OK !\r\n"); 
+	InitADC(); 
+	SendString("ADC Init OK !\r\n");  
+    PWMn_init(); //初始化pwm
+	SendString("PWM Init OK !\r\n"); 
+	PIDInit(); //初始化pwm
+	SendString("PID Init OK !\r\n");  
+    while(1){
+		if(cmd_ready()){
+			parseCMD();
+		}
+		if(isPIDEnable()){
+		 PIDStart();
+		 } 
  
+	}
+}	
+
+void sysInit()
+{
+    P0M0 = 0x00;
+    P0M1 = 0x00;
+    P1M0 = 0x00;
+    P1M1 = 0x00;
+    P2M0 = 0x00;
+    P2M1 = 0x00;
+    P3M0 = 0x00;
+    P3M1 = 0x00;
+    P4M0 = 0x00;
+    P4M1 = 0x00;
+    P5M0 = 0x00;
+    P5M1 = 0x00;
+    P6M0 = 0x00;
+    P6M1 = 0x00;
+    P7M0 = 0x00;
+    P7M1 = 0x00;
+}

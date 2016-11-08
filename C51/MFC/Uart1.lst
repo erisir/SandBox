@@ -1,0 +1,227 @@
+C51 COMPILER V9.00   UART1                                                                 11/06/2016 00:22:08 PAGE 1   
+
+
+C51 COMPILER V9.00, COMPILATION OF MODULE UART1
+OBJECT MODULE PLACED IN Uart1.obj
+COMPILER INVOKED BY: C:\Keil\C51\BIN\C51.EXE hardware\Uart1.c BROWSE DEBUG OBJECTEXTEND PRINT(.\Uart1.lst) OBJECT(Uart1.
+                    -obj)
+
+line level    source
+
+   1          /*---------------------------------------------------------------------*/
+   2          /* --- STC MCU Limited ------------------------------------------------*/
+   3          /* --- STC15F4K60S4 系列 定时器1用作串口1的波特率发生器举例------------*/
+   4          /* --- Mobile: (86)13922805190 ----------------------------------------*/
+   5          /* --- Fax: 86-0513-55012956,55012947,55012969 ------------------------*/
+   6          /* --- Tel: 86-0513-55012928,55012929,55012966-------------------------*/
+   7          /* --- Web: www.STCMCU.com --------------------------------------------*/
+   8          /* --- Web: www.GXWMCU.com --------------------------------------------*/
+   9          /* 如果要在程序中使用此代码,请在程序中注明使用了STC的资料及程序        */
+  10          /* 如果要在文章中应用此代码,请在文章中注明使用了STC的资料及程序        */
+  11          /*---------------------------------------------------------------------*/
+  12          
+  13          //本示例在Keil开发环境下请选择Intel的8058芯片型号进行编译
+  14          //若无特别说明,工作频率一般为11.0592MHz
+  15          
+  16          #include <STC15F2K60S2.H>
+  17          
+  18          #include "intrins.h"
+  19          #include "../user/public.h"
+  20          #include "Uart1.h"
+  21          #include "string.h"
+  22          #include "PWM.h" 
+  23          #include "ADC.h"
+  24          #include "PID.h"
+  25          
+  26          #define FOSC 24576000L          //系统频率
+  27          #define BAUD 19200             //串口波特率
+  28          
+  29          
+  30           
+  31          
+  32          #define S1_S0 0x40              //P_SW1.6
+  33          #define S1_S1 0x80              //P_SW1.7
+  34           
+  35          bit busy; 
+  36          bit uart_flag;
+  37          bit uart_start_flag;  
+  38          unsigned char receive[16]={0};// 可以考虑在定义时加上idata,毕竟还可能是32
+  39                                             //或者64长度的数组呢unsigned char idata receive[16]={0};  
+  40          unsigned char rec;                                     
+  41          u8 boardaddress; 
+  42          u8 cmd_len=5; 
+  43          static u8 uart_cnt=0;//串口接收计数的变量 
+  44          
+  45          void Uart1Init()
+  46          {
+  47   1          
+  48   1      
+  49   1          ACC = P_SW1;
+  50   1          ACC &= ~(S1_S0 | S1_S1);    //S1_S0=0 S1_S1=0
+  51   1          P_SW1 = ACC;                //(P3.0/RxD, P3.1/TxD)
+  52   1      
+  53   1          SCON = 0x50;                //8位可变波特率
+  54   1          AUXR = 0x40;                //定时器1为1T模式
+C51 COMPILER V9.00   UART1                                                                 11/06/2016 00:22:08 PAGE 2   
+
+  55   1          TMOD = 0x00;                //定时器1为模式0(16位自动重载)
+  56   1          TL1 = (65536 - (FOSC/4/BAUD));   //设置波特率重装值
+  57   1          TH1 = (65536 - (FOSC/4/BAUD))>>8;
+  58   1          TR1 = 1;                    //定时器1开始启动
+  59   1          ES = 1;                     //使能串口中断
+  60   1              
+  61   1      }
+  62          
+  63          /*----------------------------
+  64          UART 中断服务程序
+  65          -----------------------------*/
+  66          void Uart() interrupt 4 using 1
+  67          {
+  68   1          if (RI)
+  69   1          {
+  70   2              
+  71   2                      
+  72   2                      receive[uart_cnt] = SBUF;       
+  73   2                      if(receive[uart_cnt] == '@'){//begin
+  74   3                              uart_start_flag = 1;    
+  75   3                      }       
+  76   2                      if(uart_start_flag ==1){
+  77   3                                                      
+  78   3                              uart_cnt++;      
+  79   3                              if(uart_cnt==cmd_len-1){        //@x0001X
+  80   4                                      uart_start_flag = 0;
+  81   4                                      uart_cnt=0;
+  82   4                                      //if(checksumCalc(receive)==receive[cmd_len-1]){
+  83   4                                              uart_flag = 1;
+  84   4                              //      }                       
+  85   4                              }
+  86   3      
+  87   3                      }
+  88   2                      RI = 0;                 //清除RI位 
+  89   2          }
+  90   1          if (TI)
+  91   1          {
+  92   2              TI = 0;                 //清除TI位
+  93   2              busy = 0;               //清忙标志
+  94   2          }
+  95   1      }
+  96          unsigned char checksumCalc(unsigned char rec[])
+  97          { 
+  98   1      
+  99   1              return (( unsigned char)rec[0])^(( unsigned char)rec[1])^(( unsigned char)rec[2])^(( unsigned char)rec[3]
+             -);
+ 100   1      } 
+ 101          void parseCMD(){
+ 102   1              unsigned int v_data;
+ 103   1              uart_flag = 0;
+ 104   1                              
+ 105   1              v_data =  receive[2]*256+receive[3] ;
+ 106   1              ES = 1;
+ 107   1                       
+ 108   1       
+ 109   1           switch(receive[1]){
+ 110   2                         
+ 111   2                        case _U_SetVotage:SetSetPoint(v_data);break;//0 
+ 112   2      
+ 113   2                        case _U_SetPTerm:SetPIDparam_P_inc(v_data);break;//2
+ 114   2      
+ 115   2                        case _U_SetITerm:SetPIDparam_I_inc(v_data);break;//4
+C51 COMPILER V9.00   UART1                                                                 11/06/2016 00:22:08 PAGE 3   
+
+ 116   2       
+ 117   2                        case _U_SetDTerm:SetPIDparam_D_inc(v_data);break;//6
+ 118   2                         
+ 119   2                        case _U_SetPWMVal:SetPWMValue(v_data);break;//8
+ 120   2                        
+ 121   2                        case _U_GetVotage:GetPosition();break;//8
+ 122   2                        
+ 123   2                        case _U_SetDura:GetPIDStatu();break;//8
+ 124   2      
+ 125   2                        case _U_SetTClose:SetTClose();break;//8
+ 126   2      
+ 127   2                        case _U_SetTOpen:SetTOpen();break;//8
+ 128   2      
+ 129   2                        case _U_SetTPID:SetTPID();break;//8
+ 130   2      
+ 131   2                        case _U_SetVotageTimes:SetVotageTimes(v_data);break;//8
+ 132   2      
+ 133   2                         case _U_SetVotageChanel:SetVotageChanel(v_data);break;//8
+ 134   2                        
+ 135   2                              
+ 136   2                        default:break;
+ 137   2               }          
+ 138   1      }
+ 139          bit cmd_ready()
+ 140          {
+ 141   1              return uart_flag; 
+ 142   1      }
+ 143          /*----------------------------
+ 144          发送串口数据
+ 145          ----------------------------*/
+ 146          void SendData(unsigned   char dat)
+ 147          {
+ 148   1          while (busy);               //等待前面的数据发送完成
+ 149   1          busy = 1;
+ 150   1          SBUF = dat;                 //写数据到UART数据寄存器
+ 151   1      }
+ 152          
+ 153          /*----------------------------
+ 154          发送字符串
+ 155          ----------------------------*/
+ 156          void SendString(unsigned   char *s)
+ 157          {
+ 158   1          while (*s)                  //检测字符串结束标志
+ 159   1          {
+ 160   2              SendData(*s++);         //发送当前字符
+ 161   2          }
+ 162   1      }
+ 163          void SendInt(unsigned  long  int v){
+ 164   1      
+ 165   1              u8 rec[5]; 
+ 166   1              rec[0] = '@';
+ 167   1              rec[1] = 'P';
+ 168   1              rec[2] = v/256;
+ 169   1              rec[3] = v%256;
+ 170   1              rec[4] = checksumCalc(rec);
+ 171   1      
+ 172   1          SendData(rec[0]);
+ 173   1              SendData(rec[1]);
+ 174   1              SendData(rec[2]);
+ 175   1              SendData(rec[3]);
+ 176   1              SendData(rec[4]);
+ 177   1       
+C51 COMPILER V9.00   UART1                                                                 11/06/2016 00:22:08 PAGE 4   
+
+ 178   1      }
+ 179          void SendInt1(unsigned int setV,unsigned int pwm){
+ 180   1              u8 rec[7]; 
+ 181   1              rec[0] = '@';
+ 182   1              rec[1] = 'P';
+ 183   1              rec[2] = setV/256;
+ 184   1              rec[3] = setV%256;
+ 185   1              rec[4] = pwm/256;
+ 186   1              rec[5] = pwm%256;
+ 187   1              rec[6] = checksumCalc(rec);
+ 188   1      
+ 189   1          SendData(rec[0]);
+ 190   1              SendData(rec[1]);
+ 191   1              SendData(rec[2]);
+ 192   1              SendData(rec[3]);
+ 193   1              SendData(rec[4]);
+ 194   1              SendData(rec[5]);
+ 195   1              SendData(rec[6]);
+ 196   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    436    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =     20      21
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =      3    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

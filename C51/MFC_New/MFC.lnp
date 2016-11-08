@@ -1,7 +1,0 @@
-"ADC.obj",
-"Uart1.obj",
-"PWM.obj",
-"main.obj",
-"public.obj" 
-TO "MFC" 
-RAMSIZE(256) 

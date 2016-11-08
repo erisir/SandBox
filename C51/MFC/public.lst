@@ -1,0 +1,63 @@
+C51 COMPILER V9.00   PUBLIC                                                                11/06/2016 00:22:09 PAGE 1   
+
+
+C51 COMPILER V9.00, COMPILATION OF MODULE PUBLIC
+OBJECT MODULE PLACED IN public.obj
+COMPILER INVOKED BY: C:\Keil\C51\BIN\C51.EXE user\public.c BROWSE DEBUG OBJECTEXTEND PRINT(.\public.lst) OBJECT(public.o
+                    -bj)
+
+line level    source
+
+   1          #include "public.h"     
+   2          #include "../hardware/Uart1.h"          
+   3          #include "intrins.h"
+   4          #define PWM_MIN_VALUE ;
+   5          void Delay100ms()               //@11.0592MHz
+   6          {
+   7   1              unsigned char i, j, k;
+   8   1      
+   9   1              _nop_();
+  10   1              _nop_();
+  11   1              i = 5;
+  12   1              j = 52;
+  13   1              k = 195;
+  14   1              do
+  15   1              {
+  16   2                      do
+  17   2                      {
+  18   3                              while (--k);
+  19   3                      } while (--j);
+  20   2              } while (--i);
+  21   1      }
+  22          /*void Delay1000ms()            //@11.0592MHz
+  23          {
+  24                  unsigned char i, j, k;
+  25          
+  26                  _nop_();
+  27                  _nop_();
+  28                  i = 43;
+  29                  j = 6;
+  30                  k = 203;
+  31                  do
+  32                  {
+  33                          do
+  34                          {
+  35                                  while (--k);
+  36                          } while (--j);
+  37                  } while (--i);
+  38          }               */
+  39            
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     15    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
