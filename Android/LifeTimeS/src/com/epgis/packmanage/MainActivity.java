@@ -1,8 +1,8 @@
 package com.epgis.packmanage;
 
 import com.epgis.packmanage.gps.GPSTrackManager;
-import com.epgis.packmanage.puh3.SmsObserver;
 
+import com.epgis.packmanage.puh3.SmsObserver;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.ContentResolver;
@@ -13,12 +13,10 @@ import android.os.Message;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.TextView;
 
-
-public class MainActivity extends Activity {
+public class MainActivity extends Activity{
  
 	Dialog alertDialog;
 	private Handler mHandler;
@@ -55,7 +53,7 @@ public class MainActivity extends Activity {
 		final SmsObserver smsObserver = new SmsObserver(this,cr,mHandler);
 		
 		final GPSTrackManager GM  = new GPSTrackManager(this);
-	 	
+ 
 
 		checkboxTrack.setOnClickListener(new OnClickListener() {
 			@Override

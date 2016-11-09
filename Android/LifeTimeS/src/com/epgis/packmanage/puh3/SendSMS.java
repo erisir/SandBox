@@ -2,26 +2,24 @@ package com.epgis.packmanage.puh3;
 
 import java.io.IOException;
 
+
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.widget.TextView;
-import android.widget.Toast;
 
 public class SendSMS {	
 	 
 	private Handler handler;
-	private Object message;
+	private Message  message;
 
 
 
 	public SendSMS(	Handler mHandler){
 		this.handler = mHandler;
-		Message msg = new Message();  
+		message = new Message();  
 		
 	}
 
@@ -32,8 +30,6 @@ public class SendSMS {
 			}
 		}.start();
 	}
-	
-
 	 
 	void postMSG(String code){
 

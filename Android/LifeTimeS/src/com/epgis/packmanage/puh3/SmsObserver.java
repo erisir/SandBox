@@ -9,7 +9,6 @@ import android.database.ContentObserver;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Handler;
-import android.widget.TextView;
 
 public class SmsObserver extends ContentObserver {  
 	public  Uri SMS_INBOX = Uri.parse("content://sms/");
@@ -31,7 +30,6 @@ public class SmsObserver extends ContentObserver {
 	public static Handler smsHandler = new Handler() {  
 		//这里可以进行回调的操作  
 		//TODO  
-
 	}; 
 	public void getSmsFromPhone() {          
 		      
