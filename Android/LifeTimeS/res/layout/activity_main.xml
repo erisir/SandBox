@@ -1,0 +1,45 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="com.epgis.packmanage.MainActivity" >
+
+    <Button
+        android:id="@+id/startTrack"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="开始录制轨迹" />
+
+    <Button
+        android:id="@+id/stopTrack"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:text="取消录制轨迹" />
+     <Button
+        android:id="@+id/startPuh3Server"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="开始监控短信" />
+
+    <Button
+        android:id="@+id/stopPuh3Server"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:text="取消监控短信" />
+	<ScrollView
+	    android:layout_width="fill_parent" 
+		android:layout_height="fill_parent">
+	    <TextView
+	        android:id="@+id/textView1"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:text="" />
+	</ScrollView>
+</LinearLayout>
