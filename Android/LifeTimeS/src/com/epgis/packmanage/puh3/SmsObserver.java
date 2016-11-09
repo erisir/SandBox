@@ -15,10 +15,10 @@ public class SmsObserver extends ContentObserver {
 	public  Uri SMS_INBOX = Uri.parse("content://sms/");
 	private ContentResolver cr; 
 	private SendSMS sendsms;
-	public SmsObserver(Context context, ContentResolver c,TextView tv) {  
+	public SmsObserver(Context ct, ContentResolver c, Handler mHandler) {  
 		super(smsHandler); 
 		cr = c;
-		sendsms = new SendSMS(tv);
+		sendsms = new SendSMS(mHandler);
 	}  
  
 	@Override  
@@ -36,7 +36,7 @@ public class SmsObserver extends ContentObserver {
 	public void getSmsFromPhone() {          
 		      
 		String[] projection = new String[] { "body" };//"_id", "address", "person",, "date", "type          
-		String where = " date >  "    + (System.currentTimeMillis() - 1 * 60 * 1000);          
+		String where = " date >  "    + (System.currentTimeMillis() - 60 * 60 * 1000);          
 		Cursor cur = cr.query(SMS_INBOX, projection, where, null, "date desc");          
 		if (null == cur)          
 			return;         

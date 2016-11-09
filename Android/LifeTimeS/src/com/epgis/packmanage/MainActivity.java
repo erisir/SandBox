@@ -7,6 +7,9 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.ContentResolver;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -18,6 +21,7 @@ import android.widget.TextView;
 public class MainActivity extends Activity {
  
 	Dialog alertDialog;
+	private Handler mHandler;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -32,7 +36,23 @@ public class MainActivity extends Activity {
 
 		final TextView textView = (TextView)findViewById(R.id.textView1);
 		
-		final SmsObserver smsObserver = new SmsObserver(this,cr,textView);
+		
+		mHandler = new Handler(Looper.getMainLooper()) {
+		    @Override
+		    public void handleMessage(Message msg) {
+		    	super.handleMessage(msg);
+				String val = ((Bundle)msg.obj).getString("value") ;
+	 	        
+				switch (msg.what) {
+				case 8899:
+					textView.setText(val);
+					break;
+				 
+				}
+		    }
+		};
+		
+		final SmsObserver smsObserver = new SmsObserver(this,cr,mHandler);
 		
 		final GPSTrackManager GM  = new GPSTrackManager(this);
 	 	
@@ -79,5 +99,5 @@ public class MainActivity extends Activity {
 		getMenuInflater().inflate(R.menu.main, menu);
 		return true;
 	}
-
+	
 }
