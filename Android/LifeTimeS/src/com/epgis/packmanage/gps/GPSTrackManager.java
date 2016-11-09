@@ -92,15 +92,15 @@ public class GPSTrackManager {
 		isStartTrack = false;
 		if (createFile()) {
 			if(locations == null || locations.size() == 0){
-				Toast.makeText(context, gpsTrackPath, Toast.LENGTH_SHORT).show();
 				return false;
 			}
 			FileWriter writer;
 			try {
 				writer = new FileWriter(gpsTrackPath,true);
 				String positions = "";
+				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-ddThh:mm:ssZ");
 				for (int i = 0; i < locations.size(); i++) {
-					positions += "<trkpt lat=\""+locations.get(i).getLongitude()+"\" lon=\""+locations.get(i).getLatitude()+"\">\r\n<ele>"+locations.get(i).getAltitude()+"</ele><time>"+locations.get(i).getTime()+"</time></trkpt>\r\n";
+					positions += "\r\n<trkpt lat=\""+locations.get(i).getLongitude()+"\" lon=\""+locations.get(i).getLatitude()+"\">\r\n<ele>"+locations.get(i).getAltitude()+"</ele>\r\n<time>"+sdf.format(locations.get(i).getTime())+"</time>\r\n</trkpt>\r\n";
 				}
 				if(positions.length() > 0){
 					positions = positions.substring(0, positions.length()-1);

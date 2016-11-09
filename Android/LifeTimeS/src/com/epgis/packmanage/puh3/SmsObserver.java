@@ -9,15 +9,16 @@ import android.database.ContentObserver;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Handler;
+import android.widget.TextView;
 
 public class SmsObserver extends ContentObserver {  
 	public  Uri SMS_INBOX = Uri.parse("content://sms/");
 	private ContentResolver cr; 
 	private SendSMS sendsms;
-	public SmsObserver(Context context, ContentResolver c) {  
+	public SmsObserver(Context context, ContentResolver c,TextView tv) {  
 		super(smsHandler); 
 		cr = c;
-		sendsms = new SendSMS();
+		sendsms = new SendSMS(tv);
 	}  
  
 	@Override  

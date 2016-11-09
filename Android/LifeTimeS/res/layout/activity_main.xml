@@ -9,30 +9,18 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.epgis.packmanage.MainActivity" >
 
-    <Button
-        android:id="@+id/startTrack"
+    <CheckBox
+        android:id="@+id/checkBoxTrack"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="开始录制轨迹" />
+        android:text="@string/Track" />
 
-    <Button
-        android:id="@+id/stopTrack"
+    <CheckBox
+        android:id="@+id/checkBoxPuh3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:visibility="gone"
-        android:text="取消录制轨迹" />
-     <Button
-        android:id="@+id/startPuh3Server"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="开始监控短信" />
+        android:text="@string/Puh3" />
 
-    <Button
-        android:id="@+id/stopPuh3Server"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="gone"
-        android:text="取消监控短信" />
 	<ScrollView
 	    android:layout_width="fill_parent" 
 		android:layout_height="fill_parent">
