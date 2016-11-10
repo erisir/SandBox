@@ -8,6 +8,6 @@
 	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"/>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="gen"/>
-	<classpathentry exported="true" kind="lib" path="D:/Development/Sandbox/Android/LifeTimeS/bin/dexedLibs/TencentLocationSDK_v4.8.8.3.jar"/>
+	<classpathentry kind="lib" path="C:/Development/SandBox/Android/LifeTimeS/libs/TencentLocationSDK_v4.8.8.3.jar"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>
