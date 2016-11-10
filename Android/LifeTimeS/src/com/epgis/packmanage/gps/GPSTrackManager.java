@@ -67,6 +67,9 @@ public class GPSTrackManager  {
 			{
 				if(location != null){
 					locations.add(location);
+					if(locations.size()>4){
+						saveLocations();
+					}
 					Toast.makeText(context, "轨迹定位中...", Toast.LENGTH_SHORT).show();
 				}
 			}
@@ -108,7 +111,13 @@ public class GPSTrackManager  {
 	/**
 	 * 轨迹录制
 	 * */
-	public boolean tracklocations() {
+	public boolean tracklocations(boolean flag) {
+		
+		if(!flag){
+			locationManager.removeUpdates(locationListener);
+			isOpenTrack = false;
+			return false;
+		}
 		//判断开关是否开启
 		if (!isOpenTrack) {          
 			return false;			
@@ -143,23 +152,27 @@ public class GPSTrackManager  {
 		if (!isOpenTrack) {          
 			return false;			
 		}
-		isStartTrack = false;
+
 		if (createFile()) {
 			if(locations == null || locations.size() == 0){
 				return false;
 			}
 			FileWriter writer;
+			 
 			try {
 				writer = new FileWriter(gpsTrackPath,true);
 				String positions = "";	
 				for (int i = 0; i < locations.size(); i++) {
-					String str = String.format("\r\n<trkpt lat=\"%f\" lon=\"%f\">\r\n<ele>\"%f\"</ele>\r\n<time>\"%s\"</time>\r\n</trkpt>\r\n", locations.get(i).getLongitude(),locations.get(i).getLatitude(),locations.get(i).getAltitude(),getGPSTime());
+					String str = String.format("\r\n<trkpt lat=\"%f\" lon=\"%f\">\r\n"
+												+ "<ele>%f</ele>\r\n"
+												+ "<time>%s</time>\r\n"
+												+ "</trkpt>",
+												locations.get(i).getLatitude(), locations.get(i).getLongitude(),
+												locations.get(i).getAltitude(),getGPSTime());
 					positions += str;
 				}
-				if(positions.length() > 0){
-					positions = positions.substring(0, positions.length()-1);
-				}
-				String content = positions + "\n"+getFileEnd();
+				 
+				String content = positions + "\n";
 				writer.write(content);
 				writer.close();
 				locations.clear();
@@ -171,15 +184,23 @@ public class GPSTrackManager  {
 		return true;
 	}
 
-
-	/**
-	 * 返回轨迹记录列表
-	 * @return ArrayList<HashMap<String,Object>>
-	 * ArrayList 每条对应文件中的一条数据
-	 * HashMap{name:String,position:ArrayList<Location>}
-	 * */
+	public boolean addFileTail() {
+		
+		FileWriter writer;
+		 
+		try {
+			writer = new FileWriter(gpsTrackPath,true);
+			writer.write(getFileEnd());
+			writer.close();
+			locations.clear();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	return true;
+}
+ 
 	public ArrayList<HashMap<String, Object>> getTrackList() {
-		//判断开关是否开启
 		if (!isOpenTrack) {          
 			return null;			
 		}
@@ -226,9 +247,7 @@ public class GPSTrackManager  {
 		}
 		return list;
 	}
-	/**
-	 * 检查存储文件在sdCard中是否存在并创建
-	 * */
+	 
 	private  boolean createFile(){
 		File file = new File(gpsTrackPath);
 		if(file.exists() == false){
@@ -241,12 +260,10 @@ public class GPSTrackManager  {
 					writer.write(content);
 					writer.close();
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 				return false;
 			}
@@ -261,16 +278,44 @@ public class GPSTrackManager  {
 		return sdf.format(new Date());
 	}
 	private String getGPSTime() {
-		// TODO Auto-generated method stub
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		SimpleDateFormat sdf1 = new SimpleDateFormat("hh:mm:ss");
 		return sdf.format(new Date())+"T"+sdf1.format(new Date())+"Z";
 	} 
 	
 	public String getFileHander(){
-		String str = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\" ?>\r\n<gpx xmlns=\"http://www.topografix.com/GPX/1/1\" xmlns:gpxtpx=\"http://www.garmin.com/xmlschemas/TrackPointExtension/v1\" creator=\"OruxMaps v.6.5.9\" version=\"1.1\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd\">\r\n<metadata>\r\n<name><![CDATA[西山太舟坞上2016-11-05 14:35]]></name>\r\n<desc><![CDATA[]]></desc>\r\n<link href=\"http://www.oruxmaps.com\">\r\n<text>OruxMaps</text>\r\n</link>\r\n<time>2016-11-05T06:35:35Z</time><bounds maxlat=\"40.0382312\" maxlon=\"116.2590316\" minlat=\"40.0046640\" minlon=\"116.1865904\"/>\r\n</metadata>\r\n<trk>\r\n<name><![CDATA[轨迹记录]]></name>\r\n<desc><![CDATA[<p>起始时间: 11/05/2016 14:35</p><p>结束时间: 11/05/2016 18:25</p><p>距离: 6.2 km (03:50)</p><p>移动时间: 03:21</p><p>平均速度: 1.62 km/h</p><p>平均移动速度: 1.85 km/h</p><p>最大速度: 9.94km/h</p><p>最小高程: 42 m</p><p>最大高程: 390 m</p><p>上升速度: 282.2 m/h</p><p>下降速度: -252.9 m/h</p><p>高程上升: 379 m</p><p>高程下降: -343 m</p><p>上升时间: 01:20</p><p>下降时间: 01:21</p><hr align=\"center\" width=\"480\" style=\"height: 2px; width: 517px\"/>]]></desc>\r\n<type>背包客</type>\r\n<extensions>\r\n<om:oruxmapsextensions xmlns:om=\"http://www.oruxmaps.com/oruxmapsextensions/1/0\">\r\n<om:ext type=\"TYPE\" subtype=\"0\">28</om:ext>\r\n<om:ext type=\"DIFFICULTY\">0</om:ext>\r\n</om:oruxmapsextensions>\r\n</extensions>\r\n<trkseg>\r\n";			
+		String str = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\" ?>"
+				 + " <gpx xmlns=\"http://www.topografix.com/GPX/1/1\" xmlns:gpxtpx=\"http://www.garmin.com/xmlschemas/TrackPointExtension/v1\" creator=\"OruxMaps v.6.5.9\" version=\"1.1\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd\">"
+				 + " <metadata>"
+				 + " <name><![CDATA["+this.defineFileName()+"轨迹]]></name>"
+				 + " <desc><![CDATA[]]></desc>"
+				 + " <link href=\"http://www.oruxmaps.com\">"
+				 + " <text>OruxMaps</text>"
+				 + " </link>"
+				 + " <time>"+this.getGPSTime()+"</time><bounds maxlat=\"40.0382312\" maxlon=\"116.2590316\" minlat=\"40.0046640\" minlon=\"116.1865904\"/>"
+				 + " </metadata>"
+				 + " <trk>"
+				 + " <name><![CDATA[轨迹记录]]></name>"
+				//+ " <desc><![CDATA[<p>起始时间: null</p><p>结束时间: "+this.getGPSTime()+"</p><p>距离: null km (03:50)</p><p>移动时间: 03:21</p><p>平均速度: 1.62 km/h</p><p>平均移动速度: 1.85 km/h</p><p>最大速度: 9.94km/h</p><p>最小高程: 42 m</p><p>最大高程: 390 m</p><p>上升速度: 282.2 m/h</p><p>下降速度: -252.9 m/h</p><p>高程上升: 379 m</p><p>高程下降: -343 m</p><p>上升时间: 01:20</p><p>下降时间: 01:21</p><hr align=\"center\" width=\"480\" style=\"height: 2px; width: 517px\"/>]]></desc>"
+				 + " <desc><![CDATA[<p>"+this.getdesc()+"</p><hr align=\"center\" width=\"480\" style=\"height: 2px; width: 517px\"/>]]></desc>"
+				 + " <type>日常</type>"
+				 + " <extensions>"
+				 + " <om:oruxmapsextensions xmlns:om=\"http://www.oruxmaps.com/oruxmapsextensions/1/0\">"
+				 + " <om:ext type=\"TYPE\" subtype=\"0\">28</om:ext>"
+				 + " <om:ext type=\"DIFFICULTY\">0</om:ext>"
+				 + " </om:oruxmapsextensions>"
+				 + " </extensions>"
+				 + " <trkseg>"
+				 + " ";			
+		 
 		return str;
+		
 	}
+	private String getdesc() {
+		// TODO Auto-generated method stub
+		return "desc";
+	}
+
 	public String getFileEnd(){
 		String str = "</trkseg>\r\n</trk>\r\n</gpx>";
 		return str;

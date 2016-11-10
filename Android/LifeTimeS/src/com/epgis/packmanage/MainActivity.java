@@ -20,6 +20,8 @@ public class MainActivity extends Activity{
  
 	Dialog alertDialog;
 	private Handler mHandler;
+	 GPSTrackManager gpsTrackManager = null;
+	 SmsObserver smsObserver = null;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -50,10 +52,9 @@ public class MainActivity extends Activity{
 		    }
 		};
 		
-		final SmsObserver smsObserver = new SmsObserver(this,cr,mHandler);
-		
-		final GPSTrackManager GM  = new GPSTrackManager(this);
- 
+		smsObserver = new SmsObserver(this,cr,mHandler);		
+		gpsTrackManager  = new GPSTrackManager(this);
+		 
 
 		checkboxTrack.setOnClickListener(new OnClickListener() {
 			@Override
@@ -61,13 +62,14 @@ public class MainActivity extends Activity{
 				// TODO Auto-generated method stub
 				if(checkboxTrack.isChecked()){
 					textView.setText("ÕýÔÚ¼ÇÂ¼¹ì¼£");
-					GM.tracklocations();
+					gpsTrackManager.tracklocations(true);
 				}
 				else
 				{
-				GM.saveLocations();				 
+				gpsTrackManager.saveLocations();
+				gpsTrackManager.addFileTail();
+				gpsTrackManager.tracklocations(false);
 				textView.setText("Í£Ö¹¼ÇÂ¼¹ì¼£");
-				textView.setText(GM.getTrackList().toString());
 				}
 
 			}
@@ -97,5 +99,6 @@ public class MainActivity extends Activity{
 		getMenuInflater().inflate(R.menu.main, menu);
 		return true;
 	}
+	
 	
 }
