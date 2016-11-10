@@ -139,7 +139,7 @@ public class GPSTrackManager extends Service {
 			case 3:  errorStr = "×Ô¶¯¼ÓÔØlibtencentloc.soÊ§°Ü";
 			break;
 			}
-			Toast.makeText(context, errorStr, Toast.LENGTH_SHORT).show();           
+			Log.i(TAG, errorStr);           
 			return false;        
 		}
 		isStartTrack = true;	
@@ -343,6 +343,7 @@ public class GPSTrackManager extends Service {
     public void onCreate()  
     {  
         Log.i(TAG, "Service onCreate--->");  
+        
         super.onCreate();  
     }  
    
@@ -352,7 +353,7 @@ public class GPSTrackManager extends Service {
 
 		locations = new ArrayList<TencentLocation>();		  
 		request = TencentLocationRequest.create();
-		request.setInterval(1000);
+		request.setInterval(30000);
 		locationManager = TencentLocationManager.getInstance(context);
 		locationManager.requestLocationUpdates(request,locationListener);
 		
