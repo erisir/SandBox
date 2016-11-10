@@ -50,6 +50,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        
+        <service android:name="com.epgis.packmanage.GPSTrackManager" />     
+    
         <meta-data android:name="TencentMapSDK" android:value="ORRBZ-7X5K5-4E4I7-QWZEQ-CF44J-6HB4X" />
     </application>
 

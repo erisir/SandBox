@@ -1,15 +1,16 @@
 package com.epgis.packmanage;
 
-import com.epgis.packmanage.gps.GPSTrackManager;
-
 import com.epgis.packmanage.puh3.SmsObserver;
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.ComponentName;
 import android.content.ContentResolver;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -17,7 +18,7 @@ import android.widget.CheckBox;
 import android.widget.TextView;
 
 public class MainActivity extends Activity{
- 
+	protected static final String TAG = "MainActivity";
 	Dialog alertDialog;
 	private Handler mHandler;
 	 GPSTrackManager gpsTrackManager = null;
@@ -35,7 +36,8 @@ public class MainActivity extends Activity{
 		final CheckBox checkboxTrack = (CheckBox)findViewById(R.id.checkBoxTrack);
 
 		final TextView textView = (TextView)findViewById(R.id.textView1);
-		
+		final Intent startIntent = new Intent(this, GPSTrackManager.class);
+
 		
 		mHandler = new Handler(Looper.getMainLooper()) {
 		    @Override
@@ -52,24 +54,32 @@ public class MainActivity extends Activity{
 		    }
 		};
 		
+		
 		smsObserver = new SmsObserver(this,cr,mHandler);		
 		gpsTrackManager  = new GPSTrackManager(this);
 		 
-
 		checkboxTrack.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View arg0) {
 				// TODO Auto-generated method stub
 				if(checkboxTrack.isChecked()){
+				 
+					ComponentName ret = startService(startIntent);
+					if(ret == null)
+						Log.i(TAG,"开启服务失败");
+					else{
+						Log.i(TAG,"开启服务成功");
+					}
+					 
 					textView.setText("正在记录轨迹");
-					gpsTrackManager.tracklocations(true);
+					Log.i(TAG, "正在记录轨迹");    
 				}
 				else
 				{
-				gpsTrackManager.saveLocations();
-				gpsTrackManager.addFileTail();
-				gpsTrackManager.tracklocations(false);
-				textView.setText("停止记录轨迹");
+					 
+					stopService(startIntent);  				 
+					textView.setText("停止记录轨迹");
+					Log.i(TAG, "停止记录轨迹");    
 				}
 
 			}
