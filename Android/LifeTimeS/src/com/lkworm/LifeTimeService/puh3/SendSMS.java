@@ -33,10 +33,10 @@ public class SendSMS {
 			HttpURLConnection httpConn = (HttpURLConnection)url.openConnection();  
 			if(httpConn.getResponseCode() == HttpURLConnection.HTTP_OK)  
 			{         
-				sendMSG(0, "·¢ËÍÑéÖ¤Âë¡¾"+code+"¡¿³É¹¦");
+				sendMSG(0, "å‘é€éªŒè¯ç ã€"+code+"ã€‘æˆåŠŸ");
 			}else  
 			{  
-				sendMSG(1, "·¢ËÍÑéÖ¤Âë¡¾"+code+"¡¿Ê§°Ü"); 
+				sendMSG(1, "å‘é€éªŒè¯ç ã€"+code+"ã€‘å¤±è´¥"); 
 			}  
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -44,7 +44,7 @@ public class SendSMS {
  
 	}
 	
-	public void sendMSG(int i, String msg){//0,ÏÂ·½£¬1ÉÏ·½
+	public void sendMSG(int i, String msg){//0,ä¸‹æ–¹ï¼Œ1ä¸Šæ–¹
 		Bundle data = new Bundle();  
 		data.putString("value", msg);
 		message = handler.obtainMessage(MSGCODE[i], data);

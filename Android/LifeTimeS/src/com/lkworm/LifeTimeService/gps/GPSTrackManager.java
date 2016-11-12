@@ -45,7 +45,8 @@ public class GPSTrackManager extends Service {
 	
 	private static Handler handler;
 	private static Message message;
-	
+	private boolean showFlag = false;
+
 	private   TencentLocationListener  locationListener= new TencentLocationListener () {
 		
 
@@ -54,23 +55,23 @@ public class GPSTrackManager extends Service {
 		{	
 			if (!isStartTrack) {
 				locationManager.removeUpdates(locationListener);
-				Log.i(TAG, "GPS£¬Í£Ö¹¼ÇÂ¼");  
-				sendMSG(1,"GPS£¬Í£Ö¹¼ÇÂ¼");
+				Log.i(TAG, "GPSï¼Œåœæ­¢è®°å½•");  
+				sendMSG(1,"GPSï¼Œåœæ­¢è®°å½•");
 			}else 
 			{
-
+				showFlag = !showFlag;
 				if(location.getAccuracy()>GPSAccuracy || location.getAccuracy()<1){
-					Log.i("acrc", "GPS£¬¾«¶È--->"+String.format("%f", location.getAccuracy()));  
+					Log.i("acrc", "GPSï¼Œç²¾åº¦--->"+String.format("%f", location.getAccuracy()));  
 				}else{
-					Log.i(TAG, "GPS£¬¾«¶È--->"+String.format("%f", location.getAccuracy()));  
+					Log.i(TAG, "GPSï¼Œç²¾åº¦--->"+String.format("%f", location.getAccuracy()));  
 				}
 				if(location != null && location.getAccuracy()<GPSAccuracy && location.getAccuracy()>0.1){
 					locations.add(location);
 					if(locations.size()>locationBufferSize){
 						saveLocations();
-						sendMSG(0,String.format("µ±Ç°Î»ÖÃ:[%s]¾«¶È£º%.0fm",location.getName(), location.getAccuracy()));
 					}
-					Log.i(TAG, "GPS£¬»ñÈ¡µØÖ·--->"+location.getName());  
+					Log.i(TAG, "GPSï¼Œè·å–åœ°å€--->"+location.getName());  
+					sendMSG(0,String.format("å½“å‰ä½ç½®:[%s]ç²¾åº¦ï¼š%.0fm\t%s",location.getName(), location.getAccuracy(),showFlag?".":""));
 				}
 			}
 		}                
@@ -78,17 +79,17 @@ public class GPSTrackManager extends Service {
 		@Override
 		public void onStatusUpdate(String name, int status, String desc) {            
 			switch (status) {            
-			//GPS×´Ì¬Îª¿É¼ûÊ±            
+			//GPSçŠ¶æ€ä¸ºå¯è§æ—¶            
 			case LocationProvider.AVAILABLE:                
-				Log.i(TAG, "µ±Ç°GPS×´Ì¬Îª¿É¼û×´Ì¬");                
+				Log.i(TAG, "å½“å‰GPSçŠ¶æ€ä¸ºå¯è§çŠ¶æ€");                
 				break;            
-				//GPS×´Ì¬Îª·şÎñÇøÍâÊ±            
+				//GPSçŠ¶æ€ä¸ºæœåŠ¡åŒºå¤–æ—¶            
 			case LocationProvider.OUT_OF_SERVICE:                
-				Log.i(TAG, "µ±Ç°GPS×´Ì¬Îª·şÎñÇøÍâ×´Ì¬");                
+				Log.i(TAG, "å½“å‰GPSçŠ¶æ€ä¸ºæœåŠ¡åŒºå¤–çŠ¶æ€");                
 				break;            
-				//GPS×´Ì¬ÎªÔİÍ£·şÎñÊ±            
+				//GPSçŠ¶æ€ä¸ºæš‚åœæœåŠ¡æ—¶            
 			case LocationProvider.TEMPORARILY_UNAVAILABLE:                
-				Log.i(TAG, "µ±Ç°GPS×´Ì¬ÎªÔİÍ£·şÎñ×´Ì¬");                
+				Log.i(TAG, "å½“å‰GPSçŠ¶æ€ä¸ºæš‚åœæœåŠ¡çŠ¶æ€");                
 				break;            
 			}        
 		}                  
@@ -110,19 +111,19 @@ public class GPSTrackManager extends Service {
 			locationManager.removeUpdates(locationListener);
 			return false;
 		}
-		//ÅĞ¶ÏGPSÊÇ·ñÕı³£Æô¶¯        
+		//åˆ¤æ–­GPSæ˜¯å¦æ­£å¸¸å¯åŠ¨        
 		int error = locationManager.requestLocationUpdates(request, locationListener);
-		String errorStr = "×¢²á¼àÌıÆ÷£º";
+		String errorStr = "æ³¨å†Œç›‘å¬å™¨ï¼š";
 		if(error !=0){
 			switch(error)
 			{
-			case 0:  errorStr += "×¢²áÎ»ÖÃ¼àÌıÆ÷³É¹¦";
+			case 0:  errorStr += "æ³¨å†Œä½ç½®ç›‘å¬å™¨æˆåŠŸ";
 			break;
-			case 1:  errorStr += "Éè±¸È±ÉÙÊ¹ÓÃÌÚÑ¶¶¨Î»SDKĞèÒªµÄ»ù±¾Ìõ¼ş";
+			case 1:  errorStr += "è®¾å¤‡ç¼ºå°‘ä½¿ç”¨è…¾è®¯å®šä½SDKéœ€è¦çš„åŸºæœ¬æ¡ä»¶";
 			break;
-			case 2:  errorStr += "ÅäÖÃµÄ key ²»ÕıÈ·";
+			case 2:  errorStr += "é…ç½®çš„ key ä¸æ­£ç¡®";
 			break;
-			case 3:  errorStr += "×Ô¶¯¼ÓÔØlibtencentloc.soÊ§°Ü";
+			case 3:  errorStr += "è‡ªåŠ¨åŠ è½½libtencentloc.soå¤±è´¥";
 			break;
 			}
 			Log.i(TAG, errorStr);           
@@ -178,7 +179,7 @@ public class GPSTrackManager extends Service {
 		if(file.exists() == false){
 			try {
 				file.createNewFile();
-				FileWriter writer;//Ğ´ÈëÎÄ¼şÍ·
+				FileWriter writer;//å†™å…¥æ–‡ä»¶å¤´
 				try {
 					writer = new FileWriter(getGPSTrackPath(),true);
 					String content = getFileHander()+gpsTrackFileEnd;
@@ -210,7 +211,7 @@ public class GPSTrackManager extends Service {
 		String str = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\" ?>"
 				+ " \r\n<gpx xmlns=\"http://www.topografix.com/GPX/1/1\" xmlns:gpxtpx=\"http://www.garmin.com/xmlschemas/TrackPointExtension/v1\" creator=\"OruxMaps v.6.5.9\" version=\"1.1\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd\">"
 				+ "  \r\n<metadata>"
-				+ "  \r\n<name><![CDATA["+this.defineFileName()+"¹ì¼£]]></name>"
+				+ "  \r\n<name><![CDATA["+this.defineFileName()+"è½¨è¿¹]]></name>"
 				+ "  \r\n<desc><![CDATA[]]></desc>"
 				+ "  \r\n<link href=\"http://www.oruxmaps.com\">"
 				+ "  \r\n<text>OruxMaps</text>"
@@ -218,9 +219,9 @@ public class GPSTrackManager extends Service {
 				+ "  \r\n<time>"+this.getGPSTime()+"</time><bounds maxlat=\"40.0382312\" maxlon=\"116.2590316\" minlat=\"40.0046640\" minlon=\"116.1865904\"/>"
 				+ "  \r\n</metadata>"
 				+ "  \r\n<trk>"
-				+ "  \r\n<name><![CDATA[¹ì¼£¼ÇÂ¼]]></name>"
+				+ "  \r\n<name><![CDATA[è½¨è¿¹è®°å½•]]></name>"
 				+ "  \r\n<desc><![CDATA[<p>"+this.getdesc()+"</p><hr align=\"center\" width=\"480\" style=\"height: 2px; width: 517px\"/>]]></desc>"
-				+ "  \r\n<type>ÈÕ³£</type>"
+				+ "  \r\n<type>æ—¥å¸¸</type>"
 				+ "  \r\n<extensions>"
 				+ "  \r\n<om:oruxmapsextensions xmlns:om=\"http://www.oruxmaps.com/oruxmapsextensions/1/0\">"
 				+ "  \r\n<om:ext type=\"TYPE\" subtype=\"0\">28</om:ext>"
@@ -241,7 +242,7 @@ public class GPSTrackManager extends Service {
 		return null;
 	}
 	@Override 
-	//ServiceÊ±±»µ÷ÓÃ  
+	//Serviceæ—¶è¢«è°ƒç”¨  
 	public void onCreate()  
 	{  
 		Log.i(TAG, "Service onCreate--->");  
@@ -262,7 +263,7 @@ public class GPSTrackManager extends Service {
 		return super.onStartCommand(intent, flags, startId);  
 	}  
 	@Override 
-	//µ±Service²»ÔÚÊ¹ÓÃÊ±µ÷ÓÃ  
+	//å½“Serviceä¸åœ¨ä½¿ç”¨æ—¶è°ƒç”¨  
 	public void onDestroy()  
 	{  
 		Log.i(TAG, "Service onDestroy--->"); 

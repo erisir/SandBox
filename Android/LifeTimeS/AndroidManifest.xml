@@ -42,7 +42,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name="com.epgis.packmanage.MainActivity"
+            android:name="com.lkworm.LifeTimeService.MainActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -51,7 +51,7 @@
             </intent-filter>
         </activity>
         
-        <service android:name="com.epgis.packmanage.GPSTrackManager"
+        <service android:name="com.lkworm.LifeTimeService.gps.GPSTrackManager"
                  android:label = "GPSTrackManager"/>  
     
         <meta-data android:name="TencentMapSDK" android:value="ORRBZ-7X5K5-4E4I7-QWZEQ-CF44J-6HB4X" />

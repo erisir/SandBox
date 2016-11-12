@@ -68,19 +68,19 @@ public class MainActivity extends Activity{
 				if(checkboxTrack.isChecked()){
 					ComponentName ret = startService(startIntent);
 					if(ret == null){
-						Log.i(TAG,"¿ªÆô·şÎñÊ§°Ü");
-						msgTextUp.setText("¿ªÆô·şÎñÊ§°Ü");
+						Log.i(TAG,"å¼€å¯æœåŠ¡å¤±è´¥");
+						msgTextUp.setText("å¼€å¯æœåŠ¡å¤±è´¥");
 					}
 					else{
-						Log.i(TAG,"¿ªÆô·şÎñ³É¹¦");
-						msgTextUp.setText("¿ªÆô·şÎñ³É¹¦");
+						Log.i(TAG,"å¼€å¯æœåŠ¡æˆåŠŸ");
+						msgTextUp.setText("å¼€å¯æœåŠ¡æˆåŠŸ");
 					}
 				}
 				else
 				{
 					stopService(startIntent);  				 
-					Log.i(TAG, "¹Ø±ÕÎ»ÖÃ·şÎñ");    
-					msgTextUp.setText("¹Ø±ÕÎ»ÖÃ·şÎñ");
+					Log.i(TAG, "å…³é—­ä½ç½®æœåŠ¡");    
+					msgTextUp.setText("å…³é—­ä½ç½®æœåŠ¡");
 				}
 
 			}
@@ -94,10 +94,10 @@ public class MainActivity extends Activity{
 				{
 					getContentResolver().registerContentObserver(smsObserver.SMS_INBOX, true,  
 						smsObserver); 
-					msgTextUp.setText("¿ªÊ¼¼à¿Ø¶ÌĞÅÑéÖ¤Âë");
+					msgTextUp.setText("å¼€å§‹ç›‘æ§çŸ­ä¿¡éªŒè¯ç ");
 				}else{
 					getContentResolver().unregisterContentObserver(smsObserver); 
-					msgTextUp.setText("Í£Ö¹¼à¿Ø¶ÌĞÅÑéÖ¤Âë");
+					msgTextUp.setText("åœæ­¢ç›‘æ§çŸ­ä¿¡éªŒè¯ç ");
 				}
 
 			}

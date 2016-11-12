@@ -33,7 +33,7 @@ public class SmsObserver extends ContentObserver {
 			return;         
 		if (cur.moveToNext()) {      
 			String body = cur.getString(cur.getColumnIndex("body"));                   
-			Pattern pattern = Pattern.compile("北京市预约挂号统一平台");  
+			Pattern pattern = Pattern.compile("鍖椾含甯傞绾︽寕鍙风粺涓�骞冲彴");  
 			Pattern pattern1 = Pattern.compile("[0-9]{6}");  
 			Matcher matcher = pattern.matcher(body);
 			Matcher matcher1 = pattern1.matcher(body);
