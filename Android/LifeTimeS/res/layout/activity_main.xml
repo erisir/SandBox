@@ -25,11 +25,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/Puh3" />
+	
+ 
 
     <TextView
         android:id="@+id/MsgDown"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="0.09" />
+        android:layout_height="wrap_content"/>
 
 </LinearLayout>

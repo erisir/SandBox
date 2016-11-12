@@ -2,6 +2,7 @@ package com.lkworm.LifeTimeService;
 
 import com.lkworm.LifeTimeService.gps.GPSTrackManager;
 import com.lkworm.LifeTimeService.puh3.SmsObserver;
+import com.tencent.tencentmap.mapsdk.maps.MapView;
 
 import android.app.Activity;
 import android.content.ComponentName;
@@ -24,7 +25,7 @@ public class MainActivity extends Activity{
 	private  SmsObserver smsObserver;
 	@SuppressWarnings("unused")
 	private  GPSTrackManager gpsTrackManager;
-
+	//private MapView mMapView;
 
 	
 	
@@ -37,7 +38,7 @@ public class MainActivity extends Activity{
 		final CheckBox checkboxTrack = (CheckBox)findViewById(R.id.checkBoxTrack);
 		final TextView msgTextUp = (TextView)findViewById(R.id.MsgUp);
 		final TextView msgTextDown = (TextView)findViewById(R.id.MsgDown);
-		
+		//mMapView = (MapView) findViewById(R.id.map);
 		startIntent = new Intent(this, GPSTrackManager.class);
 
 		//puh3 smsSever
