@@ -1,6 +1,7 @@
-package com.epgis.packmanage;
+package com.lkworm.LifeTimeService;
 
-import com.epgis.packmanage.puh3.SmsObserver;
+import com.lkworm.LifeTimeService.gps.GPSTrackManager;
+import com.lkworm.LifeTimeService.puh3.SmsObserver;
 
 import android.app.Activity;
 import android.content.ComponentName;
