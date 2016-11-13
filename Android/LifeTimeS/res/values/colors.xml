@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="btn_frag_normal">#ffffffff</color>
+    <color name="btn_frag_pressed">#ffff8800</color>
+    
+    <color name="btn_direction_normal">#44555555</color>
+    <color name="btn_direction_pressed">#66ee7600</color>
+    
+    <color name="bg_panel">#55555555</color>
+</resources>

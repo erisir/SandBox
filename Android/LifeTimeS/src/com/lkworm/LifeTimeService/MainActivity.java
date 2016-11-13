@@ -1,16 +1,21 @@
 package com.lkworm.LifeTimeService;
 
 import com.lkworm.LifeTimeService.gps.GPSTrackManager;
+import com.lkworm.LifeTimeService.map.CustMapFragment;
 import com.lkworm.LifeTimeService.puh3.SmsObserver;
-import com.tencent.tencentmap.mapsdk.maps.MapView;
+import com.tencent.tencentmap.mapsdk.maps.SupportMapFragment;
+import com.tencent.tencentmap.mapsdk.maps.model.LatLng;
+import com.tencent.tencentmap.mapsdk.maps.model.Marker;
+import com.tencent.tencentmap.mapsdk.maps.model.MarkerOptions;
 
-import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
@@ -18,7 +23,7 @@ import android.view.View.OnClickListener;
 import android.widget.CheckBox;
 import android.widget.TextView;
 
-public class MainActivity extends Activity{
+public class MainActivity extends FragmentActivity{
 	private  static final String TAG = "MainActivity";
 	private Handler mHandler;
 	private Intent startIntent;
@@ -26,7 +31,9 @@ public class MainActivity extends Activity{
 	@SuppressWarnings("unused")
 	private  GPSTrackManager gpsTrackManager;
 	//private MapView mMapView;
-
+	private SupportMapFragment supportMapFragment;
+	private CustMapFragment custMapFragment;
+	FragmentManager fragmentManager;
 	
 	
 	@Override
@@ -40,7 +47,7 @@ public class MainActivity extends Activity{
 		final TextView msgTextDown = (TextView)findViewById(R.id.MsgDown);
 		//mMapView = (MapView) findViewById(R.id.map);
 		startIntent = new Intent(this, GPSTrackManager.class);
-
+		initView();
 		//puh3 smsSever
 		mHandler = new Handler(Looper.getMainLooper()) {
 		    @Override
@@ -58,8 +65,6 @@ public class MainActivity extends Activity{
 				}
 		    }
 		};
-		
-		
 		smsObserver = new SmsObserver(getContentResolver(),mHandler);		
 		gpsTrackManager  = new GPSTrackManager(this,mHandler);
 		 
@@ -110,6 +115,24 @@ public class MainActivity extends Activity{
 		getMenuInflater().inflate(R.menu.main, menu);
 		return true;
 	}
-	
+	private void initView() {
+		fragmentManager = getSupportFragmentManager();
+		
+		supportMapFragment = SupportMapFragment.newInstance(this);
+		Marker marker1 = supportMapFragment.getMap()
+				.addMarker(new MarkerOptions()
+				.position(new LatLng(39.984129,116.307696))
+				.title("SupportMapFragment"));
+		marker1.showInfoWindow();
+//		fragmentManager.beginTransaction().add(R.id.ll_frag_root, supportMapFragment).commit();
+
+		custMapFragment = CustMapFragment.newInstance(this);
+		Marker marker2 = custMapFragment.getMap()
+				.addMarker(new MarkerOptions()
+				.position(new LatLng(39.984129,116.307696))
+				.title("CustMapFragment"));
+		marker2.showInfoWindow();
+		fragmentManager.beginTransaction().add(R.id.ll_frag_root, custMapFragment).commit();
+	}
 	
 }
