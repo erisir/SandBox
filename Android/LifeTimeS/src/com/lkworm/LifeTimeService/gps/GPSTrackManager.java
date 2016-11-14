@@ -39,7 +39,7 @@ public class GPSTrackManager extends Service {
 	private TencentLocationRequest request;
 
 	private final int GPSAccuracy = 200; 
-	private final long GPSInterval = 10*1000;//sec
+	private final long GPSInterval = 1*1000;//sec
 	private int locationBufferSize = 6;
 	private int MSGCODE[] = new int[]{1111,9999};
 	
@@ -84,7 +84,8 @@ public class GPSTrackManager extends Service {
 		}                
 
 		@Override
-		public void onStatusUpdate(String name, int status, String desc) {            
+		public void onStatusUpdate(String name, int status, String desc) {   
+			Log.i(TAG, "onStatusUpdate");                
 			switch (status) {            
 			//GPS状态为可见时            
 			case LocationProvider.AVAILABLE:                

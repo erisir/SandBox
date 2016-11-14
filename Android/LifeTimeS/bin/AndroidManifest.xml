@@ -7,22 +7,23 @@
     <uses-sdk
         android:minSdkVersion="11"
         android:targetSdkVersion="22" />
-	
-	<uses-permission android:name="android.permission.RECEIVE_SMS" />
+
+    <uses-permission android:name="android.permission.RECEIVE_SMS" />
     <uses-permission android:name="android.permission.READ_SMS" />
-    
-    <!--腾讯地图 sdk 要求的权限(开始)-->
-    <!--访问网络获取地图服务-->
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <!--检查网络可用性-->
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+
+    <!-- 腾讯地图 sdk 要求的权限(开始) -->
+    <!-- 访问网络获取地图服务 -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <!-- 检查网络可用性 -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <!-- 访问WiFi状态 -->
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-    <!--需要外部存储写权限用于保存地图缓存-->
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-    <!--获取 device id 辨别设备-->
-    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
-    <!--腾讯地图 sdk 要求的权限(结束)-->
+    <!-- 需要外部存储写权限用于保存地图缓存 -->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <!-- 获取 device id 辨别设备 -->
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <!-- 腾讯地图 sdk 要求的权限(结束) -->
+
 
     <!-- 腾讯定位 sdk 要求的权限  (开始) -->
     <!-- 通过GPS得到精确位置 -->
@@ -48,10 +49,12 @@
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
+
         <!-- 如果您key确认无误，却依然授权没有通过，请检查您的key的白名单配置 -->
         <meta-data
             android:name="TencentMapSDK"
             android:value="ORRBZ-7X5K5-4E4I7-QWZEQ-CF44J-6HB4X" />
+
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name" >
@@ -61,19 +64,20 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        
-         <service android:name="com.lkworm.LifeTimeService.gps.GPSTrackManager"
-                 android:label = "GPSTrackManager"/>  
-                 
-        
+
+        <service
+            android:name="com.lkworm.LifeTimeService.gps.GPSTrackManager"
+            android:label="GPSTrackManager" />
+        <service
+            android:name="com.lkworm.LifeTimeService.map.DemoLocationSource"
+            android:label="DemoLocationSource" />
+
         <activity
             android:name="com.lkworm.LifeTimeService.map.MapFragmentActivity"
             android:label="@string/demo_desc_map_fragment" />
-         <activity
+        <activity
             android:name="com.lkworm.LifeTimeService.map.UiSetting"
             android:label="UiSetting" />
-        
-        
     </application>
 
 </manifest>
