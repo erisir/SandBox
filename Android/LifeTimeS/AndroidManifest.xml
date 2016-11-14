@@ -68,16 +68,7 @@
         <service
             android:name="com.lkworm.LifeTimeService.gps.GPSTrackManager"
             android:label="GPSTrackManager" />
-        <service
-            android:name="com.lkworm.LifeTimeService.map.DemoLocationSource"
-            android:label="DemoLocationSource" />
-
-        <activity
-            android:name="com.lkworm.LifeTimeService.map.MapFragmentActivity"
-            android:label="@string/demo_desc_map_fragment" />
-        <activity
-            android:name="com.lkworm.LifeTimeService.map.UiSetting"
-            android:label="UiSetting" />
+         
     </application>
 
 </manifest>

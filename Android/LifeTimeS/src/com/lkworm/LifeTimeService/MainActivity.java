@@ -1,13 +1,12 @@
 package com.lkworm.LifeTimeService;
 
 import com.lkworm.LifeTimeService.gps.GPSTrackManager;
-
+import com.lkworm.LifeTimeService.map.DemoLocationSource;
+import com.lkworm.LifeTimeService.map.MapControl;
 import com.lkworm.LifeTimeService.puh3.SmsObserver;
 import com.tencent.tencentmap.mapsdk.maps.SupportMapFragment;
 import com.tencent.tencentmap.mapsdk.maps.TencentMap;
 import com.tencent.tencentmap.mapsdk.maps.UiSettings;
-import com.lkworm.LifeTimeService.map.DemoLocationSource;
-import com.lkworm.LifeTimeService.map.MapControl;
 
 import android.content.ComponentName;
 import android.content.Intent;
@@ -19,12 +18,10 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.Menu;
-import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.TextView;
 import android.widget.CompoundButton.OnCheckedChangeListener;
+import android.widget.TextView;
 
 public class MainActivity extends FragmentActivity{
 	private  static final String TAG = "MainActivity";
@@ -83,11 +80,14 @@ public class MainActivity extends FragmentActivity{
 			}
 		};
 
-		tencentMap.getUiSettings().setZoomControlsEnabled(false);
 		mapControl = new MapControl(tencentMap);
+
 		//定位开始
-		locationSource = new DemoLocationSource(this,mapControl,this.mHandler,startIntent);
+		//设置是否显示我的位置，地图SDK不负责获取位置，由外界提供 设计的地图和定位是分开的，
+		//所以需要setLocationSource(locationSource);提供接口
+		locationSource = new DemoLocationSource(this);
 		tencentMap.setLocationSource(locationSource);
+
 		tencentMap.setMyLocationEnabled(true);
 
 
@@ -129,23 +129,23 @@ public class MainActivity extends FragmentActivity{
 		cbScrollGesture = (CheckBox)findViewById(R.id.cb_scroll_gesture);
 		cbTiltGesture = (CheckBox)findViewById(R.id.cb_tilt_gesture);
 		cbZoomGesture = (CheckBox)findViewById(R.id.cb_zoom_gesture);
-		
+
 		mapUiSettings.setCompassEnabled(true);
 		mapUiSettings.setZoomControlsEnabled(true);
-		mapUiSettings.setMyLocationButtonEnabled(true);
+		//mapUiSettings.setMyLocationButtonEnabled(true);
 		mapUiSettings.setRotateGesturesEnabled(true);
 		mapUiSettings.setScrollGesturesEnabled(true);
 		mapUiSettings.setTiltGesturesEnabled(true);
 		mapUiSettings.setZoomGesturesEnabled(true);
-		
+
 
 		cbAllGesture.setChecked(mapUiSettings.isRotateGesturesEnabled() && 
 				mapUiSettings.isScrollGesturesEnabled() && 
 				mapUiSettings.isTiltGesturesEnabled() &&
 				mapUiSettings.isZoomGesturesEnabled());
 		cbCompass.setChecked(mapUiSettings.isCompassEnabled());
- 		cbZoomWidget.setChecked(mapUiSettings.isZoomControlsEnabled());
- 		cbLocationWidget.setChecked(mapUiSettings.isMyLocationButtonEnabled());
+		cbZoomWidget.setChecked(mapUiSettings.isZoomControlsEnabled());
+		cbLocationWidget.setChecked(mapUiSettings.isMyLocationButtonEnabled());
 		cbRotateGesture.setChecked(mapUiSettings.isRotateGesturesEnabled());
 		cbScrollGesture.setChecked(mapUiSettings.isScrollGesturesEnabled());
 		cbTiltGesture.setChecked(mapUiSettings.isTiltGesturesEnabled());
@@ -188,51 +188,51 @@ public class MainActivity extends FragmentActivity{
 						Log.i(TAG, "关闭位置服务");    
 						msgTextUp.setText("关闭位置服务");
 					}
-				break;
-			case R.id.cb_all_gesture:
-				mapUiSettings.setAllGesturesEnabled(isChecked);
-				cbRotateGesture.setChecked(isChecked);
-				cbScrollGesture.setChecked(isChecked);
-				cbTiltGesture.setChecked(isChecked);
-				cbZoomGesture.setChecked(isChecked);
-				break;
-			case R.id.cb_compass:
-				mapUiSettings.setCompassEnabled(isChecked);
-				break;
-			case R.id.cb_zoom_widget:
-				mapUiSettings.setZoomControlsEnabled(isChecked);
-				break;
-			case R.id.cb_location_button:
-				mapUiSettings.setMyLocationButtonEnabled(isChecked);
-				break;
-			case R.id.cb_rotate_gesture:
-				mapUiSettings.setRotateGesturesEnabled(isChecked);
-				break;
-			case R.id.cb_scroll_gesture:
-				mapUiSettings.setScrollGesturesEnabled(isChecked);
-				break;
-			case R.id.cb_tilt_gesture:
-				mapUiSettings.setTiltGesturesEnabled(isChecked);
-				break;
-			case R.id.cb_zoom_gesture:
-				mapUiSettings.setZoomGesturesEnabled(isChecked);
-				break;
+					break;
+				case R.id.cb_all_gesture:
+					mapUiSettings.setAllGesturesEnabled(isChecked);
+					cbRotateGesture.setChecked(isChecked);
+					cbScrollGesture.setChecked(isChecked);
+					cbTiltGesture.setChecked(isChecked);
+					cbZoomGesture.setChecked(isChecked);
+					break;
+				case R.id.cb_compass:
+					mapUiSettings.setCompassEnabled(isChecked);
+					break;
+				case R.id.cb_zoom_widget:
+					mapUiSettings.setZoomControlsEnabled(isChecked);
+					break;
+				case R.id.cb_location_button:
+					mapUiSettings.setMyLocationButtonEnabled(isChecked);
+					break;
+				case R.id.cb_rotate_gesture:
+					mapUiSettings.setRotateGesturesEnabled(isChecked);
+					break;
+				case R.id.cb_scroll_gesture:
+					mapUiSettings.setScrollGesturesEnabled(isChecked);
+					break;
+				case R.id.cb_tilt_gesture:
+					mapUiSettings.setTiltGesturesEnabled(isChecked);
+					break;
+				case R.id.cb_zoom_gesture:
+					mapUiSettings.setZoomGesturesEnabled(isChecked);
+					break;
 
-			default:
-				break;
+				default:
+					break;
+				}
 			}
-		}
-	};
-	checkboxPuh3.setOnCheckedChangeListener(onCheckedChangeListener);
-	checkboxTrack.setOnCheckedChangeListener(onCheckedChangeListener);
-	cbAllGesture.setOnCheckedChangeListener(onCheckedChangeListener);
-	cbCompass.setOnCheckedChangeListener(onCheckedChangeListener);
-	cbZoomWidget.setOnCheckedChangeListener(onCheckedChangeListener);
-	cbLocationWidget.setOnCheckedChangeListener(onCheckedChangeListener);
-	cbRotateGesture.setOnCheckedChangeListener(onCheckedChangeListener);
-	cbScrollGesture.setOnCheckedChangeListener(onCheckedChangeListener);
-	cbTiltGesture.setOnCheckedChangeListener(onCheckedChangeListener);
-	cbZoomGesture.setOnCheckedChangeListener(onCheckedChangeListener);
+		};
+		checkboxPuh3.setOnCheckedChangeListener(onCheckedChangeListener);
+		checkboxTrack.setOnCheckedChangeListener(onCheckedChangeListener);
+		cbAllGesture.setOnCheckedChangeListener(onCheckedChangeListener);
+		cbCompass.setOnCheckedChangeListener(onCheckedChangeListener);
+		cbZoomWidget.setOnCheckedChangeListener(onCheckedChangeListener);
+		cbLocationWidget.setOnCheckedChangeListener(onCheckedChangeListener);
+		cbRotateGesture.setOnCheckedChangeListener(onCheckedChangeListener);
+		cbScrollGesture.setOnCheckedChangeListener(onCheckedChangeListener);
+		cbTiltGesture.setOnCheckedChangeListener(onCheckedChangeListener);
+		cbZoomGesture.setOnCheckedChangeListener(onCheckedChangeListener);
 
-}
+	}
 }
