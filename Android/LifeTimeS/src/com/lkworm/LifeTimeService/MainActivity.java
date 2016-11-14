@@ -129,16 +129,23 @@ public class MainActivity extends FragmentActivity{
 		cbScrollGesture = (CheckBox)findViewById(R.id.cb_scroll_gesture);
 		cbTiltGesture = (CheckBox)findViewById(R.id.cb_tilt_gesture);
 		cbZoomGesture = (CheckBox)findViewById(R.id.cb_zoom_gesture);
+		
+		mapUiSettings.setCompassEnabled(true);
+		mapUiSettings.setZoomControlsEnabled(true);
+		mapUiSettings.setMyLocationButtonEnabled(true);
+		mapUiSettings.setRotateGesturesEnabled(true);
+		mapUiSettings.setScrollGesturesEnabled(true);
+		mapUiSettings.setTiltGesturesEnabled(true);
+		mapUiSettings.setZoomGesturesEnabled(true);
+		
 
 		cbAllGesture.setChecked(mapUiSettings.isRotateGesturesEnabled() && 
 				mapUiSettings.isScrollGesturesEnabled() && 
 				mapUiSettings.isTiltGesturesEnabled() &&
 				mapUiSettings.isZoomGesturesEnabled());
 		cbCompass.setChecked(mapUiSettings.isCompassEnabled());
-//		cbZoomWidget.setChecked(mapUiSettings.isZoomControlsEnabled());
-//		cbLocationWidget.setChecked(mapUiSettings.isMyLocationButtonEnabled());
-		cbLocationWidget.setChecked(true);
-		cbZoomWidget.setChecked(true);
+ 		cbZoomWidget.setChecked(mapUiSettings.isZoomControlsEnabled());
+ 		cbLocationWidget.setChecked(mapUiSettings.isMyLocationButtonEnabled());
 		cbRotateGesture.setChecked(mapUiSettings.isRotateGesturesEnabled());
 		cbScrollGesture.setChecked(mapUiSettings.isScrollGesturesEnabled());
 		cbTiltGesture.setChecked(mapUiSettings.isTiltGesturesEnabled());

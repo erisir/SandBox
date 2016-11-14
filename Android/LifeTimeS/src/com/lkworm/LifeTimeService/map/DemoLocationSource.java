@@ -56,6 +56,7 @@ public class DemoLocationSource    implements LocationSource, TencentLocationLis
 	private int runningCounter = 0;
 	private String runningStr = "";
 	private Intent startIntent;
+	
 	public DemoLocationSource(Context context, MapControl mapC,Handler mHandler, Intent intent) {
 		// TODO Auto-generated constructor stub
 		mContext = context;
@@ -66,7 +67,7 @@ public class DemoLocationSource    implements LocationSource, TencentLocationLis
  
 		message = new Message();  
 	}
-
+	//LocationSource的回调  当我的位置有变化时，调用的接口。
 	@Override
 	public void onLocationChanged(TencentLocation arg0, int arg1,
 			String arg2) {
@@ -78,6 +79,7 @@ public class DemoLocationSource    implements LocationSource, TencentLocationLis
 			location.setLatitude(arg0.getLatitude());
 			location.setLongitude(arg0.getLongitude());
 			location.setAccuracy(arg0.getAccuracy());
+			//LocationSource..onLocationChanged(location) 新的位置信息设置函数，由调用者把新的位置信息传给地图SDK
 			mChangedListener.onLocationChanged(location);
 			//	\mapControl.MoveCameraPosition(null, arg0.getLatitude(), arg0.getLongitude());
 			if (!isStartTrack) {
@@ -221,7 +223,7 @@ public class DemoLocationSource    implements LocationSource, TencentLocationLis
 	
 	@Override
 	public void onStatusUpdate(String arg0, int arg1, String arg2) {
-		// TODO Auto-generated method stub
+		Log.i(TAG, "onStatusUpdate"); 
 		switch (arg1) {            
 		//GPS状态为可见时            
 		case LocationProvider.AVAILABLE:                
@@ -237,7 +239,7 @@ public class DemoLocationSource    implements LocationSource, TencentLocationLis
 			break;            
 		}        
 	}
-
+	//LocationSource的回调  设置位置变化回调接口
 	@Override
 	public void activate(OnLocationChangedListener arg0) {
 		
@@ -270,10 +272,10 @@ public class DemoLocationSource    implements LocationSource, TencentLocationLis
 			break;
 		}
 	}
-
+	//LocationSource的回调  取消位置变化回调
 	@Override
 	public void deactivate() {
-		// TODO Auto-generated method stub
+		 
 		Log.i(TAG,"deactivate");
 		saveLocations();
 		ComponentName ret = this.mContext.startService(startIntent);
