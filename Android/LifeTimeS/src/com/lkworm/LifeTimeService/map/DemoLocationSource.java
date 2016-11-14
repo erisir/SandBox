@@ -1,5 +1,4 @@
-package com.lkworm.LifeTimeService.gps;
-
+package com.lkworm.LifeTimeService.map;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -12,30 +11,41 @@ import com.tencent.map.geolocation.TencentLocation;
 import com.tencent.map.geolocation.TencentLocationListener;
 import com.tencent.map.geolocation.TencentLocationManager;
 import com.tencent.map.geolocation.TencentLocationRequest;
+import com.tencent.tencentmap.mapsdk.maps.CameraUpdate;
+import com.tencent.tencentmap.mapsdk.maps.CameraUpdateFactory;
+import com.tencent.tencentmap.mapsdk.maps.LocationSource;
+import com.tencent.tencentmap.mapsdk.maps.TencentMap;
+import com.tencent.tencentmap.mapsdk.maps.TencentMap.CancelableCallback;
+import com.tencent.tencentmap.mapsdk.maps.model.CameraPosition;
+import com.tencent.tencentmap.mapsdk.maps.model.LatLng;
 
 import android.annotation.SuppressLint;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.location.Location;
 import android.location.LocationProvider;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.util.Log;
+import android.view.View;
 
-
-@SuppressLint("SimpleDateFormat")
-public class GPSTrackManager extends Service {
-
-	private  static final String TAG = "GPSTrackManager";
+public class DemoLocationSource  extends Service implements LocationSource, TencentLocationListener {
+	private  static final String TAG = "DemoLocationSource";
+	private Context mContext;
+	private OnLocationChangedListener mChangedListener;
+	private TencentLocationManager locationManager;
+	private TencentLocationRequest locationRequest;
+	private TencentMap tencentMap;
+	private MapControl mapControl;
 	private final String gpsTrackFileEnd = "</trkseg>\r\n</trk>\r\n</gpx>";	
 	private static Context context;
 	private boolean isStartTrack;
 	private String gpsTrackFolder = "mnt/sdcard/myTrackLog/" ;
 	private RandomAccessFile randFileWriter = null;	
 	private ArrayList<TencentLocation> locations;	 
-	private TencentLocationManager locationManager;
 	private TencentLocationRequest request;
 
 	private final int GPSAccuracy = 200; 
@@ -47,17 +57,34 @@ public class GPSTrackManager extends Service {
 	private static Message message;
 	private int runningCounter = 0;
 	private String runningStr = "";
+	public DemoLocationSource(Context context, MapControl mapC,Handler mHandler) {
+		// TODO Auto-generated constructor stub
+		mContext = context;
+		mapControl = mapC;
+		locationManager = TencentLocationManager.getInstance(mContext);
+		locationRequest = TencentLocationRequest.create();
+		locationRequest.setInterval(2000);
+	 
+			handler = mHandler;
+			message = new Message();  
+	}
 
-	private   TencentLocationListener  locationListener= new TencentLocationListener () {
-		
-
-		@Override
-		public void onLocationChanged(TencentLocation location, int error, String reason)
-		{	
+	@Override
+	public void onLocationChanged(TencentLocation arg0, int arg1,
+			String arg2) {
+		// TODO Auto-generated method stub
+		if (arg1 == TencentLocation.ERROR_OK && mChangedListener != null) {
+			Log.e("maplocation", "location: " + arg0.getCity() + " " + arg0.getProvider());
+			Location location = new Location(arg0.getProvider());
+			location.setLatitude(arg0.getLatitude());
+			location.setLongitude(arg0.getLongitude());
+			location.setAccuracy(arg0.getAccuracy());
+			mChangedListener.onLocationChanged(location);
+		//	mapControl.MoveCameraPosition(null, arg0.getLatitude(), arg0.getLongitude());
 			if (!isStartTrack) {
-				locationManager.removeUpdates(locationListener);
 				Log.i(TAG, "GPS，停止记录");  
 				sendMSG(1,"GPS，停止记录");
+				deactivate() ;
 			}else 
 			{
 				runningCounter ++;
@@ -72,74 +99,20 @@ public class GPSTrackManager extends Service {
 					Log.i(TAG, "GPS，精度--->"+String.format("%f", location.getAccuracy()));  
 				}
 				if(location != null && location.getAccuracy()<GPSAccuracy && location.getAccuracy()>0.1){
-					locations.add(location);
+					locations.add(arg0);
 					if(locations.size()>locationBufferSize){
 						saveLocations();
 					}
-					Log.i(TAG, "GPS，获取地址--->"+location.getName());  
+					Log.i(TAG, "GPS，获取地址--->"+arg0.getName());  
 				
-					sendMSG(0,String.format("当前位置:[%s]精度：%.0fm\t%s",location.getName(), location.getAccuracy(),runningStr));
+					sendMSG(0,String.format("当前位置:[%s]精度：%.0fm\t%s",arg0.getName(), location.getAccuracy(),runningStr));
 				}
 			}
-		}                
-
-		@Override
-		public void onStatusUpdate(String name, int status, String desc) {            
-			switch (status) {            
-			//GPS状态为可见时            
-			case LocationProvider.AVAILABLE:                
-				Log.i(TAG, "当前GPS状态为可见状态");                
-				break;            
-				//GPS状态为服务区外时            
-			case LocationProvider.OUT_OF_SERVICE:                
-				Log.i(TAG, "当前GPS状态为服务区外状态");                
-				break;            
-				//GPS状态为暂停服务时            
-			case LocationProvider.TEMPORARILY_UNAVAILABLE:                
-				Log.i(TAG, "当前GPS状态为暂停服务状态");                
-				break;            
-			}        
-		}                  
-	};
-
-
-	public   GPSTrackManager(Context ct,Handler mHandler) {
-		context = ct;
-		handler = mHandler;
-		message = new Message();  
-	}
-	public GPSTrackManager() {
-
-	}
-
-	public boolean tracklocations(boolean flag) {
-
-		if(!flag){
-			locationManager.removeUpdates(locationListener);
-			return false;
 		}
-		//判断GPS是否正常启动        
-		int error = locationManager.requestLocationUpdates(request, locationListener);
-		String errorStr = "注册监听器：";
-		if(error !=0){
-			switch(error)
-			{
-			case 0:  errorStr += "注册位置监听器成功";
-			break;
-			case 1:  errorStr += "设备缺少使用腾讯定位SDK需要的基本条件";
-			break;
-			case 2:  errorStr += "配置的 key 不正确";
-			break;
-			case 3:  errorStr += "自动加载libtencentloc.so失败";
-			break;
-			}
-			Log.i(TAG, errorStr);           
-			return false;        
-		}
-		isStartTrack = true;	
-		return true;		
+		
+		
 	}
-
+	 
 
 	@SuppressLint("DefaultLocale")
 	public boolean saveLocations() {
@@ -241,6 +214,76 @@ public class GPSTrackManager extends Service {
 	private String getdesc() {
 		return "desc";
 	}
+	@Override
+	public void onStatusUpdate(String arg0, int arg1, String arg2) {
+		// TODO Auto-generated method stub
+		switch (arg1) {            
+		//GPS状态为可见时            
+		case LocationProvider.AVAILABLE:                
+			Log.i(TAG, "当前GPS状态为可见状态");                
+			break;            
+			//GPS状态为服务区外时            
+		case LocationProvider.OUT_OF_SERVICE:                
+			Log.i(TAG, "当前GPS状态为服务区外状态");                
+			break;            
+			//GPS状态为暂停服务时            
+		case LocationProvider.TEMPORARILY_UNAVAILABLE:                
+			Log.i(TAG, "当前GPS状态为暂停服务状态");                
+			break;            
+		}        
+	}
+
+	@Override
+	public void activate(OnLocationChangedListener arg0) {
+		// TODO Auto-generated method stub
+		mChangedListener = arg0;
+		int err = locationManager.requestLocationUpdates(locationRequest, this);
+		switch (err) {
+		case 0:
+			Log.i(TAG,"监听成功");
+			isStartTrack = true;	
+			break;
+	
+		case 1:
+			Log.i(TAG,"设备缺少使用腾讯定位服务需要的基本条件");
+			break;
+		case 2:
+			Log.i(TAG,"manifest 中配置的 key 不正确");
+			break;
+		case 3:
+			Log.i(TAG,"自动加载libtencentloc.so失败");
+			break;
+
+		default:
+			break;
+		}
+	}
+
+	@Override
+	public void deactivate() {
+		// TODO Auto-generated method stub
+		locationManager.removeUpdates(this);
+		mContext = null;
+		locationManager = null;
+		locationRequest = null;
+		mChangedListener = null;
+	}
+
+	public void onPause() {
+		locationManager.removeUpdates(this);
+	}
+
+	public void onResume() {
+		locationManager.requestLocationUpdates(locationRequest, this);
+	}
+
+	public void onAnimatToSigemaClicked(View view) {
+		//		LatLng sigma = new LatLng(39.977290,116.337000);
+		CameraUpdate cameraSigma = 
+				CameraUpdateFactory.newCameraPosition(new CameraPosition(
+						new LatLng(39.977290,116.337000), 19, 45f, 45f));
+		tencentMap.animateCamera(cameraSigma, (CancelableCallback) this);
+	}
 
 	@Override
 	public IBinder onBind(Intent intent) {
@@ -285,5 +328,6 @@ public class GPSTrackManager extends Service {
 		message = handler.obtainMessage(MSGCODE[i], data);
 		((Message) message).sendToTarget();
 	}
- 
+
 }
+

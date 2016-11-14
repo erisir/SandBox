@@ -1,43 +1,179 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.tencent.mapsdk.vector.demo.MainActivity" >
+    android:layout_height="match_parent" >
 
-    <TextView
-        android:id="@+id/MsgUp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-
-    <CheckBox
-        android:id="@+id/checkBoxTrack"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/Track" />
-
-    <CheckBox
-        android:id="@+id/checkBoxPuh3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/Puh3" />
-
- 
-        <LinearLayout
-        android:id="@+id/ll_frag_root"
+    <fragment
+        android:id="@+id/frag_map"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_alignParentTop="true"
+        class="com.tencent.tencentmap.mapsdk.maps.SupportMapFragment" />
+
+    <LinearLayout
+        android:id="@+id/ll_log"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:background="#11444444"
+        android:orientation="vertical"
+        android:visibility="gone" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/transparent"
+        android:orientation="horizontal" />
+
+    <SlidingDrawer
+        android:id="@+id/sliding_drawer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentTop="true"
+        android:content="@+id/ll_content"
+        android:handle="@+id/iv_handle"
         android:orientation="vertical" >
 
-    </LinearLayout>
+        <LinearLayout
+            android:id="@+id/ll_content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/bg_panel"
+            android:clickable="true"
+            android:longClickable="true"
+            android:orientation="vertical" >
 
-    <TextView
-        android:id="@+id/MsgDown"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+            <TextView
+                android:id="@+id/MsgUp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@android:color/white" />
 
-</LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal" >
+
+                <CheckBox
+                    android:id="@+id/checkBoxTrack"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/Track" />
+
+                <CheckBox
+                    android:id="@+id/checkBoxPuh3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/Puh3" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal" >
+
+                <TextView
+                    android:id="@+id/MsgDown"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@android:color/white" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal" >
+
+                <Button
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:onClick="onAnimatToYinkeClicked"
+                    android:text="@string/controll_map_animate_to_yk" />
+
+                <Button
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:onClick="onAnimatToSigemaClicked"
+                    android:text="@string/controll_map_animate_to_sigma" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal" >
+
+                <CheckBox
+                    android:id="@+id/cb_all_gesture"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="所有手势" />
+
+                <CheckBox
+                    android:id="@+id/cb_compass"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="指南针" />
+
+                <CheckBox
+                    android:id="@+id/cb_zoom_widget"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="缩放控件" />
+         </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal" >
+                <CheckBox
+                    android:id="@+id/cb_location_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="定位控件" />
+
+                <CheckBox
+                    android:id="@+id/cb_rotate_gesture"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="旋屏手势" />
+
+                <CheckBox
+                    android:id="@+id/cb_scroll_gesture"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="划屏手势" />
+         </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal" >
+                <CheckBox
+                    android:id="@+id/cb_tilt_gesture"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="视角手势" />
+
+                <CheckBox
+                    android:id="@+id/cb_zoom_gesture"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="缩放手势" />  
+            </LinearLayout>
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/iv_handle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/thumb_horizontal"
+            android:clickable="true"
+            android:gravity="center_horizontal"
+            android:longClickable="true"
+            android:text="@string/controll_map_hadle_text"
+            android:textColor="@android:color/black" />
+    </SlidingDrawer>
+
+</RelativeLayout>
