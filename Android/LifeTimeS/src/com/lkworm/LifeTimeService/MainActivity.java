@@ -1,15 +1,33 @@
 package com.lkworm.LifeTimeService;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserFactory;
+
+import com.lkworm.LifeTimeService.file.CallbackBundle;
+import com.lkworm.LifeTimeService.file.OpenFileDialog;
 import com.lkworm.LifeTimeService.gps.GPSTrackManager;
 import com.lkworm.LifeTimeService.map.DemoLocationSource;
 import com.lkworm.LifeTimeService.map.MapControl;
+import com.lkworm.LifeTimeService.map.xmlDecoder;
 import com.lkworm.LifeTimeService.puh3.SmsObserver;
 import com.tencent.tencentmap.mapsdk.maps.SupportMapFragment;
 import com.tencent.tencentmap.mapsdk.maps.TencentMap;
 import com.tencent.tencentmap.mapsdk.maps.UiSettings;
+import com.tencent.tencentmap.mapsdk.maps.model.LatLng;
+import com.tencent.tencentmap.mapsdk.maps.model.Polyline;
+import com.tencent.tencentmap.mapsdk.maps.model.PolylineOptions;
 
+import android.app.Dialog;
 import android.content.ComponentName;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -37,7 +55,7 @@ public class MainActivity extends FragmentActivity{
 	private DemoLocationSource locationSource;
 	private MapControl mapControl;
 	private UiSettings mapUiSettings;
-
+	private Polyline polyline;
 	private CheckBox cbAllGesture;
 	private CheckBox cbCompass;
 	private CheckBox cbZoomWidget;
@@ -50,6 +68,8 @@ public class MainActivity extends FragmentActivity{
 	private CheckBox checkboxTrack;
 	private TextView msgTextUp;
 	private TextView msgTextDown;
+	private ArrayList<LatLng> latLngs;
+	private Dialog dialog;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -205,8 +225,13 @@ public class MainActivity extends FragmentActivity{
 				case R.id.cb_location_button:
 					mapUiSettings.setMyLocationButtonEnabled(isChecked);
 					break;
-				case R.id.cb_rotate_gesture:
+				case R.id.cb_rotate_gesture://旋转屏幕手势
 					mapUiSettings.setRotateGesturesEnabled(isChecked);
+					if(isChecked){
+					showTrack();
+					}else{
+						closeTrack();
+					}
 					break;
 				case R.id.cb_scroll_gesture:
 					mapUiSettings.setScrollGesturesEnabled(isChecked);
@@ -234,5 +259,86 @@ public class MainActivity extends FragmentActivity{
 		cbTiltGesture.setOnCheckedChangeListener(onCheckedChangeListener);
 		cbZoomGesture.setOnCheckedChangeListener(onCheckedChangeListener);
 
+	}
+
+	protected void closeTrack() {
+		if(polyline != null)
+			polyline.remove();		
+	}
+
+	protected void showTrack() {
+		// TODO Auto-generated method stub
+		getXmldata();
+	}
+	private String getPath(String Startpath){
+		Map<String, Integer> images = new HashMap<String, Integer>();  
+		// 下面几句设置各文件类型的图标， 需要你先把图标添加到资源文件夹  
+		images.put(OpenFileDialog.sRoot, R.drawable.death_star);   // 根目录图标  
+		images.put(OpenFileDialog.sParent, R.drawable.death_star);    //返回上一层的图标  
+		images.put(OpenFileDialog.sFolder, R.drawable.death_star);   //文件夹图标  
+		images.put("wav", R.drawable.death_star);   //wav文件图标  
+		images.put(OpenFileDialog.sEmpty, R.drawable.death_star);  
+		dialog = OpenFileDialog.createDialog(Startpath,0, this, "打开文件", new CallbackBundle() {  
+			@Override  
+			public void callback(Bundle bundle) {  
+				String filepath = bundle.getString("path");  
+				parseXMLWithPull(filepath);
+
+			}  
+		},   
+				".gpx;",  
+				images);
+		dialog.show();
+		return "";
+	}
+	private void getXmldata(){
+		String path = "mnt/sdcard/myTrackLog/" ;
+		latLngs = new ArrayList<LatLng>();
+		path = getPath(path);
+		//path = gpsTrackManager.getGPSTrackPath();
+
+		//parseXMLWithPull(path);
+	}
+	private void parseXMLWithPull(String path){
+		try {
+			XmlPullParserFactory  factory = XmlPullParserFactory.newInstance();
+			XmlPullParser xmlPullParser = factory.newPullParser();
+			xmlPullParser.setInput(new FileInputStream(path),"UTF-8");
+			int eventType = xmlPullParser.getEventType();
+			double lat = 0;
+			double lon = 0;
+			while (eventType != (XmlPullParser.END_DOCUMENT)){
+				String nodeName = xmlPullParser.getName();
+				switch (eventType){
+				//开始解析XML
+				case XmlPullParser.START_TAG:{
+					//nextText()用于获取结点内的具体内容
+					if("trkpt".equals(nodeName)){
+						lat = Double.valueOf(xmlPullParser.getAttributeValue(0)).doubleValue();
+						lon =Double.valueOf(xmlPullParser.getAttributeValue(1)).doubleValue();
+						latLngs.add(new LatLng(lat,lon));
+					}
+				} break;
+				//结束解析
+				case XmlPullParser.END_TAG:{
+					if("app".equals(nodeName)){
+						Log.i(TAG, "parseXMLWithPull: meet end ");
+					}
+				} break;
+				default: 
+					break;
+				}
+				//下一个
+				eventType = xmlPullParser.next();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		dialog.dismiss();
+		addPolyLine();
+	}
+
+	public void addPolyLine() {//透明度0-100，色调0-1，饱和度0-1，亮度0-1
+		polyline = tencentMap.addPolyline(new PolylineOptions().addAll(latLngs).color(Color.HSVToColor(100,new float[]{0.7f, 1f, 1f})).arrow(true).width(9f));
 	}
 }

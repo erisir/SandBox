@@ -178,7 +178,7 @@ public class GPSTrackManager extends Service {
 		return true;
 	}
 
-	private String getGPSTrackPath() {
+	public String getGPSTrackPath() {
 		return gpsTrackFolder+defineFileName()+".gpx";
 	}
 
