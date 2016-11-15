@@ -9,7 +9,7 @@
         android:layout_height="match_parent"
         android:layout_alignParentTop="true"
         class="com.tencent.tencentmap.mapsdk.maps.SupportMapFragment" />
- 
+
     <LinearLayout
         android:id="@+id/ll_log"
         android:layout_width="match_parent"
@@ -66,7 +66,7 @@
                     android:layout_height="wrap_content"
                     android:text="@string/Puh3" />
             </LinearLayout>
- 
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -77,13 +77,14 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="@android:color/white" />
-             
             </LinearLayout>
-     <TextView
+
+            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="路径显示"
                 android:textColor="@android:color/white" />
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -101,18 +102,38 @@
                     android:layout_weight="1"
                     android:onClick="onLoadTrackFile"
                     android:text="加载轨迹" />
-                 <Button
+
+                <Button
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:onClick="onRemoveTrackFile"
                     android:text="清除轨迹" />
             </LinearLayout>
-   <TextView
+
+            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="激活控件"
                 android:textColor="@android:color/white" />
+ 	<LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" >
+
+            <CheckBox
+                android:id="@+id/cb_satellite"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/satellite_map" />
+
+            <CheckBox
+                android:id="@+id/cb_traffic"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/real_time_traffic" />
+            
+        </LinearLayout>
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -135,12 +156,13 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="缩放控件" />
-         </LinearLayout>
+            </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal" >
+
                 <CheckBox
                     android:id="@+id/cb_location_button"
                     android:layout_width="wrap_content"
@@ -158,12 +180,13 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="划屏手势" />
-         </LinearLayout>
+            </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal" >
+
                 <CheckBox
                     android:id="@+id/cb_tilt_gesture"
                     android:layout_width="wrap_content"
@@ -174,9 +197,10 @@
                     android:id="@+id/cb_zoom_gesture"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="缩放手势" />  
+                    android:text="缩放手势" />
             </LinearLayout>
         </LinearLayout>
+
 
         <TextView
             android:id="@+id/iv_handle"

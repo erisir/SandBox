@@ -53,8 +53,11 @@ public class MainActivity extends FragmentActivity{
 	private CheckBox checkboxTrack;
 	private TextView msgTextUp;
 	private TextView msgTextDown;
-	private TrackFileManager trackFileManager;
 	private CheckBox overWriteTrack;
+	private CheckBox cbSatellite;
+	private CheckBox cbTraffic;
+	
+	private TrackFileManager trackFileManager;
 
 
 	@Override
@@ -138,7 +141,9 @@ public class MainActivity extends FragmentActivity{
 		cbScrollGesture = (CheckBox)findViewById(R.id.cb_scroll_gesture);
 		cbTiltGesture = (CheckBox)findViewById(R.id.cb_tilt_gesture);
 		cbZoomGesture = (CheckBox)findViewById(R.id.cb_zoom_gesture);
-
+		cbSatellite = (CheckBox)findViewById(R.id.cb_satellite);
+		cbTraffic = (CheckBox)findViewById(R.id.cb_traffic);
+		
 		mapUiSettings.setCompassEnabled(true);
 		mapUiSettings.setZoomControlsEnabled(true);
 		//mapUiSettings.setMyLocationButtonEnabled(true);
@@ -146,7 +151,13 @@ public class MainActivity extends FragmentActivity{
 		mapUiSettings.setScrollGesturesEnabled(true);
 		mapUiSettings.setTiltGesturesEnabled(true);
 		mapUiSettings.setZoomGesturesEnabled(true);
-
+		
+		if (tencentMap.getMapType() == TencentMap.MAP_TYPE_SATELLITE) {
+			cbSatellite.setChecked(true);
+		} else {
+			cbSatellite.setChecked(false);
+		}
+		cbTraffic.setChecked(tencentMap.isTrafficEnabled());
 
 		cbAllGesture.setChecked(mapUiSettings.isRotateGesturesEnabled() && 
 				mapUiSettings.isScrollGesturesEnabled() && 
@@ -194,8 +205,7 @@ public class MainActivity extends FragmentActivity{
 					else
 					{
 						stopService(startIntent);  				 
-						Log.i(TAG, "关闭位置服务");    
-						msgTextUp.setText("关闭位置服务");
+						Log.i(TAG, "位置服务关闭");    
 					}
 					break;
 				case R.id.cb_all_gesture:
@@ -226,6 +236,16 @@ public class MainActivity extends FragmentActivity{
 				case R.id.cb_zoom_gesture:
 					mapUiSettings.setZoomGesturesEnabled(isChecked);
 					break;
+				case R.id.cb_satellite:
+					if (isChecked) {
+						tencentMap.setMapType(TencentMap.MAP_TYPE_SATELLITE);
+					} else {
+						tencentMap.setMapType(TencentMap.MAP_TYPE_NORMAL);
+					}
+					break;
+				case R.id.cb_traffic:
+					tencentMap.setTrafficEnabled(isChecked);
+					break;
 
 				default:
 					break;
@@ -242,7 +262,8 @@ public class MainActivity extends FragmentActivity{
 		cbScrollGesture.setOnCheckedChangeListener(onCheckedChangeListener);
 		cbTiltGesture.setOnCheckedChangeListener(onCheckedChangeListener);
 		cbZoomGesture.setOnCheckedChangeListener(onCheckedChangeListener);
-
+		cbSatellite.setOnCheckedChangeListener(onCheckedChangeListener);
+		cbTraffic.setOnCheckedChangeListener(onCheckedChangeListener);
 	}
 
 }
