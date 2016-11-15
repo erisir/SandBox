@@ -15,9 +15,6 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.View;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
-import android.widget.CompoundButton.OnCheckedChangeListener;
 
 public class MapControl  extends FragmentActivity implements 
 OnCameraChangeListener, OnCompassClickedListener, OnMapClickListener, 
@@ -45,23 +42,6 @@ OnMapLongClickListener, CancelableCallback {
 		tencentMap.setOnCompassClickedListener(this);
 		tencentMap.setOnMapClickListener(this);
 		tencentMap.setOnMapLongClickListener(this);
-
-		OnCheckedChangeListener onCheckedChangeListener = 
-				new OnCheckedChangeListener() {
-
-			@Override
-			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-				// TODO Auto-generated method stub
-				switch (buttonView.getId()) {
-
-				default:
-					break;
-				}
-			}
-		};
-		//		cbCustZoom.setOnCheckedChangeListener(onCheckedChangeListener);
-		//		cbScrollBy.setOnCheckedChangeListener(onCheckedChangeListener);
-		//		cbLog.setOnCheckedChangeListener(onCheckedChangeListener);
 	}
 
 	public void onUpClicked(View view) {

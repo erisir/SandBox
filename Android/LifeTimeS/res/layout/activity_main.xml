@@ -9,7 +9,7 @@
         android:layout_height="match_parent"
         android:layout_alignParentTop="true"
         class="com.tencent.tencentmap.mapsdk.maps.SupportMapFragment" />
-
+ 
     <LinearLayout
         android:id="@+id/ll_log"
         android:layout_width="match_parent"
@@ -66,7 +66,7 @@
                     android:layout_height="wrap_content"
                     android:text="@string/Puh3" />
             </LinearLayout>
-
+ 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -77,28 +77,42 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="@android:color/white" />
+             
             </LinearLayout>
-
+     <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="路径显示"
+                android:textColor="@android:color/white" />
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal" >
 
-                <Button
-                    android:layout_width="match_parent"
+                <CheckBox
+                    android:id="@+id/overWriteTrack"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:onClick="onAnimatToYinkeClicked"
-                    android:text="@string/controll_map_animate_to_yk" />
+                    android:text="重叠显示" />
 
                 <Button
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:onClick="onAnimatToSigemaClicked"
-                    android:text="@string/controll_map_animate_to_sigma" />
+                    android:onClick="onLoadTrackFile"
+                    android:text="加载轨迹" />
+                 <Button
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:onClick="onRemoveTrackFile"
+                    android:text="清除轨迹" />
             </LinearLayout>
-
+   <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="激活控件"
+                android:textColor="@android:color/white" />
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

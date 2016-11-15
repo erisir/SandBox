@@ -32,7 +32,7 @@ public class GPSTrackManager extends Service {
 	private final String gpsTrackFileEnd = "</trkseg>\r\n</trk>\r\n</gpx>";	
 	private static Context context;
 	private boolean isStartTrack;
-	private String gpsTrackFolder = "mnt/sdcard/myTrackLog/" ;
+	private static String gpsTrackFolder = "mnt/sdcard/myTrackLog/" ;
 	private RandomAccessFile randFileWriter = null;	
 	private ArrayList<TencentLocation> locations;	 
 	private TencentLocationManager locationManager;
@@ -285,6 +285,9 @@ public class GPSTrackManager extends Service {
 		data.putString("value", msg);
 		message = handler.obtainMessage(MSGCODE[i], data);
 		((Message) message).sendToTarget();
+	}
+	public static String getTrackFolder(){
+		return gpsTrackFolder;
 	}
  
 }

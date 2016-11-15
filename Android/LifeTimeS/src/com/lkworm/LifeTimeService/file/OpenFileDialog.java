@@ -8,18 +8,17 @@ import java.util.List;
 import java.util.Map;
 
 import com.lkworm.LifeTimeService.R;
-
-import android.app.Activity;
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.Toast;
-import android.widget.AdapterView.OnItemClickListener;
 
 public class OpenFileDialog {
 	public static String tag = "OpenFileDialog";
@@ -40,7 +39,7 @@ public class OpenFileDialog {
 		//	父目录的索引为sParent;
 		//	文件夹的索引为sFolder;
 		//	默认图标的索引为sEmpty;
-		//	其他的直接根据后缀进行索引，比如.wav文件图标的索引为"wav"
+		//	其他的直接根据后缀进行索引，比如.WAV文件图标的索引为"WAV"
 	public static Dialog createDialog(String startpath, int id, Context context, String title, CallbackBundle callback, String suffix, Map<String, Integer> images){
 		AlertDialog.Builder builder = new AlertDialog.Builder(context);
 		builder.setView(new FileSelectView(startpath,context, id, callback, suffix, images));
@@ -55,19 +54,15 @@ public class OpenFileDialog {
 		private CallbackBundle callback = null;
 		private String path = sRoot;
 		private List<Map<String, Object>> list = null;
-		private int dialogid = 0;
-		
 		private String suffix = null;
-		
 		private Map<String, Integer> imagemap = null;
-		
+		@SuppressLint("DefaultLocale")
 		public FileSelectView(String startpath, Context context, int dialogid, CallbackBundle callback, String suffix, Map<String, Integer> images) {
 			super(context);
 			this.imagemap = images;
 			this.path = startpath;
 			this.suffix = suffix==null?"":suffix.toLowerCase();
 			this.callback = callback;
-			this.dialogid = dialogid;
 			this.setOnItemClickListener(this);
 			refreshFileList();
 		}
@@ -97,6 +92,7 @@ public class OpenFileDialog {
 			}
 		}
 		
+		@SuppressLint("DefaultLocale")
 		private int refreshFileList()
 		{
 			// 刷新文件列表
