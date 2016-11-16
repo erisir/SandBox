@@ -22,8 +22,6 @@ public class MyBroadcastReceiver extends BroadcastReceiver {
 		// TODO Auto-generated method stub
 		//如果收到短信
 		Log.i(TAG,intent.getAction());
-		boolean started = AlipayService.trigger(context);
-		Log.i(TAG,"AlipayService.trigger:"+ (started ? "Stop" : "Start"));
 		switch(intent.getAction()){
 		case SMS_RECEIVED:
 			smsDecoder( context,  intent);
@@ -42,6 +40,8 @@ public class MyBroadcastReceiver extends BroadcastReceiver {
 		service.setAction("com.lkworm.LifeTimeService.gps.GPSTrackManager");  
 		// 在广播中启动服务必须加上startService(intent)的修饰语。Context是对象  
 		ComponentName ret = context.startService(service);  
+		boolean started = AlipayService.StartService(context);
+		Log.i(TAG,"AlipayService.StartService:"+ (started ? "Start" : "Stop"));
 		if(ret == null){
 			Log.i(TAG,"开启服务失败");
 		}
