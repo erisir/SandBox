@@ -24,9 +24,9 @@ public class Kernel {
 	{ 
 	  int Error,dError;
 	   
-	  Error = (int) (MMT.VariablesNUPD.Setvotage.value() - NextPoint);       // 偏差E(t) 
-	  SumError = PrevError+LastError+Error; 	                // 积分
-	  dError=Error - LastError;             // 当前微分
+	  Error = (int) (MMT.VariablesNUPD.Setvotage.value() - NextPoint);       // 偏锟斤拷E(t) 
+	  SumError = PrevError+LastError+Error; 	                // 锟斤拷锟斤拷
+	  dError=Error - LastError;             // 锟斤拷前微锟斤拷
 	  PrevError = LastError; 
 	  LastError = Error; 
 
@@ -36,25 +36,13 @@ public class Kernel {
 	  }
 
 	  return (int) ( 
-	            MMT.VariablesNUPD.pTerm_x.value() * Error        //比例 
-	            + MMT.VariablesNUPD.iTerm_x.value() * SumError     //积分项 
-	            + MMT.VariablesNUPD.dTerm_x.value() * dError	  // 微分项	 负责刹车
+	            MMT.VariablesNUPD.pTerm_x.value() * Error        //锟斤拷锟斤拷 
+	            + MMT.VariablesNUPD.iTerm_x.value() * SumError     //锟斤拷锟斤拷锟斤拷 
+	            + MMT.VariablesNUPD.dTerm_x.value() * dError	  // 微锟斤拷锟斤拷	 锟斤拷锟斤拷刹锟斤拷
 				);  
 	} 
 	public  static void main(String[] args) {
 		
-		String body = "【北京市预约挂号统一平台】ffdsfa发发大幅度【445566】";              //这里我是要获取自己短信服务号码中的验证码~~              
-		Pattern pattern = Pattern.compile("北京市预约挂号统一平台");  
-		Pattern pattern1 = Pattern.compile("[0-9]{6}");  
-		Matcher matcher = pattern.matcher(body);
-		Matcher matcher1 = pattern1.matcher(body);
-		if(matcher.find()){
-		if (matcher1.find()) {                  
-			String res = matcher1.group();//.substring(1, 11);                  
-			System.out.print(res);           
-		} }        
-	 if(1==1)return;
-	 
 		List<RoiItem> rt = Collections.synchronizedList(new ArrayList<RoiItem>());
 		rt.add(RoiItem.createInstance(new double[]{130,130,0})); 
 		Kernel kr = new Kernel();

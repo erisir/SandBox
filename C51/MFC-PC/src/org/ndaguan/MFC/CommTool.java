@@ -33,7 +33,7 @@ public class CommTool {
 	private SerialPort serialPort;
 	private OutputStream outputStream;
 	private int baudRate = 19200;
-	private String comId = "COM4";
+	private String comId = "COM3";
 	private InputStream inputStream;
 	private String lastError = "No error";
 	private boolean isDeviceReady;
