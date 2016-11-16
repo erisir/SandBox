@@ -1,4 +1,4 @@
-package com.example.miniservice;
+package com.lkworm.miniservice;
 
 import android.app.Activity;
 import android.os.Bundle;

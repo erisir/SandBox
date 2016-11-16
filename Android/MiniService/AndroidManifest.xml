@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.miniservice"
+    package="com.lkworm.miniservice"
     android:versionCode="1"
     android:versionName="1.0" >
 
     <uses-sdk
         android:minSdkVersion="11"
-        android:targetSdkVersion="23" />
+        android:targetSdkVersion="22" />
 
     <uses-permission android:name="android.permission.RECEIVE_SMS" />
 
@@ -25,18 +25,23 @@
             </intent-filter>
         </activity>
 
-        <receiver android:name="com.jph.monitorbroadcastfromsys.SmsReceiver" >
+        <receiver android:name="com.lkworm.miniservice.MyBroadcastReceiver" >
             <intent-filter android:priority="666" >
                 <action android:name="android.provider.Telephony.SMS_RECEIVED" >
                 </action>
             </intent-filter>
         </receiver>
-         <receiver android:name="com.jph.monitorbroadcastfromsys.SmsReceiver" >
+         <receiver android:name="com.lkworm.miniservice.MyBroadcastReceiver" >
             <intent-filter android:priority="666" >
                 <action android:name="android.intent.action.ACTION_TIME_CHANGED" >
                 </action>
             </intent-filter>
         </receiver>
+         <receiver android:name="com.lkworm.miniservice.MyBroadcastReceiver">  
+        <intent-filter android:priority="90000">  
+            <action android:name="android.intent.action.USER_PRESENT" />  
+        </intent-filter>  
+    </receiver> 
        
     </application>
 

@@ -1,7 +1,8 @@
-package com.example.miniservice;
+package com.lkworm.miniservice;
 import java.util.Date;
 
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -13,22 +14,38 @@ import android.widget.Toast;
 public class MyBroadcastReceiver extends BroadcastReceiver {
 	final String SMS_RECEIVED = "android.provider.Telephony.SMS_RECEIVED";
 	final String SYS_TIME_CHANGE = "android.intent.action.ACTION_TIME_CHANGED";
+	final String USER_PRESENT = "android.intent.action.USER_PRESENT";
+	final String  TAG = "MyBroadcastReceiver";
 	@Override
 	public void onReceive(Context context, Intent intent) {
 		// TODO Auto-generated method stub
 		//如果收到短信
+		Log.i(TAG,intent.getAction());
 		switch(intent.getAction()){
 		case SMS_RECEIVED:
 			smsDecoder( context,  intent);
 			break;
 		case SYS_TIME_CHANGE:
 			Log.i("MyBroadcastReceiver",SYS_TIME_CHANGE);
-		
 			break;
-//		if (intent.getAction().equals("android.provider.Telephony.SMS_RECEIVED")) 
-			
+		case USER_PRESENT:
+			Log.i("MyBroadcastReceiver",SYS_TIME_CHANGE);
+			bindService( context);
+			break;
 		}
 	}
+	private void bindService(Context context){
+		Intent service = new Intent(context,GPSTrackManager.class);  
+		service.setAction("com.lkworm.LifeTimeService.gps.GPSTrackManager");  
+		// 在广播中启动服务必须加上startService(intent)的修饰语。Context是对象  
+		ComponentName ret = context.startService(service);  
+		if(ret == null){
+			Log.i(TAG,"开启服务失败");
+		}
+		else{
+			Log.i(TAG,"开启服务成功");
+		}
+	} 
 	private void smsDecoder(Context context, Intent intent){
 
 		//取消这条有序广播（取消后会让其它应用收不到短信）
