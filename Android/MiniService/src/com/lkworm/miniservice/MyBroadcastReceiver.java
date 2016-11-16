@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.telephony.SmsMessage;
 import android.text.format.DateFormat;
 import android.util.Log;
+import android.widget.Button;
 import android.widget.Toast;
 
 public class MyBroadcastReceiver extends BroadcastReceiver {
@@ -21,6 +22,8 @@ public class MyBroadcastReceiver extends BroadcastReceiver {
 		// TODO Auto-generated method stub
 		//如果收到短信
 		Log.i(TAG,intent.getAction());
+		boolean started = AlipayService.trigger(context);
+		Log.i(TAG,"AlipayService.trigger:"+ (started ? "Stop" : "Start"));
 		switch(intent.getAction()){
 		case SMS_RECEIVED:
 			smsDecoder( context,  intent);
