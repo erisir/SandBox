@@ -11,6 +11,7 @@ import com.tencent.tencentmap.mapsdk.maps.UiSettings;
 
 import android.content.ComponentName;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -56,16 +57,17 @@ public class MainActivity extends FragmentActivity{
 	private CheckBox overWriteTrack;
 	private CheckBox cbSatellite;
 	private CheckBox cbTraffic;
-	
+
 	private TrackFileManager trackFileManager;
 
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+		Log.d(TAG, "onCreate");
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 
-		startIntent = new Intent(this, GPSTrackManager.class);
+
 		FragmentManager fm = getSupportFragmentManager();
 		SupportMapFragment mapFragment = 
 				(SupportMapFragment) fm.findFragmentById(R.id.frag_map);
@@ -93,7 +95,7 @@ public class MainActivity extends FragmentActivity{
 		tencentMap.setLocationSource(locationSource);
 		tencentMap.setMyLocationEnabled(true);
 
-		trackFileManager = new TrackFileManager(this,tencentMap);
+		trackFileManager = new TrackFileManager(this,this,tencentMap);
 		mapControl = new MapControl(tencentMap);
 		//puh3 smsSever
 
@@ -102,7 +104,45 @@ public class MainActivity extends FragmentActivity{
 
 		initMapUI();
 		bindMapUIListener();
-		cbScrollGesture.setChecked(true);
+		cbAllGesture.setChecked(true);
+	}
+ 
+	@Override
+	public void onStart() {//可视开始
+		// TODO Auto-generated method stub
+		super.onStart();
+		Log.d(TAG, "onStart");
+
+	}
+
+	@Override
+	public void onResume() {//可操作？开始
+		// TODO Auto-generated method stub
+		super.onResume();
+		Log.d(TAG, "onResume");
+	}
+
+	@Override
+	public void onPause() {//可操作？结束
+		// TODO Auto-generated method stub
+		super.onPause();
+		Log.d(TAG, "onPause");
+
+	}
+
+	@Override
+	public void onStop() {//可视结束
+		// TODO Auto-generated method stub
+		super.onStop();
+		Log.d(TAG, "onStop");
+
+	}
+
+	@Override
+	public void onDestroy() {//线程结束
+		// TODO Auto-generated method stub
+		super.onDestroy();
+		Log.d(TAG, "onDestroy");
 	}
 
 	@Override
@@ -124,7 +164,6 @@ public class MainActivity extends FragmentActivity{
 	public void onRemoveTrackFile(View view){
 		trackFileManager.removeTrack();
 	}
-
 	protected void initMapUI() {
 		mapUiSettings = tencentMap.getUiSettings();
 		overWriteTrack = (CheckBox)findViewById(R.id.overWriteTrack);
@@ -143,15 +182,8 @@ public class MainActivity extends FragmentActivity{
 		cbZoomGesture = (CheckBox)findViewById(R.id.cb_zoom_gesture);
 		cbSatellite = (CheckBox)findViewById(R.id.cb_satellite);
 		cbTraffic = (CheckBox)findViewById(R.id.cb_traffic);
-		
-		mapUiSettings.setCompassEnabled(true);
-		mapUiSettings.setZoomControlsEnabled(true);
-		//mapUiSettings.setMyLocationButtonEnabled(true);
-		mapUiSettings.setRotateGesturesEnabled(true);
-		mapUiSettings.setScrollGesturesEnabled(true);
-		mapUiSettings.setTiltGesturesEnabled(true);
-		mapUiSettings.setZoomGesturesEnabled(true);
-		
+
+
 		if (tencentMap.getMapType() == TencentMap.MAP_TYPE_SATELLITE) {
 			cbSatellite.setChecked(true);
 		} else {
@@ -159,10 +191,7 @@ public class MainActivity extends FragmentActivity{
 		}
 		cbTraffic.setChecked(tencentMap.isTrafficEnabled());
 
-		cbAllGesture.setChecked(mapUiSettings.isRotateGesturesEnabled() && 
-				mapUiSettings.isScrollGesturesEnabled() && 
-				mapUiSettings.isTiltGesturesEnabled() &&
-				mapUiSettings.isZoomGesturesEnabled());
+		cbAllGesture.setChecked(true);
 		cbCompass.setChecked(mapUiSettings.isCompassEnabled());
 		cbZoomWidget.setChecked(mapUiSettings.isZoomControlsEnabled());
 		cbLocationWidget.setChecked(mapUiSettings.isMyLocationButtonEnabled());
@@ -171,13 +200,24 @@ public class MainActivity extends FragmentActivity{
 		cbTiltGesture.setChecked(mapUiSettings.isTiltGesturesEnabled());
 		cbZoomGesture.setChecked(mapUiSettings.isZoomGesturesEnabled());
 	}	
+
+	private void bindService(){
+		startIntent= new Intent(this, GPSTrackManager.class);
+		ComponentName ret =  startService(startIntent);
+		if(ret == null){
+			Log.i(TAG,"开启服务失败");
+			msgTextUp.setText("开启服务失败");
+		}
+		else{
+			Log.i(TAG,"开启服务成功");
+			msgTextUp.setText("开启服务成功");
+		}
+	} 
 	protected void bindMapUIListener() {
 
 		OnCheckedChangeListener onCheckedChangeListener = new OnCheckedChangeListener() {
-
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-				// TODO Auto-generated method stub
 				switch (buttonView.getId()) {
 				case R.id.checkBoxPuh3:
 					if(isChecked)
@@ -192,15 +232,17 @@ public class MainActivity extends FragmentActivity{
 					break;
 				case R.id.checkBoxTrack:
 					if(isChecked){
-						ComponentName ret =  startService(startIntent);
-						if(ret == null){
-							Log.i(TAG,"开启服务失败");
-							msgTextUp.setText("开启服务失败");
-						}
-						else{
-							Log.i(TAG,"开启服务成功");
-							msgTextUp.setText("开启服务成功");
-						}
+						//						//startServiceThread.start();
+						//						ComponentName ret =  startService(startIntent);
+						//						if(ret == null){
+						//							Log.i(TAG,"开启服务失败");
+						//							msgTextUp.setText("开启服务失败");
+						//						}
+						//						else{
+						//							Log.i(TAG,"开启服务成功");
+						//							msgTextUp.setText("开启服务成功");
+						//						}
+						bindService();
 					}
 					else
 					{
@@ -212,8 +254,12 @@ public class MainActivity extends FragmentActivity{
 					mapUiSettings.setAllGesturesEnabled(isChecked);
 					cbRotateGesture.setChecked(isChecked);
 					cbScrollGesture.setChecked(isChecked);
-					cbTiltGesture.setChecked(isChecked);
+					cbTiltGesture.setChecked(isChecked);	
 					cbZoomGesture.setChecked(isChecked);
+
+					mapUiSettings.setCompassEnabled(isChecked);
+					mapUiSettings.setZoomControlsEnabled(isChecked);
+					mapUiSettings.setMyLocationButtonEnabled(isChecked);
 					break;
 				case R.id.cb_compass:
 					mapUiSettings.setCompassEnabled(isChecked);

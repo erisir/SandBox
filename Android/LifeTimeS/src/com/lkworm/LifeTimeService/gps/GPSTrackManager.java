@@ -31,7 +31,6 @@ public class GPSTrackManager extends Service {
 	private  static final String TAG = "GPSTrackManager";
 	private final String gpsTrackFileEnd = "</trkseg>\r\n</trk>\r\n</gpx>";	
 	private static Context context;
-	private boolean isStartTrack;
 	private static String gpsTrackFolder = "mnt/sdcard/myTrackLog/" ;
 	private RandomAccessFile randFileWriter = null;	
 	private ArrayList<TencentLocation> locations;	 
@@ -50,6 +49,7 @@ public class GPSTrackManager extends Service {
 
 	private   TencentLocationListener  locationListener= new TencentLocationListener () {
 
+		@SuppressLint("DefaultLocale")
 		@Override
 		public void onLocationChanged(TencentLocation location, int error, String reason)
 		{	
@@ -60,22 +60,20 @@ public class GPSTrackManager extends Service {
 				runningCounter = 0;
 				runningStr = "";
 			}
-
-			Log.i(TAG, "GPS，精度--->"+String.format("%f", location.getAccuracy()));  
 			if(location != null && location.getAccuracy()<GPSAccuracy && location.getAccuracy()>0.1){
 				locations.add(location);
 				if(locations.size()>locationBufferSize){
 					saveLocations();
 				}
-				Log.i(TAG, "GPS，获取地址--->"+location.getName());  
-
-				sendMSG(0,String.format("当前位置:[%s]定位方式:[%s]精度：%.0fm\t%s",location.getName(), location.getProvider(),location.getAccuracy(),runningStr));
+                String str = String.format("当前位置:[%s]\r\n定位方式:[%s]精度：%.0fm\t%s",location.getName(), location.getProvider(),location.getAccuracy(),runningStr);
+                Log.i(TAG, str);  
+				sendMSG(0,str);
 			}
 		}
 
 		@Override
 		public void onStatusUpdate(String name, int status, String desc) {   
-			Log.i(TAG, "onStatusUpdate");                
+			Log.i(TAG, "onStatusUpdate:  name:" +name +"  desc    "+desc+String.format("   status   :%d", status));                
 			switch (status) {            
 			//GPS状态为可见时            
 			case LocationProvider.AVAILABLE:                
@@ -92,12 +90,10 @@ public class GPSTrackManager extends Service {
 			}        
 		}                  
 	};
-
-
 	public   GPSTrackManager(Context ct,Handler mHandler) {
 		context = ct;
 		handler = mHandler;
-		message = new Message();  
+		message = new Message();
 	}
 	public GPSTrackManager() {
 
@@ -205,11 +201,7 @@ public class GPSTrackManager extends Service {
 		return "desc";
 	}
 
-	@Override
-	public IBinder onBind(Intent intent) {
-		Log.i(TAG, "Service onBind--->");  
-		return null;
-	}
+ 
 	@Override 
 	//Service时被调用  
 	public void onCreate()  
@@ -220,7 +212,7 @@ public class GPSTrackManager extends Service {
 
 	@Override  
 	public int onStartCommand(Intent intent, int flags, int startId) {  
-		Log.d(TAG, "onStartCommand() executed");  
+		Log.i(TAG, "onStartCommand() executed");  
 
 		locations = new ArrayList<TencentLocation>();		  
 		request = TencentLocationRequest.create();
@@ -234,16 +226,12 @@ public class GPSTrackManager extends Service {
 			switch(error)
 			{
 			case 0:  errorStr += "注册位置监听器成功";
-			isStartTrack = true;	
 			case 1:  errorStr += "设备缺少使用腾讯定位SDK需要的基本条件";
-			isStartTrack = false;	
-			break;
+				break;
 			case 2:  errorStr += "配置的 key 不正确";
-			isStartTrack = false;	
-			break;
+				break;
 			case 3:  errorStr += "自动加载libtencentloc.so失败";
-			isStartTrack = false;	
-			break;
+				break;
 			}
 			Log.i(TAG, errorStr);           
 		}
@@ -254,7 +242,6 @@ public class GPSTrackManager extends Service {
 	public void onDestroy()  
 	{  
 		Log.i(TAG, "Service onDestroy--->");
-		isStartTrack = false;
 		locationManager.removeUpdates(locationListener);
 		sendMSG(1,"位置服务关闭");
 		sendMSG(0,"");
@@ -271,6 +258,11 @@ public class GPSTrackManager extends Service {
 	}
 	public static String getTrackFolder(){
 		return gpsTrackFolder;
+	}
+	@Override
+	public IBinder onBind(Intent intent) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

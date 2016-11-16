@@ -79,11 +79,28 @@
                     android:textColor="@android:color/white" />
             </LinearLayout>
 
+        <LinearLayout
+            style="@style/PanelLineStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal" >
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="路径显示"
-                android:textColor="@android:color/white" />
+                android:text="@string/hue"
+                android:textColor="@android:color/black"
+                android:textSize="16sp" />
+
+            <SeekBar
+                android:id="@+id/sb_hue"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:progress="230"
+                android:max="360"/>
+        </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"

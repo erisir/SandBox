@@ -19,7 +19,7 @@ import android.view.View;
 public class MapControl  extends FragmentActivity implements 
 OnCameraChangeListener, OnCompassClickedListener, OnMapClickListener, 
 OnMapLongClickListener, CancelableCallback {
-	private  static final String TAG = "MainActivity";
+	private  static final String TAG = "MapControl";
 	private TencentMap tencentMap;
 	//	private SlidingDrawer slidingDrawer;
 	//	private CheckBox cbScrollBy;
@@ -30,13 +30,6 @@ OnMapLongClickListener, CancelableCallback {
 		tencentMap = map;
 		bindListener();
 	}
-	@Override
-	protected void onCreate(Bundle arg0) {
-		// TODO Auto-generated method stub
-		super.onCreate(arg0);
-//		bindListener();
-	}
-
 	protected void bindListener() {
 		tencentMap.setOnCameraChangeListener(this);
 		tencentMap.setOnCompassClickedListener(this);
@@ -44,37 +37,11 @@ OnMapLongClickListener, CancelableCallback {
 		tencentMap.setOnMapLongClickListener(this);
 	}
 
-	public void onUpClicked(View view) {
-		tencentMap.moveCamera(CameraUpdateFactory.scrollBy(0, -100));
-	}
-
-	public void onDownClicked(View view) {
-		tencentMap.moveCamera(CameraUpdateFactory.scrollBy(0, 100));
-	}
-
-	public void onRightClicked(View view) {
-		tencentMap.moveCamera(CameraUpdateFactory.scrollBy(100, 0));
-	}
-
-	public void onLeftClicked(View view) {
-		tencentMap.moveCamera(CameraUpdateFactory.scrollBy(-100, 0));
-	}
-
-	public void onZoomOutClicked(View view) {
-		tencentMap.moveCamera(CameraUpdateFactory.zoomOut());
-	}
-
-	public void onZoomInClicked(View view) {
-		tencentMap.moveCamera(CameraUpdateFactory.zoomIn());
-	}
-
-
 	public void MoveCameraPosition(View view,double lat,double lng) {
 		CameraUpdate cameraSigma = 
 				CameraUpdateFactory.newCameraPosition(new CameraPosition(
 						new LatLng(lat,lng), 19, 0f, 0f));
 		tencentMap.animateCamera(cameraSigma, this);
-
 	}
 
 	public void onStopAnimationClicked(View view) {
