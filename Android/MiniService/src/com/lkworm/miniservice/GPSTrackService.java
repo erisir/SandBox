@@ -40,7 +40,7 @@ public class GPSTrackService extends Service {
 	private  String gpsTrackFolder = "mnt/sdcard/myTrackLog/" ;
 	private  String gpsTrackFileEnd = "</trkseg>\r\n</trk>\r\n</gpx>";	
 
-	private  int GPSAccuracy = 100; 
+	private  int GPSAccuracy = 150; 
 	private  long GPSInterval = 5*1000;//sec
 	private int locationBufferSize = 10;
 	private int runningCounter = 0;
@@ -189,14 +189,15 @@ public class GPSTrackService extends Service {
 				runningCounter = 0;
 				runningStr = "";
 			}
+			String str = String.format("当前位置:[%s]\r\n"
+					+ "                  定位方式:[%s]\t精度：%.0fm\t%s",location.getName(), location.getProvider(),location.getAccuracy(),runningStr);
+			LogMessage(true, str); 
 			if(location != null && location.getAccuracy()<GPSAccuracy && location.getAccuracy()>0.1){
 				locations.add(location);
 				if(locations.size()>locationBufferSize){
 					saveLocations();
+					LogMessage(true, "saveLocations");
 				}
-				String str = String.format("当前位置:[%s]\r\n"
-						+ "                  定位方式:[%s]\t精度：%.0fm\t%s",location.getName(), location.getProvider(),location.getAccuracy(),runningStr);
-				LogMessage(true, str);  
 			}
 		}
 

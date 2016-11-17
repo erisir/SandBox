@@ -29,7 +29,7 @@ public class MyBroadcastReceiver extends BroadcastReceiver {
 			GPSTrackService.StartService(context);
 			break;
 		case USER_PRESENT:
-			sendMSG(1, "Welcome!");
+			sendMSG(1, "\t\t\t\t\t\tWelcome!");
 			break;
 		}
 	}
