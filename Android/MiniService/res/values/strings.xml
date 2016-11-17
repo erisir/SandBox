@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<resources>
+    <string name="app_name">MiniService</string>
+    <string name="action_settings">Settings</string>
+    
+    <string name="controll_map_hadle_text">控制面板</string>
+     
+    <string name="showLogCheck">显示消息</string>
+    
+</resources>
