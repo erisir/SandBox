@@ -26,7 +26,7 @@ public class ChartManager extends JFrame  {
 	private HashMap<String, XYSeries> dataSeries_;
 	private HashMap<String, JFreeChart> chartSeries_;
 	private XYSeriesCollection dataset_;
-	private int ChartMaxItemCount = 4000;
+	private int ChartMaxItemCount = 8000;
 	private final int DEFAULT_WIDTH = 920;
 	private int tapSize = 870;
 	private final int DEFAULT_HEIGHT =(int)( DEFAULT_WIDTH*0.618);

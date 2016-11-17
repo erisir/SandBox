@@ -8,7 +8,6 @@
         android:minSdkVersion="11"
         android:targetSdkVersion="22" />
 
-    <uses-permission android:name="android.permission.RECEIVE_SMS" />
     <!-- 腾讯地图 sdk 要求的权限(开始) -->
     <!-- 访问网络获取地图服务 -->
     <uses-permission android:name="android.permission.INTERNET" />
@@ -59,19 +58,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <receiver android:name="com.lkworm.miniservice.MyBroadcastReceiver" >
+<!--  这个不能在此定义，只能在程序中调用 -->  
+<!--       <receiver android:name="com.lkworm.miniservice.MyBroadcastReceiver" >
             <intent-filter android:priority="666" >
-                <action android:name="android.provider.Telephony.SMS_RECEIVED" >
+                <action android:name="android.intent.action.TIME_TICK" >
                 </action>
             </intent-filter>
         </receiver>
-        <receiver android:name="com.lkworm.miniservice.MyBroadcastReceiver" >
-            <intent-filter android:priority="666" >
-                <action android:name="android.intent.action.ACTION_TIME_CHANGED" >
-                </action>
-            </intent-filter>
-        </receiver>
+ -->  
         <receiver android:name="com.lkworm.miniservice.MyBroadcastReceiver" >
             <intent-filter android:priority="90000" >
                 <action android:name="android.intent.action.USER_PRESENT" />
@@ -79,14 +73,11 @@
         </receiver>
 
         <service
-            android:name="com.lkworm.miniservice.AlipayService"
-            android:label="AlipayService" />
+            android:name="com.lkworm.miniservice.GPSTrackService"
+            android:label="GPSTrackService" />
         <service
-            android:name="com.lkworm.miniservice.AlipayService$InnerService"
+            android:name="com.lkworm.miniservice.GPSTrackService$InnerService"
             android:label="InnerService" />
-        <service
-            android:name="com.lkworm.miniservice.GPSTrackManager"
-            android:label="GPSTrackManager" />
     </application>
 
 </manifest>

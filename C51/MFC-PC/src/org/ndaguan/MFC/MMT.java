@@ -45,7 +45,7 @@ public class MMT {
 	}
 	public static void tok(String mouldeName ) 
 	{
-		System.out.print(String.format("\r\nMoulde¡¾%s¡¿:\tcostTime:\t%f ms\t\n", mouldeName,(System.nanoTime()-timeStart)/10e6));
+		System.out.print(String.format("\r\nMouldeï¿½ï¿½%sï¿½ï¿½:\tcostTime:\t%f ms\t\n", mouldeName,(System.nanoTime()-timeStart)/10e6));
 	}
 	public static void debugError(String string) 
 	{
@@ -98,27 +98,27 @@ public class MMT {
 	} 
 	public static enum VariablesNUPD {
 		//constructor format:	unit,	default value,	precision,	importance,	toolTip,	classify
-		chartWidth("",1000,0,1,"Êý¾ÝÍ¼µÄ³¤¶È£¬ÍÆ¼ö2000+",VariablesClassify.DataSheet.name()),
+		chartWidth("",8000,0,1,"ï¿½ï¿½ï¿½ï¿½Í¼ï¿½Ä³ï¿½ï¿½È£ï¿½ï¿½Æ¼ï¿½2000+",VariablesClassify.DataSheet.name()),
 		
 		//advance
-		saveFile(" ",1,0,0,"²âÊÔ×¨ÓÃ£ºÊÇ·ñ±£´æÊý¾Ý,1£ºÊÇ£¬0£º·ñ",VariablesClassify.Debug.name()),
-		PWMValue("",0,0,0,"²âÊÔ×¨ÓÃ£º¸üÐÂcorrelation ¼° posProfile Í¼ÏñµÄÖ¡¾à",VariablesClassify.Debug.name()),
+		saveFile(" ",1,0,0,"ï¿½ï¿½ï¿½ï¿½×¨ï¿½Ã£ï¿½ï¿½Ç·ñ±£´ï¿½ï¿½ï¿½ï¿½ï¿½,1ï¿½ï¿½ï¿½Ç£ï¿½0ï¿½ï¿½ï¿½ï¿½",VariablesClassify.Debug.name()),
+		PWMValue("",0,0,0,"ï¿½ï¿½ï¿½ï¿½×¨ï¿½Ã£ï¿½ï¿½ï¿½ï¿½ï¿½correlation ï¿½ï¿½ posProfile Í¼ï¿½ï¿½ï¿½Ö¡ï¿½ï¿½",VariablesClassify.Debug.name()),
 		
-		chartStatisWindow("",200,0,0,"Êý¾ÝÍ¼ÏñÏÔÊ¾£ºÏìÓ¦±ä»¯µÄÖ¡Êý£¬Ì«Ð¡Ê±Í¼ÏñÈÝÒ×¶¶¶¯£¬Ì«´óÊ±Í¼Ïñ²»ÈÝÒ××Ô¶¯Ëõ·Å£¬ÍÆ¼öÊ¹ÓÃ200~1000",VariablesClassify.DataSheet.name()),
-		MMTrout("",0.01,0.0001,0,"Êý¾ÝÍ¼ÏñÏÔÊ¾£º¸üÐÂÍ¼ÏñµÄÖ¡Êý£¬Ì«Ð¡ÁË¼ÆËãºÄÊ±£¬Ì«´óÁË¸üÐÂÂý,ÍÆ¼öÊ¹ÓÃ20~100",VariablesClassify.DataSheet.name()),
-		Setvotage("",50,0,0,"Í¼ÏñÏÔÊ¾¼´ÏìÓ¦Êó±ê²Ù×÷Ê±¼ä£¬Ì«Ð¡ÁË¼ÆËãºÄÊ±£¬Ì«´óÁËÏìÓ¦Âý£¬ÈÝÒ×³öÏÖÑ¡¿ò¸ú²»ÉÏÇòµÄÒÆ¶¯£¬ÍÆ¼öÊ¹ÓÃ50~100",VariablesClassify.Feedback.name()),
-		//frameToFeedBack("",5,0,0,"¶àÉÙÖ¡·´À¡Ò»´Î",VariablesClassify.Feedback.name()),
-		//feedBackMaxStepSize("/uM",0.02,0.001,0,"·´À¡×î´ó²½³¤,Ã¿´Î·´À¡×ßµÄ×î´óÎ»ÒÆ£¬Ì«´óÁËÈÝÒ×Õðµ´£¬Ì«Ð¡·´À¡Âý",VariablesClassify.Feedback.name()),
-		//feedBackMinStepSize("/uM",0.000,0.001,0,"·´À¡×îÐ¡²½³¤£¬µ±Æ®ÒÝÐ¡ÓÚ´ËÖµÊ±²»´¥·¢·´À¡",VariablesClassify.Feedback.name()),
-		//feedBackWindowSize("",10,0,0,"·´À¡»¬¶¯´°¿Ú´óÐ¡",VariablesClassify.Feedback.name()),
-		pTerm_x("",-0.2,0.0001,0,"±ÈÀýÏµÊý",VariablesClassify.Feedback.name()),
-		iTerm_x("",0.01,0.0001,0,"»ý·ÖÏµÊý",VariablesClassify.Feedback.name()),
-		dTerm_x("",0.01,0.0001,0,"Î¢·ÖÏµÊý",VariablesClassify.Feedback.name()),
-		AutoRange("",1,0,0,"ÊÇ·ñ×Ô¶¯ÖØ»æÍ¼±í£¬1£ºÊÇ£¬0£º·ñ£¬",VariablesClassify.DataSheet.name()),
-		PIDbyPC("",0.01,0.0001,0,"È¡µçÑ¹´ÎÊý",VariablesClassify.Debug.name()),
+		chartStatisWindow("",200,0,0,"ï¿½ï¿½ï¿½ï¿½Í¼ï¿½ï¿½ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½Ó¦ï¿½ä»¯ï¿½ï¿½Ö¡ï¿½ï¿½ï¿½ï¿½Ì«Ð¡Ê±Í¼ï¿½ï¿½ï¿½ï¿½ï¿½×¶ï¿½ï¿½ï¿½ï¿½ï¿½Ì«ï¿½ï¿½Ê±Í¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô¶ï¿½ï¿½ï¿½ï¿½Å£ï¿½ï¿½Æ¼ï¿½Ê¹ï¿½ï¿½200~1000",VariablesClassify.DataSheet.name()),
+		MMTrout("",0.01,0.0001,0,"ï¿½ï¿½ï¿½ï¿½Í¼ï¿½ï¿½ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¼ï¿½ï¿½ï¿½Ö¡ï¿½ï¿½ï¿½ï¿½Ì«Ð¡ï¿½Ë¼ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½Ì«ï¿½ï¿½ï¿½Ë¸ï¿½ï¿½ï¿½ï¿½ï¿½,ï¿½Æ¼ï¿½Ê¹ï¿½ï¿½20~100",VariablesClassify.DataSheet.name()),
+		Setvotage("",50,0,0,"Í¼ï¿½ï¿½ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½Ó¦ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ä£¬Ì«Ð¡ï¿½Ë¼ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½Ì«ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó¦ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×³ï¿½ï¿½ï¿½Ñ¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ¶ï¿½ï¿½ï¿½ï¿½Æ¼ï¿½Ê¹ï¿½ï¿½50~100",VariablesClassify.Feedback.name()),
+		//frameToFeedBack("",5,0,0,"ï¿½ï¿½ï¿½ï¿½Ö¡ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½",VariablesClassify.Feedback.name()),
+		//feedBackMaxStepSize("/uM",0.02,0.001,0,"ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ó²½³ï¿½,Ã¿ï¿½Î·ï¿½ï¿½ï¿½ï¿½ßµï¿½ï¿½ï¿½ï¿½Î»ï¿½Æ£ï¿½Ì«ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ðµ´£ï¿½Ì«Ð¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½",VariablesClassify.Feedback.name()),
+		//feedBackMinStepSize("/uM",0.000,0.001,0,"ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½Ð¡ï¿½Ú´ï¿½ÖµÊ±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½",VariablesClassify.Feedback.name()),
+		//feedBackWindowSize("",10,0,0,"ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú´ï¿½Ð¡",VariablesClassify.Feedback.name()),
+		pTerm_x("",-0.2,0.0001,0,"ï¿½ï¿½ï¿½ï¿½Ïµï¿½ï¿½",VariablesClassify.Feedback.name()),
+		iTerm_x("",0.01,0.0001,0,"ï¿½ï¿½ï¿½ï¿½Ïµï¿½ï¿½",VariablesClassify.Feedback.name()),
+		dTerm_x("",0.01,0.0001,0,"Î¢ï¿½ï¿½Ïµï¿½ï¿½",VariablesClassify.Feedback.name()),
+		AutoRange("",1,0,0,"ï¿½Ç·ï¿½ï¿½Ô¶ï¿½ï¿½Ø»ï¿½Í¼ï¿½ï¿½1ï¿½ï¿½ï¿½Ç£ï¿½0ï¿½ï¿½ï¿½ï¿½",VariablesClassify.DataSheet.name()),
+		PIDbyPC("",0.01,0.0001,0,"È¡ï¿½ï¿½Ñ¹ï¿½ï¿½ï¿½ï¿½",VariablesClassify.Debug.name()),
 		
-		SetvotageTimes("",1,0,0,"È¡µçÑ¹´ÎÊý",VariablesClassify.Debug.name()),
-		SetvotageChanel("",1,0,0,"È¡µçÑ¹Í¨µÀ",VariablesClassify.Other.name());
+		SetvotageTimes("",1,0,0,"È¡ï¿½ï¿½Ñ¹ï¿½ï¿½ï¿½ï¿½",VariablesClassify.Debug.name()),
+		SetvotageChanel("",1,0,0,"È¡ï¿½ï¿½Ñ¹Í¨ï¿½ï¿½",VariablesClassify.Other.name());
 		private String unit;
 		private double value;
 		private double presicion;

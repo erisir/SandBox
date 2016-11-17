@@ -245,7 +245,7 @@ public  class RoiItem {
 		return new double[]{(std[0]<min)?min:std[0],std[1]<min?min:std[1],std[2]<min?min:std[2],std[3]<min?min:std[3]};
 	}
 
-	public void updateDataSeries(final float eclipes,final long setVotage,final long pwmValue) {
+	public void updateDataSeries(final float eclipes,final double lon,final double lat) {
 		if(!chart_.isVisible())return;
 		
 
@@ -258,9 +258,9 @@ public  class RoiItem {
 				double data[] = getItemData();
 				//for(int i = 0;i<1;i++){
 					try{
-						chart_.getDataSeries().get(MMT.CHARTLIST[0]).add(eclipes,data[0],update&&(0 == selectedIndex));
-						chart_.getDataSeries().get(MMT.CHARTLIST[0]+"SetVotage").add(eclipes,setVotage,update&&(0 == selectedIndex));
-						chart_.getDataSeries().get(MMT.CHARTLIST[0]+"PWMValue").add(eclipes, pwmValue,update&&(0 == selectedIndex));
+						//chart_.getDataSeries().get(MMT.CHARTLIST[0]).add(eclipes,data[0],true);
+						chart_.getDataSeries().get(MMT.CHARTLIST[0]+"SetVotage").add(eclipes,lon,update&&(0 == selectedIndex));
+						//chart_.getDataSeries().get(MMT.CHARTLIST[0]+"PWMValue").add(eclipes, lat,update&&(0 == selectedIndex));
 							
 						
 						

@@ -8,6 +8,10 @@ import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.jdom2.Document;
+import org.jdom2.Element;
+import org.jdom2.input.SAXBuilder;
+
 public class Kernel {
     
 	static Kernel getInstance(){
@@ -41,15 +45,42 @@ public class Kernel {
 	            + MMT.VariablesNUPD.dTerm_x.value() * dError	  // ΢����	 ����ɲ��
 				);  
 	} 
+	private void parseXML(List<RoiItem> rt, String path){
+		SAXBuilder builder = new SAXBuilder();
+		try {
+			Document document = builder.build(path);
+			List trkpt =    document.getRootElement().getChildren().get(1).getChildren().get(4).getChildren();
+			for (int j = 0; j < trkpt.size(); j++) {
+				double lat = Double.valueOf((((Element) trkpt.get(j)).getAttributeValue("lat"))).doubleValue();
+				double lon = Double.valueOf((((Element) trkpt.get(j)).getAttributeValue("lon"))).doubleValue();
+				double att = Double.valueOf(((Element) trkpt.get(j)).getChildren().get(0).getValue());
+				String time =((Element) trkpt.get(j)).getChildren().get(1).getValue();
+				String[] temp = time.substring(11,19).split(":");
+				double dtime =  Double.valueOf(temp[0]).doubleValue()*3600+Double.valueOf(temp[1]).doubleValue()*60+Double.valueOf(temp[2]).doubleValue();
+				rt.get(0).setZ(dtime);
+				rt.get(0).updateDataSeries(j, dtime, 0);
+				System.out.print(j);
+				System.out.print("\t");
+				System.out.print(time.substring(11,19)+"\r\n");
+				//System.out.print(String.format("lat:\t%f\tlon:\t%f\t%f\ttime:\t%s\t\n", lat,lon,att,time));
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 	public  static void main(String[] args) {
 		
 		List<RoiItem> rt = Collections.synchronizedList(new ArrayList<RoiItem>());
 		rt.add(RoiItem.createInstance(new double[]{130,130,0})); 
 		Kernel kr = new Kernel();
+		
+		rt.get(0).setChartVisible(true);
+		kr.parseXML(rt,"D:\\tracklog\\20161117.gpx");
+      	if(true)return;
+      	
         CommTool comm = new CommTool(kr,rt);
         PreferDailog preDla = new PreferDailog(kr,rt,comm);
         preDla.setVisible(true);
-		rt.get(0).setChartVisible(true);
 		int ind = 0;
 	    int poss = 0;
 	    long start_time = System.nanoTime();
@@ -62,6 +93,7 @@ public class Kernel {
       	int value = 1;
       	int tmm = 1000;
       	comm.OpenTunel();
+      	
 	    while(ind <9999999){
 			try {
 				poss = (int) comm.getPosition();
