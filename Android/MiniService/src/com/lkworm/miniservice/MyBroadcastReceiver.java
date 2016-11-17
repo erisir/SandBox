@@ -21,7 +21,7 @@ public class MyBroadcastReceiver extends BroadcastReceiver {
 	public void onReceive(Context context, Intent intent) {
 		//如果收到短信
 		Log.i(TAG,intent.getAction());
-		sendMSG(0,DateFormat.format("hh.mm.ss", new Date())+"\t"+intent.getAction());
+		sendMSG(0,DateFormat.format("HH.mm.ss", new Date())+"\t"+intent.getAction());
 		switch(intent.getAction()){
 	 
 		case ACTION_TIME_TICK:

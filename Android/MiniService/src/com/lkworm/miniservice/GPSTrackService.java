@@ -46,11 +46,11 @@ public class GPSTrackService extends Service {
 	private int runningCounter = 0;
 	private String runningStr = "";
 
-	private static int MSGCODE[] = new int[]{1111,9999};
-	private static Message  message = new Message();
+	private  int MSGCODE[] = new int[]{1111,9999};
+	private  Message  message = new Message();
 
 
-	public static void sendMSG(int i, String msg){//0,下方，1上方
+	public  void sendMSG(int i, String msg){//0,下方，1上方
 		Bundle data = new Bundle();  
 		data.putString("value", msg);
 		message = MainActivity.mHandler.obtainMessage(MSGCODE[i], data);
@@ -149,11 +149,11 @@ public class GPSTrackService extends Service {
 			super.onCreate();
 			// 先把自己也搞成前台的，提供合法参数
 			startForeground(NOTIFICATION_ID, fadeNotification(this));
-			LogMessage(true,"InnerService+startForeground");
+			Log.i(TAG,"InnerService+startForeground");
 			// 关键步骤来了：自行推掉，或者把AlipayService退掉。
 			// duang！系统sb了，说好的人与人的信任呢？
 			stopSelf();
-			LogMessage(true,"InnerService+stopSelf");
+			Log.i(TAG,"InnerService+stopSelf");
 		}
 
 		@Override
@@ -239,7 +239,7 @@ public class GPSTrackService extends Service {
 							+ "</trkpt>",
 							locations.get(i).getLatitude(), locations.get(i).getLongitude(),
 							locations.get(i).getAltitude(),
-							DateFormat.format("yyyy-MM-ddThh:mm:ssX", locations.get(i).getTime())
+							DateFormat.format("yyyy-MM-ddTHH:mm:ssX", locations.get(i).getTime())
 							);
 					positions += str;
 				}
@@ -257,7 +257,7 @@ public class GPSTrackService extends Service {
 	}
 
 	public String getGPSTrackPath() {
-		return gpsTrackFolder+DateFormat.format("yymmdd", new Date())+".gpx";
+		return gpsTrackFolder+DateFormat.format("yyyyMMdd", new Date())+".gpx";
 	}
 
 	private  boolean createFile(){
@@ -284,9 +284,9 @@ public class GPSTrackService extends Service {
 		return true;
 	}
 
-	private static void LogMessage(boolean flag, String string) {
+	private  void LogMessage(boolean flag, String string) {
 		Log.i(TAG,string);
-		if(flag)sendMSG(0,DateFormat.format("hh.mm.ss", new Date())+"\t"+string);
+		if(flag)sendMSG(0,DateFormat.format("HH.mm.ss", new Date())+"\t"+string);
 
 	}
 
@@ -294,12 +294,12 @@ public class GPSTrackService extends Service {
 		String str = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\" ?>"
 				+ " \r\n<gpx xmlns=\"http://www.topografix.com/GPX/1/1\" xmlns:gpxtpx=\"http://www.garmin.com/xmlschemas/TrackPointExtension/v1\" creator=\"OruxMaps v.6.5.9\" version=\"1.1\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd\">"
 				+ "  \r\n<metadata>"
-				+ "  \r\n<name><![CDATA["+DateFormat.format("yymmdd", new Date())+"轨迹]]></name>"
+				+ "  \r\n<name><![CDATA["+DateFormat.format("yyyymmdd", new Date())+"轨迹]]></name>"
 				+ "  \r\n<desc><![CDATA[]]></desc>"
 				+ "  \r\n<link href=\"http://www.oruxmaps.com\">"
 				+ "  \r\n<text>OruxMaps</text>"
 				+ "  \r\n</link>"
-				+ "  \r\n<time>"+DateFormat.format("yyyy-MM-ddThh:mm:ssX", new Date())+"</time><bounds maxlat=\"40.0382312\" maxlon=\"116.2590316\" minlat=\"40.0046640\" minlon=\"116.1865904\"/>"
+				+ "  \r\n<time>"+DateFormat.format("yyyy-MM-ddTHH:mm:ssX", new Date())+"</time><bounds maxlat=\"40.0382312\" maxlon=\"116.2590316\" minlat=\"40.0046640\" minlon=\"116.1865904\"/>"
 				+ "  \r\n</metadata>"
 				+ "  \r\n<trk>"
 				+ "  \r\n<name><![CDATA[轨迹记录]]></name>"
