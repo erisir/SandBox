@@ -9,17 +9,49 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" >
 
-        <LinearLayout
+        <TextView
+            android:id="@+id/msg"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
+            android:text="" />
+    </ScrollView>
+
+    <SlidingDrawer
+        android:id="@+id/sliding_drawer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentTop="true"
+        android:content="@+id/ll_content"
+        android:handle="@+id/iv_handle"
+        android:orientation="vertical" >
+
+        <LinearLayout
+            android:id="@+id/ll_content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/bg_panel"
+            android:clickable="true"
+            android:longClickable="true"
             android:orientation="vertical" >
 
-            <TextView
-                android:id="@+id/msg"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:text="" />
+            <CheckBox
+                android:id="@+id/showLogCheck"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="onShowLogCheck"
+                android:text="@string/showLogCheck" />
+
         </LinearLayout>
-    </ScrollView>
+        <TextView
+                android:id="@+id/iv_handle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/thumb_horizontal"
+                android:clickable="true"
+                android:gravity="center_horizontal"
+                android:longClickable="true"
+                android:text="@string/controll_map_hadle_text"
+                android:textColor="@android:color/black" />
+    </SlidingDrawer>
 
 </RelativeLayout>

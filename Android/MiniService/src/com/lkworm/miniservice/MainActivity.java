@@ -7,6 +7,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.view.View;
+import android.widget.CheckBox;
 import android.widget.TextView;
 
 public class MainActivity extends Activity {
@@ -19,23 +21,30 @@ public class MainActivity extends Activity {
 			String val = ((Bundle)msg.obj).getString("value") ;
 			switch (msg.what) {
 			case 1111:
-				msgText.setText(msgText.getText()+"\r\n"+val);
+				if(showLogCheck.isChecked())
+					msgText.setText(msgText.getText()+"\r\n"+val);
 				break;
 			case 9999:
 				msgText.setText("\r\n"+val);
 				break;
-			 
+
 			}
 		}
 	};
+	private static CheckBox showLogCheck;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		msgText = (TextView)findViewById(R.id.msg);
+		showLogCheck = (CheckBox)findViewById(R.id.showLogCheck);
+		showLogCheck.setChecked(true);
 		IntentFilter mTime = new IntentFilter(Intent.ACTION_TIME_TICK);
 		MyBroadcastReceiver receiver = new MyBroadcastReceiver();
-	    registerReceiver(receiver, mTime);
+		registerReceiver(receiver, mTime);
 	}
-	
+	public void onShowLogCheck(View view){
+		msgText.setText("");		
+	}
+
 }
