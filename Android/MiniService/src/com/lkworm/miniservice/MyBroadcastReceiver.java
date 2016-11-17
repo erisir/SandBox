@@ -29,8 +29,7 @@ public class MyBroadcastReceiver extends BroadcastReceiver {
 			GPSTrackService.StartService(context);
 			break;
 		case USER_PRESENT:
-			//Log.i("MyBroadcastReceiver",USER_PRESENT);
-			//bindService( context);
+			sendMSG(1, "Welcome!");
 			break;
 		}
 	}
