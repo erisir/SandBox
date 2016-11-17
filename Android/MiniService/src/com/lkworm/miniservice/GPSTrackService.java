@@ -76,19 +76,18 @@ public class GPSTrackService extends Service {
 		//判断GPS是否正常启动        
 		int error = locationManager.requestLocationUpdates(request, locationListener);
 		String errorStr = "注册监听器：";
-		if(error !=0){
-			switch(error)
-			{
-			case 0:  errorStr += "注册位置监听器成功";
-			case 1:  errorStr += "设备缺少使用腾讯定位SDK需要的基本条件";
-			break;
-			case 2:  errorStr += "配置的 key 不正确";
-			break;
-			case 3:  errorStr += "自动加载libtencentloc.so失败";
-			break;
-			}
-			LogMessage(true, errorStr);           
+		switch(error)
+		{
+		case 0:  errorStr += "注册位置监听器成功";break;
+		
+		case 1:  errorStr += "设备缺少使用腾讯定位SDK需要的基本条件";break;
+		
+		case 2:  errorStr += "配置的 key 不正确";break;
+		
+		case 3:  errorStr += "自动加载libtencentloc.so失败";break;
+		
 		}
+		LogMessage(true, errorStr);  
 		return super.onStartCommand(intent, flags, startId);  
 	}
 	@Override
@@ -131,12 +130,12 @@ public class GPSTrackService extends Service {
 		if (Build.VERSION.SDK_INT < 18) {
 			// api 18（4.3）以下，随便玩
 			startForeground(NOTIFICATION_ID, new Notification());
-			LogMessage(true,"startForeground<18");
+			LogMessage(false,"startForeground<18");
 		} else {
 			// api 18的时候，google管严了，得绕着玩
 			// 先把自己做成一个前台服务，提供合法的参数
 			startForeground(NOTIFICATION_ID, fadeNotification(this));
-			LogMessage(true,"startForeground>18");
+			LogMessage(false,"startForeground>18");
 			// 再起一个服务，也是前台的
 			startService(new Intent(this, InnerService.class));
 		}
@@ -196,7 +195,7 @@ public class GPSTrackService extends Service {
 					saveLocations();
 				}
 				String str = String.format("当前位置:[%s]\r\n"
-						+ "                  定位方式:[%s]精度：%.0fm\t%s",location.getName(), location.getProvider(),location.getAccuracy(),runningStr);
+						+ "                  定位方式:[%s]\t精度：%.0fm\t%s",location.getName(), location.getProvider(),location.getAccuracy(),runningStr);
 				LogMessage(true, str);  
 			}
 		}
