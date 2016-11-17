@@ -196,7 +196,7 @@ public class GPSTrackService extends Service {
 					saveLocations();
 				}
 				String str = String.format("当前位置:[%s]\r\n"
-						+ "                 定位方式:[%s]精度：%.0fm\t%s",location.getName(), location.getProvider(),location.getAccuracy(),runningStr);
+						+ "                  定位方式:[%s]精度：%.0fm\t%s",location.getName(), location.getProvider(),location.getAccuracy(),runningStr);
 				LogMessage(true, str);  
 			}
 		}
