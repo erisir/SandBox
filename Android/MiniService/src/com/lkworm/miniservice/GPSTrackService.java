@@ -41,8 +41,8 @@ public class GPSTrackService extends Service {
 	private  String gpsTrackFileEnd = "</trkseg>\r\n</trk>\r\n</gpx>";	
 
 	private  int GPSAccuracy = 100; 
-	private  long GPSInterval = 1*1000;//sec
-	private int locationBufferSize = 6;
+	private  long GPSInterval = 5*1000;//sec
+	private int locationBufferSize = 10;
 	private int runningCounter = 0;
 	private String runningStr = "";
 
@@ -195,7 +195,8 @@ public class GPSTrackService extends Service {
 				if(locations.size()>locationBufferSize){
 					saveLocations();
 				}
-				String str = String.format("当前位置:[%s]\r\n            定位方式:[%s]精度：%.0fm\t%s",location.getName(), location.getProvider(),location.getAccuracy(),runningStr);
+				String str = String.format("当前位置:[%s]\r\n"
+						+ "                 定位方式:[%s]精度：%.0fm\t%s",location.getName(), location.getProvider(),location.getAccuracy(),runningStr);
 				LogMessage(true, str);  
 			}
 		}
