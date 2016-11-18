@@ -37,10 +37,10 @@ OnMapLongClickListener, CancelableCallback {
 		tencentMap.setOnMapLongClickListener(this);
 	}
 
-	public void MoveCameraPosition(View view,double lat,double lng) {
+	public void MoveCameraPosition(double lat,double lng) {
 		CameraUpdate cameraSigma = 
 				CameraUpdateFactory.newCameraPosition(new CameraPosition(
-						new LatLng(lat,lng), 19, 0f, 0f));
+						new LatLng(lat,lng), tencentMap.getCameraPosition().zoom , 0f, 0f));
 		tencentMap.animateCamera(cameraSigma, this);
 	}
 

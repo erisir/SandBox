@@ -23,6 +23,7 @@ import android.view.Menu;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.ScrollView;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.TextView;
 
@@ -59,6 +60,7 @@ public class MainActivity extends FragmentActivity{
 	private CheckBox cbTraffic;
 
 	private TrackFileManager trackFileManager;
+	private CheckBox cbAutoLocation;
 
 
 	@Override
@@ -91,12 +93,12 @@ public class MainActivity extends FragmentActivity{
 		//定位开始
 		//设置是否显示我的位置，地图SDK不负责获取位置，由外界提供 设计的地图和定位是分开的，
 		//所以需要setLocationSource(locationSource);提供接口
-		locationSource = new DemoLocationSource(this);
+		mapControl = new MapControl(tencentMap);
+		locationSource = new DemoLocationSource(this,this,mapControl);
 		tencentMap.setLocationSource(locationSource);
 		tencentMap.setMyLocationEnabled(true);
 
 		trackFileManager = new TrackFileManager(this,this,tencentMap);
-		mapControl = new MapControl(tencentMap);
 		//puh3 smsSever
 
 		smsObserver = new SmsObserver(getContentResolver(),mHandler);		
@@ -105,14 +107,14 @@ public class MainActivity extends FragmentActivity{
 		initMapUI();
 		bindMapUIListener();
 		cbAllGesture.setChecked(true);
+		trackFileManager.openTrackFile(gpsTrackManager.getGPSTrackPath(),false);
 	}
- 
+
 	@Override
 	public void onStart() {//可视开始
 		// TODO Auto-generated method stub
 		super.onStart();
 		Log.d(TAG, "onStart");
-
 	}
 
 	@Override
@@ -164,6 +166,9 @@ public class MainActivity extends FragmentActivity{
 	public void onRemoveTrackFile(View view){
 		trackFileManager.removeTrack();
 	}
+	public boolean isAlutoLocationAllow(){
+		return cbAutoLocation.isChecked();
+	}
 	protected void initMapUI() {
 		mapUiSettings = tencentMap.getUiSettings();
 		overWriteTrack = (CheckBox)findViewById(R.id.overWriteTrack);
@@ -183,7 +188,7 @@ public class MainActivity extends FragmentActivity{
 		cbSatellite = (CheckBox)findViewById(R.id.cb_satellite);
 		cbTraffic = (CheckBox)findViewById(R.id.cb_traffic);
 
-
+		cbAutoLocation =  (CheckBox)findViewById(R.id.cb_auto_location);
 		if (tencentMap.getMapType() == TencentMap.MAP_TYPE_SATELLITE) {
 			cbSatellite.setChecked(true);
 		} else {
@@ -199,6 +204,7 @@ public class MainActivity extends FragmentActivity{
 		cbScrollGesture.setChecked(mapUiSettings.isScrollGesturesEnabled());
 		cbTiltGesture.setChecked(mapUiSettings.isTiltGesturesEnabled());
 		cbZoomGesture.setChecked(mapUiSettings.isZoomGesturesEnabled());
+		cbAutoLocation.setChecked(true);
 	}	
 
 	private void bindService(){
@@ -282,6 +288,8 @@ public class MainActivity extends FragmentActivity{
 				case R.id.cb_zoom_gesture:
 					mapUiSettings.setZoomGesturesEnabled(isChecked);
 					break;
+				case R.id.cb_auto_location:
+					break;
 				case R.id.cb_satellite:
 					if (isChecked) {
 						tencentMap.setMapType(TencentMap.MAP_TYPE_SATELLITE);
@@ -310,6 +318,7 @@ public class MainActivity extends FragmentActivity{
 		cbZoomGesture.setOnCheckedChangeListener(onCheckedChangeListener);
 		cbSatellite.setOnCheckedChangeListener(onCheckedChangeListener);
 		cbTraffic.setOnCheckedChangeListener(onCheckedChangeListener);
+		cbAutoLocation.setOnCheckedChangeListener(onCheckedChangeListener);
 	}
 
 }

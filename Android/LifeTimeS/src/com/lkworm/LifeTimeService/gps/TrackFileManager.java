@@ -64,7 +64,13 @@ public class TrackFileManager{
 			addPolyLine();
 		}  
 	};
-
+	public void openTrackFile(String filepath,boolean isOverWriteTrack){
+		latLngs = new ArrayList<LatLng>();
+		if(!isOverWriteTrack)
+			removeTrack();
+		parseXMLWithPull(filepath);
+		addPolyLine();
+	}
 	private void OpenDialog(String Startpath){
 		Map<String, Integer> images = new HashMap<String, Integer>();  
 		// 下面几句设置各文件类型的图标， 需要你先把图标添加到资源文件夹  
@@ -126,38 +132,38 @@ public class TrackFileManager{
 				width(9f));
 		polylines.add(polyline);
 	}
-    public void bindListener() {
-    	OnSeekBarChangeListener onSeekBarChangeListener = new OnSeekBarChangeListener() {
+	public void bindListener() {
+		OnSeekBarChangeListener onSeekBarChangeListener = new OnSeekBarChangeListener() {
 
-    		@Override
-    		public void onStopTrackingTouch(SeekBar seekBar) {
+			@Override
+			public void onStopTrackingTouch(SeekBar seekBar) {
 
-    		}
+			}
 
-    		@Override
-    		public void onStartTrackingTouch(SeekBar seekBar) {
+			@Override
+			public void onStartTrackingTouch(SeekBar seekBar) {
 
-    		}
+			}
 
-    		@Override
-    		public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-    			if (polylines.size() <=0l) {
-    				return;
-    			}
-    			switch (seekBar.getId()) {
-    			case R.id.sb_hue:
-    				for (Polyline polyline : polylines)
-    					polyline.setColor(Color.HSVToColor(
-    							100,
-    							new float[]{progress, 1f, 1f}));
-    				break;
+			@Override
+			public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+				if (polylines.size() <=0l) {
+					return;
+				}
+				switch (seekBar.getId()) {
+				case R.id.sb_hue:
+					for (Polyline polyline : polylines)
+						polyline.setColor(Color.HSVToColor(
+								100,
+								new float[]{progress, 1f, 1f}));
+					break;
 
-    			default:
-    				break;
-    			}
-    		}
-    	};
+				default:
+					break;
+				}
+			}
+		};
 		sbHue.setOnSeekBarChangeListener(onSeekBarChangeListener);
-    }
+	}
 
 }

@@ -6,5 +6,6 @@
     <string name="controll_map_hadle_text">控制面板</string>
      
     <string name="showLogCheck">显示消息</string>
+    <string name="AutoScroll">自动滚动</string>
     
 </resources>

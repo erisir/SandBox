@@ -41,6 +41,12 @@
                 android:layout_height="wrap_content"
                 android:onClick="onShowLogCheck"
                 android:text="@string/showLogCheck" />
+              <CheckBox
+                android:id="@+id/AutoScroll"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="onShowLogCheck"
+                android:text="@string/AutoScroll" />
 
         </LinearLayout>
         <TextView

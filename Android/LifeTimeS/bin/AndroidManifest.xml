@@ -69,12 +69,13 @@
             android:name="com.lkworm.LifeTimeService.gps.GPSTrackManager"
             android:label="GPSTrackManager" />
 
- 
-        <receiver android:name="com.lkworm.LifeTimeService.gps.DemoBroadcastReceiver">  
+        <!--
+    <receiver android:name="com.lkworm.LifeTimeService.gps.DemoBroadcastReceiver">  
         <intent-filter android:priority="90000">  
             <action android:name="android.intent.action.USER_PRESENT" />  
         </intent-filter>  
-    </receiver> 
+    </receiver>
+        -->
     </application>
 
 </manifest>

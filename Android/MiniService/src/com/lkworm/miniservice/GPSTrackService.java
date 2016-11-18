@@ -1,9 +1,15 @@
 package com.lkworm.miniservice;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.RandomAccessFile;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -40,7 +46,7 @@ public class GPSTrackService extends Service {
 	private  String gpsTrackFolder = "mnt/sdcard/myTrackLog/" ;
 	private  String gpsTrackFileEnd = "</trkseg>\r\n</trk>\r\n</gpx>";	
 
-	private  int GPSAccuracy = 150; 
+	private  int GPSAccuracy = 100; 
 	private  long GPSInterval = 5*1000;//sec
 	private int locationBufferSize = 10;
 	private int runningCounter = 0;
@@ -56,8 +62,38 @@ public class GPSTrackService extends Service {
 		message = MainActivity.mHandler.obtainMessage(MSGCODE[i], data);
 		((Message) message).sendToTarget();
 	}
+	private int[] readConfigFromFile(String path){
+		String line = null;
+		int[] val = new int[3];
+		try {
+			InputStream fis = new FileInputStream(path);
+			InputStreamReader isr = new InputStreamReader(fis, Charset.forName("UTF-8"));
+			BufferedReader br = new BufferedReader(isr);
+			br.readLine();
+			line = br.readLine();
+			String[] sV = line.split(",");
+			for(int i = 0;i<3;i++){
+				val[i]= Long.valueOf(sV[i]).intValue();
+			}
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}  
+		return val;
+	}
 	@Override
 	public void onCreate() {
+		createConfigFile();
+		int[] v = readConfigFromFile(gpsTrackFolder+"config.txt");
+		if(v[0] != 0 )
+		 {
+			GPSAccuracy = v[0]; 
+			GPSInterval = v[1];//sec
+			locationBufferSize = v[2];
+		 }
 		super.onCreate();
 
 	}
@@ -203,7 +239,7 @@ public class GPSTrackService extends Service {
 
 		@Override
 		public void onStatusUpdate(String name, int status, String desc) {   
-			LogMessage(false, "onStatusUpdate:  name:" +name +"  desc    "+desc+String.format("   status   :%d", status));                
+			//LogMessage(false, "onStatusUpdate:  name:" +name +"  desc    "+desc+String.format("   status   :%d", status));                
 			switch (status) {            
 			//GPS状态为可见时            
 			case LocationProvider.AVAILABLE:                
@@ -269,6 +305,30 @@ public class GPSTrackService extends Service {
 				try {
 					writer = new FileWriter(getGPSTrackPath(),true);
 					String content = getFileHander()+gpsTrackFileEnd;
+					writer.write(content);
+					writer.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+
+			} catch (IOException e) {
+				LogMessage(true,"createFile"+e.toString());
+				return false;
+			}
+		}
+		file = null;
+		return true;
+	}
+	private  boolean createConfigFile(){
+		String path = gpsTrackFolder+"config.txt";
+		File file = new File(path);
+		if(file.exists() == false){
+			try {
+				file.createNewFile();
+				FileWriter writer;//写入文件头
+				try {
+					writer = new FileWriter(path,true);
+					String content = "GPSAccuracy,GPSInterval,locationBufferSize\r\n100,5000,10";
 					writer.write(content);
 					writer.close();
 				} catch (IOException e) {

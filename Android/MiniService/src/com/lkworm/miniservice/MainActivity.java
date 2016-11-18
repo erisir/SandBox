@@ -24,12 +24,14 @@ public class MainActivity extends Activity {
 			case 1111:
 				if(showLogCheck.isChecked()){
 					msgText.setText(msgText.getText()+"\r\n"+val);
-					mHandler.post(new Runnable() {  
-					    @Override  
-					    public void run() {  
-					    	scrollView.fullScroll(ScrollView.FOCUS_DOWN);   
-					    }  
-					});
+					if(autoScroll.isChecked()){
+						mHandler.post(new Runnable() {  
+							@Override  
+							public void run() {  
+								scrollView.fullScroll(ScrollView.FOCUS_DOWN);   
+							}  
+						});
+					}
 				}
 				break;
 			case 9999:
@@ -41,11 +43,13 @@ public class MainActivity extends Activity {
 	};
 	private static CheckBox showLogCheck;
 	private static ScrollView scrollView;
+	private static CheckBox autoScroll;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		msgText = (TextView)findViewById(R.id.msg);
+		autoScroll = (CheckBox)findViewById(R.id.AutoScroll);
 		showLogCheck = (CheckBox)findViewById(R.id.showLogCheck);
 		scrollView = (ScrollView)findViewById(R.id.scrollView1);
 		showLogCheck.setChecked(true);
