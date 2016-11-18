@@ -48,11 +48,16 @@ public class MainActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+		
 		msgText = (TextView)findViewById(R.id.msg);
 		autoScroll = (CheckBox)findViewById(R.id.AutoScroll);
 		showLogCheck = (CheckBox)findViewById(R.id.showLogCheck);
 		scrollView = (ScrollView)findViewById(R.id.scrollView1);
+		
 		showLogCheck.setChecked(true);
+		autoScroll.setChecked(true);
+		
+		
 		IntentFilter mTime = new IntentFilter(Intent.ACTION_TIME_TICK);
 		MyBroadcastReceiver receiver = new MyBroadcastReceiver();
 		registerReceiver(receiver, mTime);
