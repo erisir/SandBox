@@ -35,7 +35,7 @@ public class MainActivity extends Activity {
 				}
 				break;
 			case 9999:
-				msgText.setText("\r\n"+val);
+				 
 				break;
 
 			}
