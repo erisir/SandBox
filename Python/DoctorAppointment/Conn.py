@@ -1,3 +1,4 @@
+
 import pymysql 
 from _winapi import NULL
 class conn:
@@ -17,7 +18,6 @@ class conn:
         self.connPt_ = pymysql.connect(host=self.host_,port=self.port_,user=self.user_,db=self.db_,charset=self.charset_)
         #self.connPt_ = pymysql.connect(host=self.host_,port=self.port_,user=self.user_,passwd=self.passswd_,db=self.db_,charset=self.charset_)
         self.cursor_ = self.connPt_.cursor()
-        print("open database "+db)
     def close(self):
         self.connPt_.close()    
     def execute(self,sql,data):

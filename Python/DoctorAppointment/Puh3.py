@@ -5,18 +5,17 @@ import re
 import Conn
 import time
 import requests
-from wsgiref.util import application_uri
 from _winapi import NULL
  
 
-class puh3(object):
+class Puh3(object):
 
     homeurl = "http://www.bjguahao.gov.cn"
     appointMainurl = "http://www.bjguahao.gov.cn/hp/appoint/142.htm" #北医三院
     appointPosturl = "http://www.bjguahao.gov.cn/dpt/partduty.htm"
     hospitalId="142"
     departmentId="0"
-    doctorId="201105418"
+    doctorId=""
     dutySourceId = "0"
     patientId = ""
     keshiurl = ""
@@ -51,11 +50,12 @@ class puh3(object):
         }
     
     def __init__(self,name,date,time,doctorName,patientName="张宇微"):
-        
         self.keshiName = name
         self.appDate = date
         self.patientId = self.userDict[patientName]
         self.doctorId = self.doctorDict[doctorName]
+        print("="*50)
+        print("即将为"+patientName+"预约 "+self.appDate+" "+time+"["+name+"]的["+doctorName+"]")
         self.conn_=Conn.conn("BJGuahao")
         #2_2_2016-11-10 行_上1/下2午_日期
         if time == "上午" :
@@ -82,17 +82,17 @@ class puh3(object):
         getsmscodeurl = self.homeurl+"/v/sendorder.htm"
         smsSaveUrl = "http://sm4.iphy.ac.cn/g.php"
         print("正在发送验证码")
-        res = self.client.getSession().post(getsmscodeurl,data="")
+        res = self.client.getSession().post(getsmscodeurl,data="")#点击获取验证码按钮
         print(res.text) 
         print("="*50)
         acqmode = "auto"
         smsCoder = 0
-        
+        print("正在尝试接收验证码\r\n")
         if acqmode == "auto" :
             while smsCoder<1:
                 res1 =  requests.get(smsSaveUrl) 
                 smsCoder = int(res1.text)
-             
+                 
         else :
             smsCoder = input("请输入手机中的验证码\r\n")
                       
@@ -119,80 +119,20 @@ class puh3(object):
         res = self.client.getSession().post(url, data=data)   
         if res.json()["msg"]== "OK":
             self.appOk = True
-            tmp = res.json()["data"]
+            print(res)
+            #tmp = res.json()["data"]
             #print("["+tmp["patientName"]+"]\t已经成功预约\t"+tmp["hospitalName"]+"\t["+tmp["departmentName"]+"]\t\r\n"+tmp["dutyDate"]+tmp["ampm"]+"的号")
         else:
             print(res.json()["msg"])
-    def saveDoctorInfo(self,skill,doctorTitleName,doctorId,dayampm):
-            self.conn_.sqlStr_ = "select avialbeDate from doctorInfo where doctorId="+str(doctorId)+ " and keshiName='"+self.keshiName+"'"
-            res = self.conn_.select()           
-            try:
-                if  not len(res):
-                    sqlstr = "insert into doctorInfo (hospitalName,hospitalID,keshiName,skill,doctorTitleName,doctorId,avialbeDate) VALUES('北京大学第三医院',142,'"+self.keshiName+"','"+str(skill)+"','"+str(doctorTitleName)+"','"+str(doctorId)+"','"+str(dayampm)+"')"
-                    print(sqlstr)
-                    self.conn_.sqlStr_ = sqlstr
-                    res = self.conn_.insert()
-                else:
-                    sqlstr = "update doctorInfo  set avialbeDate='"+str(res[0][0])+","+dayampm+"'"+" where doctorId='"+str(doctorId)+"'"
-                    print(sqlstr)
-                    self.conn_.sqlStr_ = sqlstr
-                    res = self.conn_.insert()
-            except :  
-                traceback.print_exc()
-    def getDoctorIdDict(self):
-        
-        dateStart = 8
-        weekStart = 2
-        for d in range(dateStart,dateStart+7):            
-            for t in range(1,3):
-                time.sleep(3)
-                apDate = "2016-11-"
-                if d>=10 :
-                    apDate +=str(d) 
-                else:
-                    apDate += ("0"+str(d)) 
-                apTime = t
-                if t==1:
-                    tstr = "]上午"
-                else:
-                    tstr = "]下午"
-                print("="*50+apDate+"[星期"+str((weekStart+d-dateStart)%7)+tstr)
-          
-                data = {
-                "hospitalId":self.hospitalId,
-                "departmentId": self.departmentId,
-                "dutyCode":apTime,
-                "dutyDate":apDate,
-                "isAjax":"true"
-                }
-                try:
-                    res = self.client.getSession().post(self.appointPosturl, data=data)
-                    backup = res.json()["data"].copy()
-                    x =backup.pop()
-                     
-                    while x:
-                        
-                        if x["doctorTitleName"] !="普通专业号5元":
-                            self.saveDoctorInfo(x["skill"],x["doctorTitleName"],x["doctorId"],"[周"+str((weekStart+d-dateStart)%7)+tstr)
- 
-                        try:
-                            x =backup.pop()
-                        except:
-                            x = 0
-                except:
-                    print(data)
-                    print(backup)
-                
-                
            
     def start(self):
         
         self.tryCounter += 1
-        print("*"*50+"  第[\t" +str(self.tryCounter)+"\t]次尝试")       
+               
         res = self.client.open(self.keshiurl).text
         soup = BS(res, "html.parser")
         
-        for avilable in soup.find_all(class_="ksorder_kyy"):
+        for avilable in soup.find_all(class_="ksorder_kyy"):#检查是否已经放号
             temp = avilable.input["value"].split('_', 3 )
             if temp[2] == self.appDate and  temp[1] == self.appTime:
                 data = {
@@ -207,10 +147,11 @@ class puh3(object):
           
                 x =backup.pop()
                 while x:
-                    if x["doctorId"] == self.doctorId:
+                    if x["doctorId"] == self.doctorId:#目标医生
                         self.dutySourceId = x["dutySourceId"]                      
                         smsCode = self.getSMSCode()
                         self.confirm(smsCode)   
+                        print("已收到验证码"+str(smsCode)+"，正在提交订单")
                         break
                     
                     x =backup.pop()
@@ -218,35 +159,20 @@ class puh3(object):
                 break
             
         if(not self.appOk):
-            print("该时段无法预约")
-               
+            print(".",end='.',flush=True)
+            if self.tryCounter >=25:
+                self.tryCounter = 0
+                print("\n")
 
+               
 if __name__ == '__main__':
-    instence = puh3("妇科门诊","2016-11-14","上午","郭红燕","张宇微")
-    mode = "scanOne"
-    if mode == "guahao":
-        while not instence.appOk:
-            instence.start()
-            time.sleep( 2 )
-    if mode =="scanAll":
-        res = instence.client.open("http://www.bjguahao.gov.cn/hp/appoint/142.htm").text
-        soup = BS(res, "html.parser")
-        for x in soup.find_all('a',class_="kfyuks_islogin" ): 
-            instence.keshiName = x.get_text()
-            instence.keshiurl = instence.homeurl
-            instence.keshiurl += x["href"]
-            #以下，找到对应科室的预约网址
-            soup = BS(instence.client.open(instence.appointMainurl).text, "html.parser")            
-            res = instence.client.open(instence.keshiurl).text
-            soup = BS(res, "html.parser")
-            
-            instence.departmentId = soup.find(id="dId")["value"]
-            
-            print("正在打开["+x.get_text()+"]\t科室代码["+instence.departmentId+"]")
-            print("=" * 50)                
-            print(instence.keshiName)       
-            instence.getDoctorIdDict()
-    if mode =="scanOne":
-        instence.getDoctorIdDict()
- 
-   
+    instence = Puh3("妇科门诊","2016-11-28","上午","田惠","张宇微")
+       
+    print("*"*50+"  开始刷号")
+    while not instence.appOk:
+        instence.start()
+        time.sleep( 2 )
+    
+    print("=" * 50+"结束")     
+    time.sleep( 2000 )
+        
