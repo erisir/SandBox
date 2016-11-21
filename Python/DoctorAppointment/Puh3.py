@@ -16,6 +16,7 @@ class Puh3(object):
     hospitalId="142"
     departmentId="0"
     doctorId=""
+    outOfService = False#第一个没抢着
     dutySourceId = "0"
     patientId = ""
     keshiurl = ""
@@ -26,6 +27,7 @@ class Puh3(object):
     appOk = False
     tryCounter = 0;
     conn_ = NULL;
+    doctorName = ""
     
     userDict = {
         "农大官":"218874960",
@@ -67,13 +69,15 @@ class Puh3(object):
         "洪天配":"201111432",
         "肖文华":"201105388",
         "高洪伟":"201105794",
-        "王敏":"201106050"
+        "王敏":"201106050",
         #妇科
+        "test":"201105712"
         }
     
     def __init__(self,name,date,time,doctorName,patientName="张宇微"):
         self.keshiName = name
         self.appDate = date
+        self.doctorName = doctorName
         self.patientId = self.userDict[patientName]
         self.doctorId = self.doctorDict[doctorName]
         print("="*50)
@@ -145,6 +149,7 @@ class Puh3(object):
             #tmp = res.json()["data"]
             #print("["+tmp["patientName"]+"]\t已经成功预约\t"+tmp["hospitalName"]+"\t["+tmp["departmentName"]+"]\t\r\n"+tmp["dutyDate"]+tmp["ampm"]+"的号")
         else:
+            self.outOfService = True
             print(res.json()["msg"])
            
     def start(self):
@@ -169,7 +174,7 @@ class Puh3(object):
           
                 x =backup.pop()
                 while x:
-                    if x["doctorId"] == self.doctorId:#目标医生
+                    if x["doctorId"] == self.doctorId:#目标医生                        
                         self.dutySourceId = x["dutySourceId"]                      
                         smsCode = self.getSMSCode()
                         self.confirm(smsCode)   
@@ -188,11 +193,23 @@ class Puh3(object):
 
                
 if __name__ == '__main__':
-    instence = Puh3("妇科门诊","2016-11-28","上午","田惠","张宇微")
+    #时间，医生一一对应，按自然优先级抢号
+    #instence = Puh3("妇科门诊","2016-11-29","上午","张璐芳","张宇微")
+    #instence2 = Puh3("妇科门诊","2016-11-29","上午","田慧","张宇微")
+    instence = Puh3("肝炎门诊","2016-11-28","上午","test","农大官")
+    instence2 = Puh3("肝炎门诊","2016-11-28","上午","test","农大官")
        
     print("*"*50+"  开始刷号")
-    while not instence.appOk:
+    while not (instence.appOk or instence.outOfService):
         instence.start()
+        time.sleep( 2 )
+        
+    print("*"*50+ instence.doctorName +"号没了" + "继续刷"+instence.doctorName+"的号")
+    
+    while not (instence.appOk or  instence2.appOk):
+        if instence2.outOfService:
+            break
+        instence2.start()
         time.sleep( 2 )
     
     print("=" * 50+"结束")     
