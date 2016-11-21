@@ -14,13 +14,14 @@ class conn:
     
     sqlStr_ = ''
     def __init__(self, db):
-        self.db_ = db    
-		try:
-			self.connPt_ = pymysql.connect(host=self.host_,port=self.port_,user=self.user_,db=self.db_,charset=self.charset_)
-			#self.connPt_ = pymysql.connect(host=self.host_,port=self.port_,user=self.user_,passwd=self.passswd_,db=self.db_,charset=self.charset_)
-			self.cursor_ = self.connPt_.cursor()
-		except:
-			print("数据库无法连接，相关功能停用!")
+        try:
+            self.db_ = db    
+            self.connPt_ = pymysql.connect(host=self.host_,port=self.port_,user=self.user_,db=self.db_,charset=self.charset_)
+            #self.connPt_ = pymysql.connect(host=self.host_,port=self.port_,user=self.user_,passwd=self.passswd_,db=self.db_,charset=self.charset_)
+            self.cursor_ = self.connPt_.cursor()
+        except:
+            print("数据库无法连接，相关功能停用!")
+        
     def close(self):
         self.connPt_.close()    
     def execute(self,sql,data):
