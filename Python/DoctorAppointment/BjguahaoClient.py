@@ -49,16 +49,16 @@ class BjguahaoClient(object):
                 self.__session.cookies.update(self.__cookie)
                 soup = BS(self.open(self.homeURL).text, "html.parser")
                 print("已登陆账号： %s" % soup.find("p", class_="grdbnav_context_right").getText())
-                print("=" * 50)
+                print("." * 50)
             except:
                 print("检测到的cookie文件失效，重新登录")
                 self.login("13810617774", "jiushizhu007")
-                print("=" * 50)
+                print("." * 50)
             
         else:            
             print("没有找到cookie文件，正在调用login方法登录一次！")
             self.login("13810617774", "jiushizhu007")  
-            print("=" * 50)
+            print("." * 50)
             
 
     # 登录
@@ -96,7 +96,7 @@ class BjguahaoClient(object):
                 #"captcha": captcha
             }
             res = self.__session.post(self.__loginURL, data=data)
-            print("=" * 50)
+            print("." * 50)
             if res.json()["msg"] == "OK":
                 print("登录成功")
                 self.__saveCookie()
@@ -123,12 +123,12 @@ class BjguahaoClient(object):
             cookies = self.__session.cookies.get_dict()
             json.dump(cookies, output)
             print("=" * 50)
-            print("已在同目录下生成cookie文件：", self.cookieFile)
+            print("已在同目录下生成cookie文件：\r\n", self.cookieFile)
 
     def __loadCookie(self):
         """读取cookie文件，返回反序列化后的dict对象，没有则返回None"""
         if os.path.exists(self.cookieFile):
-            print("=" * 50)
+            print("." * 50)
             with open(self.cookieFile, "r") as f:
                 cookie = json.load(f)
                 return cookie

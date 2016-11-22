@@ -81,7 +81,7 @@ class Puh3(object):
         self.patientId = self.userDict[patientName]
         self.doctorId = self.doctorDict[doctorName]
         print("="*50)
-        print("即将为"+patientName+"预约 "+self.appDate+" "+time+"["+name+"]的["+doctorName+"]")
+        print("\r\n即将为["+patientName+"]预约 "+self.appDate+" "+time+"["+name+"]的["+doctorName+"]")
         self.conn_=Conn.conn("BJGuahao")
         #2_2_2016-11-10 行_上1/下2午_日期
         if time == "上午" :
@@ -100,7 +100,7 @@ class Puh3(object):
                 soup = BS(res, "html.parser")
                 self.departmentId = soup.find(id="dId")["value"]
                 print("正在打开["+x.get_text()+"]\t科室代码["+self.departmentId+"]")
-                print("=" * 50)                
+                print("." * 50)                
                 break
             
         # 若已经有 cookie 则直接登录
@@ -177,8 +177,8 @@ class Puh3(object):
                     if x["doctorId"] == self.doctorId:#目标医生                        
                         self.dutySourceId = x["dutySourceId"]                      
                         smsCode = self.getSMSCode()
-                        self.confirm(smsCode)   
                         print("已收到验证码"+str(smsCode)+"，正在提交订单")
+                        self.confirm(smsCode)   
                         break
                     
                     x =backup.pop()
@@ -193,10 +193,22 @@ class Puh3(object):
 
                
 if __name__ == '__main__':
+    targetTime = "2016-11-22 09:29:10" 
+    
+    
+    print("正在等待"+targetTime)
+    while True:
+        if time.localtime()>time.strptime(targetTime, "%Y-%m-%d %H:%M:%S"):
+            break
+        time.sleep(10)
+        print(time.strftime("%Y-%m-%d %H:%M:%S",time.localtime()))
+
+        
     #时间，医生一一对应，按自然优先级抢号
     instence = Puh3("妇科门诊","2016-11-29","上午","张璐芳","张宇微")
+    print("*"*50)
+    print("*"*50)
     instence2 = Puh3("妇科门诊","2016-11-29","上午","田惠","张宇微")
-          
     print("*"*50+"  开始刷号")
     while not (instence.appOk or instence.outOfService):
         instence.start()
