@@ -193,7 +193,7 @@ class Puh3(object):
 
                
 if __name__ == '__main__':
-    targetTime = "2016-11-22 09:29:10" 
+    targetTime = "2016-11-25 09:29:10" 
     
     
     print("正在等待"+targetTime)
@@ -205,10 +205,10 @@ if __name__ == '__main__':
 
         
     #时间，医生一一对应，按自然优先级抢号
-    instence = Puh3("妇科门诊","2016-11-29","上午","张璐芳","张宇微")
+    instence = Puh3("妇科门诊","2016-12-02","上午","张璐芳","张宇微")
     print("*"*50)
     print("*"*50)
-    instence2 = Puh3("妇科门诊","2016-11-29","上午","田惠","张宇微")
+    instence2 = Puh3("妇科门诊","2016-12-02","上午","田惠","张宇微")
     print("*"*50+"  开始刷号")
     while not (instence.appOk or instence.outOfService):
         instence.start()
