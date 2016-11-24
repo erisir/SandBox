@@ -44,6 +44,7 @@ public class GPSTrackService extends Service {
 	private TencentLocationRequest request;
 
 	private  String gpsTrackFolder = "mnt/sdcard/myTrackLog/" ;
+	private  String gpsTrackLogFolder = "mnt/sdcard/myTrackLog/log/" ;
 	private  String gpsTrackFileEnd = "</trkseg>\r\n</trk>\r\n</gpx>";	
 
 	private  int GPSAccuracy = 100; 
@@ -68,6 +69,7 @@ public class GPSTrackService extends Service {
 		try {
 			InputStream fis = new FileInputStream(path);
 			InputStreamReader isr = new InputStreamReader(fis, Charset.forName("UTF-8"));
+			@SuppressWarnings("resource")
 			BufferedReader br = new BufferedReader(isr);
 			br.readLine();
 			line = br.readLine();
@@ -256,7 +258,21 @@ public class GPSTrackService extends Service {
 			}        
 		}                  
 	};
-
+	public boolean LogError(String content) {
+		 
+		if (createLogFile()) {
+			FileWriter writer;
+			try {
+				writer = new FileWriter(this.getGPSLogPath(),true);
+				writer.write(content);
+				writer.close();
+				writer = null;
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}	
+		return true;
+	}
 	@SuppressLint("DefaultLocale")
 	public boolean saveLocations() {
 		if (createFile()) {
@@ -295,6 +311,9 @@ public class GPSTrackService extends Service {
 	public String getGPSTrackPath() {
 		return gpsTrackFolder+DateFormat.format("yyyyMMdd", new Date())+".gpx";
 	}
+	public String getGPSLogPath() {
+		return gpsTrackLogFolder+DateFormat.format("yyyyMMdd", new Date())+"Log.gpx";
+	}
 
 	private  boolean createFile(){
 		File file = new File(getGPSTrackPath());
@@ -313,6 +332,20 @@ public class GPSTrackService extends Service {
 
 			} catch (IOException e) {
 				LogMessage(true,"createFile"+e.toString());
+				return false;
+			}
+		}
+		file = null;
+		return true;
+	}
+	private  boolean createLogFile(){
+		 
+		File file = new File(getGPSLogPath());
+		if(file.exists() == false){
+			try {
+				file.createNewFile();
+			} catch (IOException e) {
+				LogMessage(true,"createLogFile"+e.toString());
 				return false;
 			}
 		}
@@ -346,7 +379,10 @@ public class GPSTrackService extends Service {
 
 	private  void LogMessage(boolean flag, String string) {
 		Log.i(TAG,string);
-		if(flag)sendMSG(0,DateFormat.format("HH.mm.ss", new Date())+"\t"+string);
+		if(flag){
+			sendMSG(0,DateFormat.format("HH.mm.ss", new Date())+"\t"+string);
+			LogError(DateFormat.format("HH.mm.ss", new Date())+"\t"+string);
+		}
 
 	}
 
