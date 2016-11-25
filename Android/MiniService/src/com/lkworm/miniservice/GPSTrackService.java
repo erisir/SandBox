@@ -312,7 +312,7 @@ public class GPSTrackService extends Service {
 		return gpsTrackFolder+DateFormat.format("yyyyMMdd", new Date())+".gpx";
 	}
 	public String getGPSLogPath() {
-		return gpsTrackLogFolder+DateFormat.format("yyyyMMdd", new Date())+"Log.gpx";
+		return gpsTrackLogFolder+DateFormat.format("yyyyMMdd", new Date())+"Log.log";
 	}
 
 	private  boolean createFile(){
@@ -381,7 +381,7 @@ public class GPSTrackService extends Service {
 		Log.i(TAG,string);
 		if(flag){
 			sendMSG(0,DateFormat.format("HH.mm.ss", new Date())+"\t"+string);
-			LogError(DateFormat.format("HH.mm.ss", new Date())+"\t"+string);
+			LogError("\r\n"+DateFormat.format("HH.mm.ss", new Date())+"\t"+string);
 		}
 
 	}
