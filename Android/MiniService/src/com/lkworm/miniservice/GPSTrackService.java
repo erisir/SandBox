@@ -44,7 +44,7 @@ public class GPSTrackService extends Service {
 	private TencentLocationRequest request;
 
 	private  String gpsTrackFolder = "mnt/sdcard/myTrackLog/" ;
-	private  String gpsTrackLogFolder = "mnt/sdcard/myTrackLog/log/" ;
+	private static  String gpsTrackLogFolder = "mnt/sdcard/myTrackLog/log/" ;
 	private  String gpsTrackFileEnd = "</trkseg>\r\n</trk>\r\n</gpx>";	
 
 	private  int GPSAccuracy = 100; 
@@ -258,12 +258,12 @@ public class GPSTrackService extends Service {
 			}        
 		}                  
 	};
-	public boolean LogError(String content) {
+	public static boolean LogError(String content) {
 		 
 		if (createLogFile()) {
 			FileWriter writer;
 			try {
-				writer = new FileWriter(this.getGPSLogPath(),true);
+				writer = new FileWriter(getGPSLogPath(),true);
 				writer.write(content);
 				writer.close();
 				writer = null;
@@ -311,7 +311,7 @@ public class GPSTrackService extends Service {
 	public String getGPSTrackPath() {
 		return gpsTrackFolder+DateFormat.format("yyyyMMdd", new Date())+".gpx";
 	}
-	public String getGPSLogPath() {
+	public static String getGPSLogPath() {
 		return gpsTrackLogFolder+DateFormat.format("yyyyMMdd", new Date())+"Log.log";
 	}
 
@@ -338,14 +338,14 @@ public class GPSTrackService extends Service {
 		file = null;
 		return true;
 	}
-	private  boolean createLogFile(){
+	private static  boolean createLogFile(){
 		 
 		File file = new File(getGPSLogPath());
 		if(file.exists() == false){
 			try {
 				file.createNewFile();
 			} catch (IOException e) {
-				LogMessage(true,"createLogFile"+e.toString());
+				LogError("createLogFile"+e.toString());
 				return false;
 			}
 		}
