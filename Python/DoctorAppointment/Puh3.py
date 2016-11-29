@@ -34,6 +34,7 @@ class Puh3(object):
         "张宇微":"225572924"
         }
     doctorDict = {
+        "ts":"201122688",
         #妇科
         "田惠":"201105238",
         "李华":"201121994",
@@ -74,14 +75,14 @@ class Puh3(object):
         "test":"201105712"
         }
     
-    def __init__(self,name,date,time,doctorName,patientName="张宇微"):
-        self.keshiName = name
+    def __init__(self,patientName,date,time,deparmentName,doctorName):
+        self.keshiName = deparmentName
         self.appDate = date
         self.doctorName = doctorName
         self.patientId = self.userDict[patientName]
         self.doctorId = self.doctorDict[doctorName]
         print("="*50)
-        print("\r\n即将为["+patientName+"]预约 "+self.appDate+" "+time+"["+name+"]的["+doctorName+"]")
+        print("\r\n即将为["+patientName+"]预约 "+self.appDate+" "+time+"["+deparmentName+"]的["+doctorName+"]")
         self.conn_=Conn.conn("BJGuahao")
         #2_2_2016-11-10 行_上1/下2午_日期
         if time == "上午" :
@@ -95,7 +96,7 @@ class Puh3(object):
         self.keshiurl = self.homeurl
         for x in soup.find_all("a", class_="kfyuks_islogin",text=re.compile(self.keshiName)):
             if x.get_text() == self.keshiName:
-                self.keshiurl += x["href"]               
+                self.keshiurl += x["href"]             
                 res = self.client.open(self.keshiurl).text
                 soup = BS(res, "html.parser")
                 self.departmentId = soup.find(id="dId")["value"]
@@ -155,73 +156,84 @@ class Puh3(object):
     def start(self):
         
         self.tryCounter += 1
-               
-        res = self.client.open(self.keshiurl).text
-        soup = BS(res, "html.parser")
-        
-        for avilable in soup.find_all(class_="ksorder_kyy"):#检查是否已经放号
-            temp = avilable.input["value"].split('_', 3 )
-            if temp[2] == self.appDate and  temp[1] == self.appTime:
-                data = {
-                "hospitalId":self.hospitalId,
-                "departmentId": self.departmentId,
-                "dutyCode":self.appTime,
-                "dutyDate":self.appDate,
-                "isAjax":"true"
-                }
-                res = self.client.getSession().post(self.appointPosturl, data=data)
-                backup = res.json()["data"].copy()
-          
-                x =backup.pop()
-                while x:
-                    if x["doctorId"] == self.doctorId:#目标医生                        
-                        self.dutySourceId = x["dutySourceId"]                      
-                        smsCode = self.getSMSCode()
-                        print("已收到验证码"+str(smsCode)+"，正在提交订单")
-                        self.confirm(smsCode)   
-                        break
-                    
-                    x =backup.pop()
-                   
-                break
+        try:       
+            res = self.client.open(self.keshiurl).text
+            soup = BS(res, "html.parser")
             
-        if(not self.appOk):
-            print(".",end='.',flush=True)
-            if self.tryCounter >=25:
-                self.tryCounter = 0
-                print("\n")
+            for avilable in soup.find_all(class_="ksorder_kyy"):#检查是否已经放号
+                temp = avilable.input["value"].split('_', 3 )
+                if temp[2] == self.appDate and  temp[1] == self.appTime:
+                    data = {
+                    "hospitalId":self.hospitalId,
+                    "departmentId": self.departmentId,
+                    "dutyCode":self.appTime,
+                    "dutyDate":self.appDate,
+                    "isAjax":"true"
+                    }
+                    res = self.client.getSession().post(self.appointPosturl, data=data)
+                    backup = res.json()["data"].copy()
+              
+                    x =backup.pop()
+                    while x:
+                        if x["doctorId"] == self.doctorId:#目标医生                        
+                            self.dutySourceId = x["dutySourceId"]                      
+                            smsCode = self.getSMSCode()
+                            print("已收到验证码"+str(smsCode)+"，正在提交订单")
+                            self.confirm(smsCode)   
+                            break
+                        
+                        x =backup.pop()
+                       
+                    break
+                
+            if(not self.appOk):
+                print(".",end='-',flush=True)
+                if self.tryCounter >=25:
+                    self.tryCounter = 0
+                    print("\n")
+        except:
+            print("连接错误")
 
                
 if __name__ == '__main__':
-    targetTime = "2016-11-29 09:29:10" 
+    today = time.strftime("%y-%m-%d",time.localtime())
+    today+= " "
+    targetTime = today+"09:29:30" 
+    releasedTime = today+"09:30:30" 
     
-    
-    print("正在等待"+targetTime)
+    print("正在等待\t"+targetTime)
     while True:
-        if time.localtime()>time.strptime(targetTime, "%Y-%m-%d %H:%M:%S"):
+        if time.localtime()>time.strptime(targetTime, "%y-%m-%d %H:%M:%S"):
             break
         time.sleep(10)
-        print(time.strftime("%Y-%m-%d %H:%M:%S",time.localtime()))
+        print(time.strftime("%y-%m-%d %H:%M:%S",time.localtime()))
 
-        
+    appInfo = {"农大官,2016-12-06,上午,口腔门诊,李志刚",
+              "张宇微,2016-12-06,上午,妇科门诊,张璐芳"}
     #时间，医生一一对应，按自然优先级抢号
-    instence = Puh3("口腔门诊","2016-12-06","上午","李志刚","农大官")
-    print("*"*50)
-    print("*"*50)
-    instence2 = Puh3("妇科门诊","2016-12-06","上午","张璐芳","张宇微")
-    print("*"*50+"  开始刷号")
-    while not (instence.appOk or instence.outOfService):
-        instence.start()
-        time.sleep( 2 )
+    counter = 0
+    instence = {}
+    for x in appInfo:
+        a = x.split(",")
+        instence[counter] = Puh3(a[0],a[1],a[2],a[3],a[4])
+        counter += 1
+        print("*"*50)
         
-    print("*"*50+ instence.doctorName +"号没了" + "继续刷"+instence.doctorName+"的号")
-    
-    while not (instence.appOk or  instence2.appOk):
-        if instence2.outOfService:
-            break
-        instence2.start()
+    print("*"*50+"开始刷["+instence[0].doctorName+"]的号")
+    timeOut = False
+    while not (instence[0].appOk or instence[0].outOfService or timeOut):
+        instence[0].start()
+        timeOut = time.localtime()>time.strptime(releasedTime, "%y-%m-%d %H:%M:%S")
         time.sleep( 2 )
     
-    print("=" * 50+"结束")     
+        print("\r\n"+"*"*50+"\r\n"+ instence[0].doctorName +"号没了" )
+    
+   
+    for i in range(1,len(appInfo)):
+        print("*"*50 + "继续刷"+instence[i].doctorName+"的号")
+        instence[i].start()
+        time.sleep( 2 )
+    
+    print("\r\n"+"=" * 50+"结束")     
     time.sleep( 2000 )
         
