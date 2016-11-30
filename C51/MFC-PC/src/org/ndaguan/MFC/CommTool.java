@@ -33,7 +33,7 @@ public class CommTool {
 	private SerialPort serialPort;
 	private OutputStream outputStream;
 	private int baudRate = 19200;
-	private String comId = "COM3";
+	private String comId = "COM4";
 	private InputStream inputStream;
 	private String lastError = "No error";
 	private boolean isDeviceReady;
@@ -105,8 +105,8 @@ public class CommTool {
 	}
 	public boolean setPosition(double step) throws IOException//um
 	{
-		double curr = getPosition();
-		double delta = curr - step;
+		double[] curr = getPosition();
+		double delta = curr[0] - step;
 		double step2Um = 0.49827043;
 		double sleept =Math.abs( 0.2*delta/step2Um);
 		byte[] rawData = new byte[4];
@@ -128,7 +128,7 @@ public class CommTool {
 		return false;
 	}
 
-	public double getPosition() throws IOException
+	public double[] getPosition() throws IOException
 	{
 		byte []buf = new byte[5];
 		PackageCommand(_U_GetVotage,null,buf);
@@ -143,14 +143,15 @@ public class CommTool {
 		*/
 		if(bret.length<=0){
 			LogMessage("getPosition--read nothing");
-			return  -1;
+			return  null;
 		}
-		 
-		long pos = (int)((bret[2]&0x0FF)*256+(bret[3]&0x0FF));//RawToLong(bret,2);
-		LogMessage("POS=["+pos+"]");
-		roiList_.get(0).setZ(pos);
-		return (double)pos ;
+		
+		float Vref =  (((bret[4]&0x0FF)*256+(bret[5]&0x0FF)));//RawToLong(bret,2);
+		float Vsensor =  (((bret[2]&0x0FF)*256+(bret[3]&0x0FF)));//RawToLong(bret,2);
+		float Vout =  (((bret[6]&0x0FF)*256+(bret[7]&0x0FF)));//RawToLong(bret,2);
+		return new double[]{Vsensor,Vref, Vout };
 	}
+	
 	public double[] getPIDStatue() throws IOException
 	{
 		byte []buf = new byte[5];

@@ -20,7 +20,7 @@
 void Uart1Init(); 
 void SendData(unsigned   char dat);
 void SendString(unsigned   char *s);
-void SendInt(unsigned long   int v);
+void SendInt(unsigned    int v[]);
 unsigned char checksumCalc(unsigned   char rec[]); 
 void parseCMD(); 
 bit  cmd_ready();

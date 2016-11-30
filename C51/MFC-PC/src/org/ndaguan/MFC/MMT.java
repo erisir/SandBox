@@ -31,7 +31,7 @@ public class MMT {
 	private static long timeStart;	
 	
 	public static String[] CHARTLIST = new String[]{
-		"Chart-Z","Chart-RT"
+		"V-sensor","V-ref","V-out","Chart-RT"
 	};
 
 	public static void logError(String string) 

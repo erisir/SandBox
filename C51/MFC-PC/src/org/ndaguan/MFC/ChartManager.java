@@ -26,7 +26,7 @@ public class ChartManager extends JFrame  {
 	private HashMap<String, XYSeries> dataSeries_;
 	private HashMap<String, JFreeChart> chartSeries_;
 	private XYSeriesCollection dataset_;
-	private int ChartMaxItemCount = 8000;
+	private int ChartMaxItemCount = 2000;
 	private final int DEFAULT_WIDTH = 920;
 	private int tapSize = 870;
 	private final int DEFAULT_HEIGHT =(int)( DEFAULT_WIDTH*0.618);
@@ -97,8 +97,8 @@ public class ChartManager extends JFrame  {
 			return null;
 
 		final XYSeries temp_ =  new XYSeries(tableName);
-		final XYSeries temp1_ =  new XYSeries(tableName+"SetVotage");
-		final XYSeries temp2_ =  new XYSeries(tableName+"PWMValue");
+		final XYSeries temp1_ =  new XYSeries(tableName+"1");
+		final XYSeries temp2_ =  new XYSeries(tableName+"2");
 
 		temp_.setMaximumItemCount(ChartMaxItemCount );
 		temp1_.setMaximumItemCount(ChartMaxItemCount );
@@ -113,8 +113,8 @@ public class ChartManager extends JFrame  {
 
 		chartSeries_.put(tableName, chart);
 		dataSeries_.put(tableName,temp_);	
-		dataSeries_.put(tableName+"SetVotage",temp1_);	
-		dataSeries_.put(tableName+"PWMValue",temp2_);	
+		dataSeries_.put(tableName+"1",temp1_);	
+		dataSeries_.put(tableName+"2",temp2_);	
 
 		ChartPanel cPanel = new ChartPanel(chart, true);
 		cPanel.setBounds(10, 10, tapSize, (int)(tapSize*0.6));
@@ -145,10 +145,10 @@ public class ChartManager extends JFrame  {
 	}
 
 	public void setChartWidth(int size) {
-		for(int i =0;i<dataSeries_.size();i++){
-			
-			//dataSeries_.get(MMT.CHARTLIST[i]).setMaximumItemCount(size);
-
+		for(int i =0;i<MMT.CHARTLIST.length;i++){			
+			dataSeries_.get(MMT.CHARTLIST[i]).setMaximumItemCount(size);
+			dataSeries_.get(MMT.CHARTLIST[i]+"1").setMaximumItemCount(size);
+			dataSeries_.get(MMT.CHARTLIST[i]+"2").setMaximumItemCount(size);
 		}
 	}
 

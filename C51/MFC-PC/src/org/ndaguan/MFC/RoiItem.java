@@ -58,6 +58,7 @@ public  class RoiItem {
 	private double l_;
 	private boolean isBackground_;
 	private double[] calProfileNorm;
+	private double z_;
 
 	public static RoiItem createInstance(double[] itemData) {
 		return new RoiItem(itemData);
@@ -214,12 +215,12 @@ public  class RoiItem {
 			dataFileWriter_ = new BufferedWriter(new FileWriter(file));
 
 			dataFileWriter_
-			.write("Timestamp/ms, Frame, XPos/pixel,XPos/um, YPos/pixel, YPos/um, ZPos/um,StageZ/um,MagnetZ/um,ForceX/pN,ForceY/pN\r\n");/*,Std(x/y),skrewnessy*/
+			.write("Timestamp/ms, Frame, V-sensor,V-ref,V-out\r\n");
 			dataFileWriter_.flush();
 		}
 		else{
 			dataFileWriter_
-			.write(String.format("%f,%d,%f,%f,%f,%f,%f,%f,%f,%f\r\n",elapsed,frameNum_,x_,xPhy_,y_,yPhy_,zPhy_,MMT.stageCurrentPosition,MMT.magnetCurrentPosition,fx_,fy_/*,stdXdY_,skrewness_*/));
+			.write(String.format("%f,%d,%f,%f,%f\r\n",elapsed,frameNum_,z_,x_,y_/*,stdXdY_,skrewness_*/));
 		}
 		return true;
 
@@ -228,21 +229,28 @@ public  class RoiItem {
 
 	private double[] getMean() {//z,x,y,l
 		double pointNum = 0.01;
-		return new double[]{((int)(showChartXYZStatis_[2].getMean()/pointNum))*pointNum,((int)(showChartXYZStatis_[0].getMean()/pointNum))*pointNum,((int)(showChartXYZStatis_[1].getMean()/pointNum))*pointNum,((int)(showChartXYZStatis_[3].getMean()/pointNum))*pointNum};
+		double  temp[] = new double[3];
+		for (int i = 0; i < 3; i++) {
+			temp[i] = (showChartXYZStatis_[i].getMean()/pointNum)*pointNum;
+		}
+		return temp;
 	}
-	private double[] getXYMean() {
-		return new double[]{showChartXYZStatis_[0].getMean(),showChartXYZStatis_[1].getMean()};
-	}
-	private double[] getStandardDeviation() {//z,x,y,l
-		return new double[]{showChartXYZStatis_[2].getStandardDeviation(),showChartXYZStatis_[0].getStandardDeviation(),showChartXYZStatis_[1].getStandardDeviation(),showChartXYZStatis_[3].getStandardDeviation()};
+	 
+	private double[] getStandardDeviation() {//xyz
+		double  temp[] = new double[3];
+		for (int i = 0; i < 3; i++) {
+			temp[i] = showChartXYZStatis_[i].getStandardDeviation();
+		}
+		return temp;
 	}
 	private double[] getDrawScale() {
 		double min = 50;
 		double[] std = getStandardDeviation();
 		for(int i = 0;i<std.length;i++){
 			std[i] = std[i]*6;
+			std[i] = std[i]<min?min:std[i];
 		}
-		return new double[]{(std[0]<min)?min:std[0],std[1]<min?min:std[1],std[2]<min?min:std[2],std[3]<min?min:std[3]};
+		return std;
 	}
 
 	public void updateDataSeries(final float eclipes,final double lon,final double lat) {
@@ -250,29 +258,24 @@ public  class RoiItem {
 		
 
 		final boolean update = true;
-		final int selectedIndex = chart_.getSelectedTap();
-		 
 		SwingUtilities.invokeLater(new Runnable(){
 			@Override
 			public void run() {
 				double data[] = getItemData();
-				//for(int i = 0;i<1;i++){
+				for(int i = 0;i<3;i++){
 					try{
-						//chart_.getDataSeries().get(MMT.CHARTLIST[0]).add(eclipes,data[0],true);
-						chart_.getDataSeries().get(MMT.CHARTLIST[0]+"SetVotage").add(eclipes,lon,update&&(0 == selectedIndex));
-						//chart_.getDataSeries().get(MMT.CHARTLIST[0]+"PWMValue").add(eclipes, lat,update&&(0 == selectedIndex));
-							
-						
-						
+						chart_.getDataSeries().get(MMT.CHARTLIST[i]).add(eclipes,data[i],true);
 					}catch(Exception e){
 						System.out.print(e.toString());
 					}
-				//}
+				}
 
 				if(update  && (MMT.VariablesNUPD.AutoRange.value() == 1)){
 					double[] mean = getMean();
 					double[] drawScale = getDrawScale();
-					for(int i=0;i<1;i++){
+					//System.out.print(String.format("\r\n%.1f\t%.1f\t%.1f", drawScale[0],drawScale[1],drawScale[2]));
+					//System.out.print(String.format("\r\n%.1f\t%.1f\t%.1f", mean[0],mean[1],mean[2]));
+					for(int i=0;i<3;i++){
 						chart_.getChartSeries().get(MMT.CHARTLIST[i]).getXYPlot().getRangeAxis().setRange(mean[i] - drawScale[i],mean[i] + drawScale[i]);
 					}
 				}
@@ -323,7 +326,7 @@ public  class RoiItem {
 
 	}
 	private double[] getItemData(){
-		return new double[]{zPhy_};
+		return new double[]{z_,x_,y_};
 	}
 	public double[] getXY() {
 		return new double[]{x_,y_};
@@ -331,40 +334,19 @@ public  class RoiItem {
 	public double getZ() {
 		return zPhy_;
 	}
-	public void setXY(double xPos, double yPos) {//moving ROI
+ 
+	public void setXYZ(double zPos, double xPos, double yPos) {//moving ROI
 		x_ = xPos;
 		y_ = yPos;
-	}
-	public void setXY(double[] pos){
-		if(isBackground_)
-			return;
-		//pixel
-		x_ = pos[0];
-		y_ = pos[1];
-		//uM
-		//nM:calculate Force with a bigger windowSize
-		calcForceXYZStatis_[0].addValue(xPhy_*1e3);
-		calcForceXYZStatis_[1].addValue(yPhy_*1e3);
-		calcForceXYZStatis_[2].addValue(xPhy_ * yPhy_*1e6);
-		//uM:get mean&standardDeviation  to update chart with a smaller windowSize;
-		showChartXYZStatis_[0].addValue(xPhy_);
-		showChartXYZStatis_[1].addValue(yPhy_);
-		//uM:get mean&sum of the history data
-		 
+		z_ = zPos;
+		showChartXYZStatis_[0].addValue(zPos);
+		showChartXYZStatis_[1].addValue(xPos);
+		showChartXYZStatis_[2].addValue(yPos);
+		
 	}
 	 
-	public void setZ(double zpos) {
-		zPhy_ = zpos;
-		showChartXYZStatis_[2].addValue(zPhy_);
-		 
-	}
-	public void setL() {
-		double deltax = ( xPhy_ -xPhy0_);
-		double deltay = ( yPhy_ -yPhy0_);
-		double deltaz = ( zPhy_ -zPhy0_);
-		l_ = Math.sqrt(deltax*deltax + deltay*deltay + deltaz*deltaz);
-		showChartXYZStatis_[3].addValue(l_);
-	}
+ 
+	 
 	public void setChartVisible(boolean flag) {
 		chart_.setVisible(flag);
 	}
@@ -384,12 +366,7 @@ public  class RoiItem {
 		}
 
 	}
-	public DescriptiveStatistics[] getStats() {
-		return calcForceXYZStatis_;
-	}
-	public DescriptiveStatistics getStatCross() {
-		return calcForceXYZStatis_[2];
-	}
+ 
 	public void setForce(double[] force) {
 		fx_ = force[0];
 		fy_ = force[1];
@@ -423,11 +400,6 @@ public  class RoiItem {
 				i++;
 			}
 		}
-	}
-	public void setXYOrign() {
-		double[] xymean = getXYMean();
-		xPhy0_ = xymean[0];
-		yPhy0_ = xymean[1];
 	}
 	public void setZOrign(double z) {
 		zPhy0_ = z;

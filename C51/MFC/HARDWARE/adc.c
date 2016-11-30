@@ -29,18 +29,25 @@
 
 unsigned int get_votage_smooth_window = 300;
 unsigned int ch = 2;
-
+unsigned int vBandgap = 0;
+unsigned int vBandgapReal = 1270;
+float Dig2Ang = 0.0;
 /*----------------------------
 初始化ADC
 ----------------------------*/
 void InitADC()
 {
+	P1ASF = 0x00;                   //不设置P1口为模拟口   读取bangap电压
+	ADC_RES = 0;                    //清除结果寄存器
+    ADC_CONTR = ADC_POWER | ADC_SPEEDLL;
+	Delay100ms();                       //ADC上电并延时
+	vBandgap = GetADCResult(0);
+	Dig2Ang = (float)(vBandgapReal)/vBandgap;
     P1ASF = 0xff;                   //设置P1口为AD口
     ADC_RES = 0;                    //清除结果寄存器
     ADC_CONTR = ADC_POWER | ADC_SPEEDLL;
     Delay100ms();                       //ADC上电并延时
 }
-
  
 void SetVotageChanel(unsigned int v){
 	ch = v;
@@ -51,39 +58,40 @@ void SetVotageTimes(unsigned int v_data)
 }
 
 void GetPosition(){
-	SendInt(getCurrentVoatage());
+    unsigned  int temp[3];
+	ch = 2;
+	temp[0]=getCurrentVoatage();
+	ch = 4;
+	temp[1]=getCurrentVoatage();
+	ch = 6;
+	temp[2]=getCurrentVoatage();
+	SendInt(temp);
 } 
-unsigned long int getCurrentVoatage(){
-	return GetADCResult(ch,get_votage_smooth_window);
+unsigned int getCurrentVoatage(){
+    
+	//return (unsigned int)(GetADCResult(ch)*Dig2Ang);
+	return GetADCResult(ch);
 }
 
 /*----------------------------
 读取ADC结果
 ----------------------------*/
-unsigned long int GetADCResult(unsigned char ch,unsigned int ADC_smooth_window)
-{
-    
-
-	unsigned int cnt = 0;
-	float v = 0.0,t=0.0;
+unsigned  int GetADCResult(unsigned char ch)
+{   
 	unsigned int temp;
-    ADC_CONTR = ADC_POWER | ADC_SPEEDLL | ADC_START | ch ;//开始转换
-    _nop_();_nop_();_nop_();_nop_();_nop_();_nop_();                         
-    
-	for(cnt = 0;cnt<ADC_smooth_window;cnt++){
-	    while (!(ADC_CONTR & ADC_FLAG));             //等待转换结束(ADC_FLAG=0时一直等待，直到变为1跳出)
-	    	ADC_CONTR &= !ADC_FLAG;                 //关闭AD转换
-			temp = 	 ADC_RES& 0xFF;
-			temp = (temp << 2) | (ADC_RESL & 3);
-			t= (float)temp;
-			v += t/ADC_smooth_window;
-		  	ADC_RES = 0;
-			ADC_RESL = 0;
-		 	ADC_CONTR = ADC_POWER | ADC_SPEEDHH | ADC_START | ch ;//开始转换
-		 	_nop_();_nop_();_nop_();_nop_();_nop_();_nop_();    
-		}
-		
-    return (unsigned long int) (v*4760.0/(1024));    //返回数据（10位AD值，ADC_RES高8位+ADC_RESL低2位）	
+	ADC_CONTR = ADC_POWER | ADC_SPEEDLL | ch | ADC_START;
+    _nop_();                        //等待4个NOP
+    _nop_();
+    _nop_();
+    _nop_();
+    while (!(ADC_CONTR & ADC_FLAG));//等待ADC转换完成
+    ADC_CONTR &= ~ADC_FLAG;         //Close ADC
+
+    temp = 	 ADC_RES& 0xFF;
+	temp = (temp << 2) | (ADC_RESL & 0x03); 
+
+    return temp;                //返回数据（10位AD值，ADC_RES全8位+ADC_RESL低2位）	
+ 	
 }
 
  

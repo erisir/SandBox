@@ -160,20 +160,30 @@ void SendString(unsigned   char *s)
         SendData(*s++);         //·¢ËÍµ±Ç°×Ö·û
     }
 }
-void SendInt(unsigned  long  int v){
+void SendInt(unsigned    int v[]){
 
-   	u8 rec[5]; 
+   	u8 rec[9]; 
 	rec[0] = '@';
 	rec[1] = 'P';
-	rec[2] = v/256;
-	rec[3] = v%256;
-	rec[4] = checksumCalc(rec);
+	rec[2] = v[0]/256;
+	rec[3] = v[0]%256;
+	rec[4] = v[1]/256;
+	rec[5] = v[1]%256;
+	rec[6] = v[2]/256;
+	rec[7] = v[2]%256;
+
+	rec[8] = checksumCalc(rec);
 
     SendData(rec[0]);
 	SendData(rec[1]);
 	SendData(rec[2]);
 	SendData(rec[3]);
 	SendData(rec[4]);
+	SendData(rec[5]);
+	SendData(rec[6]);
+	SendData(rec[7]);
+	SendData(rec[8]);
+	 
  
 }
 void SendInt1(unsigned int setV,unsigned int pwm){

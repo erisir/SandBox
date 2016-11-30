@@ -57,8 +57,7 @@ public class Kernel {
 				String time =((Element) trkpt.get(j)).getChildren().get(1).getValue();
 				String[] temp = time.substring(11,19).split(":");
 				double dtime =  Double.valueOf(temp[0]).doubleValue()*3600+Double.valueOf(temp[1]).doubleValue()*60+Double.valueOf(temp[2]).doubleValue();
-				rt.get(0).setZ(dtime);
-				rt.get(0).updateDataSeries(j, dtime, 0);
+				 
 				System.out.print(j);
 				System.out.print("\t");
 				System.out.print(time.substring(11,19)+"\r\n");
@@ -75,14 +74,14 @@ public class Kernel {
 		Kernel kr = new Kernel();
 		
 		rt.get(0).setChartVisible(true);
-		kr.parseXML(rt,"D:\\tracklog\\20161117.gpx");
-      	if(true)return;
+		/*kr.parseXML(rt,"D:\\tracklog\\20161117.gpx");
+      	if(true)return;*/
       	
         CommTool comm = new CommTool(kr,rt);
         PreferDailog preDla = new PreferDailog(kr,rt,comm);
         preDla.setVisible(true);
 		int ind = 0;
-	    int poss = 0;
+	    double[] poss = new double[3];
 	    long start_time = System.nanoTime();
 	    boolean pwmBack = false;
 	    int counter = 0;
@@ -91,17 +90,25 @@ public class Kernel {
 	    int dvalue = 0;
 	    int last = 0;
       	int value = 1;
-      	int tmm = 1000;
+      	int tmm = 1000000;
       	comm.OpenTunel();
       	
 	    while(ind <9999999){
 			try {
-				poss = (int) comm.getPosition();
+				poss =  comm.getPosition();
+				if(poss[0] >4000 || poss[0] <100)
+					continue;
+				if(poss[1] >4000 || poss[1] <100)
+					continue;
+				if(poss[2] >4000 || poss[2] <100)
+					continue;
+				//System.out.print("\r\nVsensor,Vref,Vout=["+poss[0]+"]"+"["+poss[1]+"]"+"["+poss[2]+"]");
+				rt.get(0).setXYZ(poss[0],poss[1], poss[2]);
+				
 				TimeUnit.MILLISECONDS.sleep(2);
 				float eclipes= (float) ((System.nanoTime()-start_time)/10e6);   
 				rt.get(0).writeData("MFC",ind,eclipes);
-				System.out.print(String.format("value:\t%d\tind:\t%d\r\n",value,ind));
-				rt.get(0).setXY(0, value);
+				//System.out.print(String.format("value:\t%d\tind:\t%d\r\n",value,ind));
                 if((ind>=tmm) && (ind%tmm == 0)){
                 	value += 20;
 					comm.SetVotageTimes(value);
@@ -109,7 +116,7 @@ public class Kernel {
                 }
 				if(MMT.VariablesNUPD.PIDbyPC.value() == 1){
  
-					delta = PIDCalc(poss);//5;
+					delta = PIDCalc((long) poss[0]);//5;
 					rout += delta;
 					/*if(!pwmBack)
 						{
@@ -140,7 +147,7 @@ public class Kernel {
 				}
 				
 				//counter++;
-				rt.get(0).updateDataSeries1(pwmBack,(long) MMT.VariablesNUPD.Setvotage.value(),rout);
+				//rt.get(0).updateDataSeries1(pwmBack,(long) MMT.VariablesNUPD.Setvotage.value(),rout);
 				rt.get(0).updateDataSeries(eclipes,(long) MMT.VariablesNUPD.Setvotage.value(),(int)(rout*MMT.VariablesNUPD.MMTrout.value() ));
 			} catch (InterruptedException e) {
 				e.printStackTrace();
