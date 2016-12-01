@@ -146,9 +146,9 @@ class Puh3(object):
         res = self.client.getSession().post(url, data=data)   
         if res.json()["msg"]== "OK":
             self.appOk = True
-            print(res)
-            #tmp = res.json()["data"]
-            #print("["+tmp["patientName"]+"]\t已经成功预约\t"+tmp["hospitalName"]+"\t["+tmp["departmentName"]+"]\t\r\n"+tmp["dutyDate"]+tmp["ampm"]+"的号")
+            print(res.text)
+            tmp = res.json()["data"]
+            print("["+tmp["patientName"]+"]\t已经成功预约\t"+tmp["hospitalName"]+"\t["+tmp["departmentName"]+"]\t\r\n"+tmp["dutyDate"]+tmp["ampm"]+"的号")
         else:
             self.outOfService = True
             print(res.json()["msg"])
@@ -226,6 +226,7 @@ if __name__ == '__main__':
         timeOut = time.localtime()>time.strptime(releasedTime, "%y-%m-%d %H:%M:%S")
         time.sleep( 2 )
     
+    if not instence[0].appOk:
         print("\r\n"+"*"*50+"\r\n"+ instence[0].doctorName +"号没了" )
     
    
