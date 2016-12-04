@@ -8,6 +8,8 @@ import java.sql.Time;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.comm.CommPortIdentifier;
 import javax.comm.PortInUseException;
@@ -32,8 +34,8 @@ public class CommTool {
 	final byte _U_SetVotageChanel= 'b';
 	private SerialPort serialPort;
 	private OutputStream outputStream;
-	private int baudRate = 19200;
-	private String comId = "COM4";
+	private int baudRate = 115200;
+	private String comId = "COM6";
 	private InputStream inputStream;
 	private String lastError = "No error";
 	private boolean isDeviceReady;
@@ -105,8 +107,8 @@ public class CommTool {
 	}
 	public boolean setPosition(double step) throws IOException//um
 	{
-		double[] curr = getPosition();
-		double delta = curr[0] - step;
+		double  curr = getPosition();
+		double delta = curr - step;
 		double step2Um = 0.49827043;
 		double sleept =Math.abs( 0.2*delta/step2Um);
 		byte[] rawData = new byte[4];
@@ -127,29 +129,38 @@ public class CommTool {
 	public boolean setRelativeStagePosition(double step) {
 		return false;
 	}
-
-	public double[] getPosition() throws IOException
+	public boolean isNumeric(String str){
+        Pattern pattern = Pattern.compile("[0-9]*");
+        Matcher isNum = pattern.matcher(str);
+        if( !isNum.matches() ){
+            return false;
+        }
+        return true;
+ }	
+	public double getPosition() throws IOException
 	{
 		byte []buf = new byte[5];
 		PackageCommand(_U_GetVotage,null,buf);
 		sendCommand(buf);
 		Sleep(10);
 		byte[] bret = readAnswer();
-		/*LogMessage("readAnswer");
-		for (int i = 0; i < 5; i++) {
-			System.out.print((int)bret[i]);
-			System.out.print((char)' ');
-		}
-		*/
-		if(bret.length<=0){
-			LogMessage("getPosition--read nothing");
-			return  null;
+		char [] ret = new char[20];
+		LogMessage("\r\nreadAnswer");
+		for (int i = 0; i < bret.length; i++) {
+			System.out.print((char)bret[i]);
+			ret[i]= (char) bret[i];
 		}
 		
-		float Vref =  (((bret[4]&0x0FF)*256+(bret[5]&0x0FF)));//RawToLong(bret,2);
-		float Vsensor =  (((bret[2]&0x0FF)*256+(bret[3]&0x0FF)));//RawToLong(bret,2);
-		float Vout =  (((bret[6]&0x0FF)*256+(bret[7]&0x0FF)));//RawToLong(bret,2);
-		return new double[]{Vsensor,Vref, Vout };
+		if(bret.length<=0){
+			LogMessage("getPosition--read nothing");
+			return  0;
+		}
+		if(ret[0]=='@' && ret[1]=='P' && isNumeric(String.copyValueOf(ret).substring(2,3))){
+			double Vsensor =  Double.valueOf(String.copyValueOf(ret).substring(2,2+6)).doubleValue();//RawToLong(bret,2);		 
+			return Vsensor;
+			}else{
+				return 0;
+			}
 	}
 	
 	public double[] getPIDStatue() throws IOException

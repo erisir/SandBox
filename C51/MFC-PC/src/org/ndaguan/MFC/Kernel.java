@@ -81,7 +81,7 @@ public class Kernel {
         PreferDailog preDla = new PreferDailog(kr,rt,comm);
         preDla.setVisible(true);
 		int ind = 0;
-	    double[] poss = new double[3];
+	    double poss = 0;
 	    long start_time = System.nanoTime();
 	    boolean pwmBack = false;
 	    int counter = 0;
@@ -96,14 +96,11 @@ public class Kernel {
 	    while(ind <9999999){
 			try {
 				poss =  comm.getPosition();
-				if(poss[0] >4000 || poss[0] <100)
+				if(poss>400000 || poss <1)
 					continue;
-				if(poss[1] >4000 || poss[1] <100)
-					continue;
-				if(poss[2] >4000 || poss[2] <100)
-					continue;
+				
 				//System.out.print("\r\nVsensor,Vref,Vout=["+poss[0]+"]"+"["+poss[1]+"]"+"["+poss[2]+"]");
-				rt.get(0).setXYZ(poss[0],poss[1], poss[2]);
+				rt.get(0).setXYZ(poss,0, 0);
 				
 				TimeUnit.MILLISECONDS.sleep(2);
 				float eclipes= (float) ((System.nanoTime()-start_time)/10e6);   
@@ -116,7 +113,7 @@ public class Kernel {
                 }
 				if(MMT.VariablesNUPD.PIDbyPC.value() == 1){
  
-					delta = PIDCalc((long) poss[0]);//5;
+					delta = PIDCalc((long) poss);//5;
 					rout += delta;
 					/*if(!pwmBack)
 						{
