@@ -27,7 +27,7 @@
 #include "stm32f10x_it.h"
 #include <stdio.h>
 extern uint8_t indexWave[];
-extern uint8_t pwm_value;
+extern uint16_t pwm_value;
 __IO unsigned char busy; 
 __IO  char uart_flag;
 __IO unsigned char uart_start_flag;  
@@ -186,19 +186,18 @@ void USART1_IRQHandler(void)
 	} 
 	 
 }
-/* PWM中断服务函数 */
+
+
+/* 呼吸灯中断服务函数 */
 void TIM3_IRQHandler(void)
 {	
-	static uint8_t pwm_index = 0;			//用于PWM查表
-	static uint8_t period_cnt = 0;		//用于计算周期数
+	//static uint8_t pwm_index = 0;			//用于PWM查表
+	//static uint8_t period_cnt = 0;		//用于计算周期数
 	
 	if (TIM_GetITStatus(TIM3, TIM_IT_Update) != RESET)	//TIM_IT_Update
  	{			
-			
-		TIM3->CCR3 = pwm_value;
-			/*if(period_cnt >= 10)										//若输出的周期数大于10，输出下一种脉冲宽的PWM波
-			period_cnt++;
-		
+			/*period_cnt++;
+			if(period_cnt >= 10)										//若输出的周期数大于10，输出下一种脉冲宽的PWM波
 			{
 				
 				TIM3->CCR3 = indexWave[pwm_index];	//根据PWM表修改定时器的比较寄存器值

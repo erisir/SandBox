@@ -1,30 +1,13 @@
-/**
-  ******************************************************************************
-  * @file    bsp_pwm_output.c
-  * @author  STMicroelectronics
-  * @version V1.0
-  * @date    2013-xx-xx
-  * @brief   tim3Êä³öËÄÂ·pwm bsp
-  ******************************************************************************
-  * @attention
-  *
-  * ÊµÑéÆ½Ì¨:Ò°»ğ iSO STM32 ¿ª·¢°å 
-  * ÂÛÌ³    :http://www.chuxue123.com
-  * ÌÔ±¦    :http://firestm32.taobao.com
-  *
-  ******************************************************************************
-  */
-  
-#include "mfc_pwm.h" 
+#include "mfc_pwm.h"
 
-/* LEDÁÁ¶ÈµÈ¼¶ PWM±í */
+/* LEDäº®åº¦ç­‰çº§ PWMè¡¨ */
 uint8_t indexWave[] = {1,1,2,2,3,4,6,8,10,14,19,25,33,44,59,80,
 	107,143,191,255,255,191,143,107,80,59,44,33,25,19,14,10,8,6,4,3,2,2,1,1};
-uint8_t pwm_value;
+
  /**
-  * @brief  ÅäÖÃTIM3¸´ÓÃÊä³öPWMÊ±ÓÃµ½µÄI/O
-  * @param  ÎŞ
-  * @retval ÎŞ
+  * @brief  é…ç½®TIM3å¤ç”¨è¾“å‡ºPWMæ—¶ç”¨åˆ°çš„I/O
+  * @param  æ— 
+  * @retval æ— 
   */
 static void TIM3_GPIO_Config(void) 
 {
@@ -33,9 +16,9 @@ static void TIM3_GPIO_Config(void)
   /* GPIOB clock enable */
   RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE); 
 
-  /* ÅäÖÃºôÎüµÆÓÃµ½µÄPB0Òı½Å */
+  /* é…ç½®å‘¼å¸ç¯ç”¨åˆ°çš„PB0å¼•è„š */
   GPIO_InitStructure.GPIO_Pin =  GPIO_Pin_0 ;
-  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;		    // ¸´ÓÃÍÆÍìÊä³ö
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;		    // å¤ç”¨æ¨æŒ½è¾“å‡º
   GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
 
   GPIO_Init(GPIOB, &GPIO_InitStructure);
@@ -43,9 +26,9 @@ static void TIM3_GPIO_Config(void)
 
 
 /**
-  * @brief  ÅäÖÃÇ¶Ì×ÏòÁ¿ÖĞ¶Ï¿ØÖÆÆ÷NVIC
-  * @param  ÎŞ
-  * @retval ÎŞ
+  * @brief  é…ç½®åµŒå¥—å‘é‡ä¸­æ–­æ§åˆ¶å™¨NVIC
+  * @param  æ— 
+  * @retval æ— 
   */
 static void NVIC_Config_PWM(void)
 {
@@ -54,27 +37,25 @@ static void NVIC_Config_PWM(void)
   /* Configure one bit for preemption priority */
   NVIC_PriorityGroupConfig(NVIC_PriorityGroup_1);
   
-  /* ÅäÖÃTIM3_IRQÖĞ¶ÏÎªÖĞ¶ÏÔ´ */
+  /* é…ç½®TIM3_IRQä¸­æ–­ä¸ºä¸­æ–­æº */
   NVIC_InitStructure.NVIC_IRQChannel = TIM3_IRQn;
   NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
   NVIC_InitStructure.NVIC_IRQChannelSubPriority = 2;
   NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
   NVIC_Init(&NVIC_InitStructure);
 }
-void LoadPWM(unsigned int pwm){
-	pwm_value = pwm;
-}
+
 /**
-  * @brief  ÅäÖÃTIM3Êä³öµÄPWMĞÅºÅµÄÄ£Ê½£¬ÈçÖÜÆÚ¡¢¼«ĞÔ
-  * @param  ÎŞ
-  * @retval ÎŞ
+  * @brief  é…ç½®TIM3è¾“å‡ºçš„PWMä¿¡å·çš„æ¨¡å¼ï¼Œå¦‚å‘¨æœŸã€ææ€§
+  * @param  æ— 
+  * @retval æ— 
   */
 
 /*
- * TIMxCLK/CK_PSC --> TIMxCNT --> TIMx_ARR --> ÖĞ¶Ï & TIMxCNT ÖØĞÂ¼ÆÊı
- *                    TIMx_CCR(µçÆ½·¢Éú±ä»¯)
+ * TIMxCLK/CK_PSC --> TIMxCNT --> TIMx_ARR --> ä¸­æ–­ & TIMxCNT é‡æ–°è®¡æ•°
+ *                    TIMx_CCR(ç”µå¹³å‘ç”Ÿå˜åŒ–)
  *
- * ĞÅºÅÖÜÆÚ=(TIMx_ARR +1 ) * Ê±ÖÓÖÜÆÚ
+ * ä¿¡å·å‘¨æœŸ=(TIMx_ARR +1 ) * æ—¶é’Ÿå‘¨æœŸ
  * 
  */
 
@@ -86,48 +67,53 @@ static void TIM3_Mode_Config(void)
 	TIM_TimeBaseInitTypeDef  TIM_TimeBaseStructure;
 	TIM_OCInitTypeDef  TIM_OCInitStructure;																				
 	
-	/* ÉèÖÃTIM3CLK Ê±ÖÓÎª72MHZ */
-  RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3, ENABLE); 					//Ê¹ÄÜTIM3Ê±ÖÓ
+	/* è®¾ç½®TIM3CLK æ—¶é’Ÿä¸º72MHZ */
+  RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3, ENABLE); 					//ä½¿èƒ½TIM3æ—¶é’Ÿ
 
-  /* »ù±¾¶¨Ê±Æ÷ÅäÖÃ */		 
-  TIM_TimeBaseStructure.TIM_Period = PWM_HIGH_MAX;        		  //µ±¶¨Ê±Æ÷´Ó0¼ÆÊıµ½255£¬¼´Îª266´Î£¬ÎªÒ»¸ö¶¨Ê±ÖÜÆÚ
-  TIM_TimeBaseStructure.TIM_Prescaler = 1999;	    							//ÉèÖÃÔ¤·ÖÆµ£º
-  TIM_TimeBaseStructure.TIM_ClockDivision = TIM_CKD_DIV1 ;			//ÉèÖÃÊ±ÖÓ·ÖÆµÏµÊı£º²»·ÖÆµ(ÕâÀïÓÃ²»µ½)
-  TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;  	//ÏòÉÏ¼ÆÊıÄ£Ê½
+  /* åŸºæœ¬å®šæ—¶å™¨é…ç½® */		 
+  TIM_TimeBaseStructure.TIM_Period = PWM_HIGH_MAX;   				  //å½“å®šæ—¶å™¨ä»0è®¡æ•°åˆ°255ï¼Œå³ä¸º266æ¬¡ï¼Œä¸ºä¸€ä¸ªå®šæ—¶å‘¨æœŸ
+  TIM_TimeBaseStructure.TIM_Prescaler = 2;	    							//è®¾ç½®é¢„åˆ†é¢‘ï¼š
+  TIM_TimeBaseStructure.TIM_ClockDivision = TIM_CKD_DIV1 ;			//è®¾ç½®æ—¶é’Ÿåˆ†é¢‘ç³»æ•°ï¼šä¸åˆ†é¢‘(è¿™é‡Œç”¨ä¸åˆ°)
+  TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;  	//å‘ä¸Šè®¡æ•°æ¨¡å¼
   TIM_TimeBaseInit(TIM3, &TIM_TimeBaseStructure);
 
-  /* PWMÄ£Ê½ÅäÖÃ */
-	TIM_OCInitStructure.TIM_OCMode = TIM_OCMode_PWM1;	    				//ÅäÖÃÎªPWMÄ£Ê½1
-  TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Enable;	//Ê¹ÄÜÊä³ö
-  TIM_OCInitStructure.TIM_Pulse = 0;										  			//ÉèÖÃ³õÊ¼PWMÂö³å¿í¶ÈÎª0	
-  TIM_OCInitStructure.TIM_OCPolarity = TIM_OCPolarity_Low;  	  //µ±¶¨Ê±Æ÷¼ÆÊıÖµĞ¡ÓÚCCR1_ValÊ±ÎªµÍµçÆ½
+  /* PWMæ¨¡å¼é…ç½® */
+	TIM_OCInitStructure.TIM_OCMode = TIM_OCMode_PWM1;	    				//é…ç½®ä¸ºPWMæ¨¡å¼1
+  TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Enable;	//ä½¿èƒ½è¾“å‡º
+  TIM_OCInitStructure.TIM_Pulse = 0;										  			//è®¾ç½®åˆå§‹PWMè„‰å†²å®½åº¦ä¸º0	
+  TIM_OCInitStructure.TIM_OCPolarity = TIM_OCPolarity_High;  	  //å½“å®šæ—¶å™¨è®¡æ•°å€¼å°äºCCR1_Valæ—¶ä¸ºä½ç”µå¹³
 
-  TIM_OC3Init(TIM3, &TIM_OCInitStructure);	 									//Ê¹ÄÜÍ¨µÀ3
+  TIM_OC3Init(TIM3, &TIM_OCInitStructure);	 									//ä½¿èƒ½é€šé“3
 	
 
-  TIM_OC3PreloadConfig(TIM3, TIM_OCPreload_Enable);						//Ê¹ÄÜÔ¤×°ÔØ	
+  TIM_OC3PreloadConfig(TIM3, TIM_OCPreload_Enable);						//ä½¿èƒ½é¢„è£…è½½	
 
-  TIM_ARRPreloadConfig(TIM3, ENABLE);			 										//Ê¹ÄÜTIM3ÖØÔØ¼Ä´æÆ÷ARR
+  TIM_ARRPreloadConfig(TIM3, ENABLE);			 										//ä½¿èƒ½TIM3é‡è½½å¯„å­˜å™¨ARR
 
   /* TIM3 enable counter */
-  TIM_Cmd(TIM3, ENABLE);                   										//Ê¹ÄÜ¶¨Ê±Æ÷3	
+  TIM_Cmd(TIM3, ENABLE);                   										//ä½¿èƒ½å®šæ—¶å™¨3	
 	
-	TIM_ITConfig(TIM3,TIM_IT_Update, ENABLE);										//Ê¹ÄÜupdateÖĞ¶Ï
+	TIM_ITConfig(TIM3,TIM_IT_Update, ENABLE);										//ä½¿èƒ½updateä¸­æ–­
 		
-	NVIC_Config_PWM();																					//ÅäÖÃÖĞ¶ÏÓÅÏÈ¼¶		
+	NVIC_Config_PWM();																					//é…ç½®ä¸­æ–­ä¼˜å…ˆçº§		
 	
 }
 
 /**
-  * @brief  TIM3 ºôÎüµÆ³õÊ¼»¯
-  *         ÅäÖÃPWMÄ£Ê½ºÍGPIO
-  * @param  ÎŞ
-  * @retval ÎŞ
+  * @brief  TIM3 å‘¼å¸ç¯åˆå§‹åŒ–
+  *         é…ç½®PWMæ¨¡å¼å’ŒGPIO
+  * @param  æ— 
+  * @retval æ— 
   */
-void TIM3_Breathing_Init(void)
+void TIM3_PWM_Init(void)
 {
 	TIM3_GPIO_Config();
 	TIM3_Mode_Config();	
 }
 
+/**************** è®¡ç®—PWMé‡è£…å€¼å‡½æ•° *******************/
+void    LoadPWM(unsigned int pwmval)
+{
+    TIM_SetCompare3(TIM3,pwmval);	
+}
 /*********************************************END OF FILE**********************/

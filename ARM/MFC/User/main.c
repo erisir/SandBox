@@ -6,8 +6,8 @@
   * @date    2013-xx-xx
   * @brief   MFC
 	×ÊÔ´£º´®¿Ú£ºPA9,PA10
-	      ADC PB0
-				PWM PB1
+	      ADC PB1
+				PWM PA6
   ******************************************************************************
   * @attention
   *
@@ -47,13 +47,10 @@ void Delay(__IO uint32_t nCount)
   */
 int main(void)
 {	
-	/* USART1 config */
-	uint8_t pwm = 0;
 	USART1_Config();
 	NVIC_Configuration();
-	TIM3_Breathing_Init();
+	TIM3_PWM_Init();
 	PIDInit() ;
-	/* enable adc1 and config adc1 to dma mode */
 	ADC1_Init();
 	 
 	while (1)
@@ -67,10 +64,6 @@ int main(void)
 		if(isPIDEnable()){
 		 PIDStart();
 		 } 
-		/* LoadPWM(pwm);
-		 pwm ++;
-		 if(pwm >200)
-			 pwm = 0;*/
 	}
 }
 /*********************************************END OF FILE**********************/

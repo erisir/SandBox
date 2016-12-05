@@ -96,8 +96,6 @@ public class Kernel {
 	    while(ind <9999999){
 			try {
 				poss =  comm.getPosition();
-				if(poss>400000 || poss <1)
-					continue;
 				
 				//System.out.print("\r\nVsensor,Vref,Vout=["+poss[0]+"]"+"["+poss[1]+"]"+"["+poss[2]+"]");
 				rt.get(0).setXYZ(poss,0, 0);
@@ -123,18 +121,18 @@ public class Kernel {
 						rout -= delta; 
 					}*/
 				
-						 if(rout>19000){
-							 rout = 19000;
+						 if(rout>5000){
+							 rout = 5000;
 							pwmBack = true;
 						 }
 
-						 if(rout< 35) 
+						 if(rout< 10) 
 						{
-							 rout = 35;
+							 rout = 10;
 							 pwmBack = false;
 						}					 						 
 						 comm.SetPWM(rout) ;
-						 System.out.print(String.format("get::%d\tset:%.1f\tdelta:%d\trout:%d",poss,MMT.VariablesNUPD.Setvotage.value(), delta,rout));
+						 System.out.print(String.format("get::%f\tset:%.1f\tdelta:%d\trout:%d",poss,MMT.VariablesNUPD.Setvotage.value(), delta,rout));
 						 System.out.print("\r\n");
 						 TimeUnit.MILLISECONDS.sleep(10);
 				}else{

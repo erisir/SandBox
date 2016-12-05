@@ -265,6 +265,8 @@ public  class RoiItem {
 				for(int i = 0;i<3;i++){
 					try{
 						chart_.getDataSeries().get(MMT.CHARTLIST[i]).add(eclipes,data[i],true);
+						chart_.getDataSeries().get(MMT.CHARTLIST[i]+"1").add(eclipes,lon,true);
+						chart_.getDataSeries().get(MMT.CHARTLIST[i]+"2").add(eclipes,lat,true);
 					}catch(Exception e){
 						System.out.print(e.toString());
 					}

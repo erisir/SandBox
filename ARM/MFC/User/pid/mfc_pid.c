@@ -26,10 +26,10 @@ int PIDCalc( struct PID *pp, unsigned int NextPoint )
   pp->PrevError = pp->LastError; 
   pp->LastError = Error; 
 
-  if(Error< pp->deadZone){
+ /* if(Error< pp->deadZone){
   pp->SumError = 0;
   return 0;
-  }
+  }*/
 
   return ( 
             pp->Proportion * Error        //±ÈÀý 
@@ -66,8 +66,8 @@ void PIDInit()
   spid.Integral =   0.00; 
   spid.Derivative =3; 
   spid.rout = 0;
-  spid.set_point = 4500;
-  spid.deadZone = 10;
+  spid.set_point = 3200;
+  spid.deadZone = 20;
 }
 
   

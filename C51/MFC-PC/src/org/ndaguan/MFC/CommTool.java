@@ -35,7 +35,7 @@ public class CommTool {
 	private SerialPort serialPort;
 	private OutputStream outputStream;
 	private int baudRate = 115200;
-	private String comId = "COM6";
+	private String comId = "COM4";
 	private InputStream inputStream;
 	private String lastError = "No error";
 	private boolean isDeviceReady;
@@ -147,7 +147,7 @@ public class CommTool {
 		char [] ret = new char[20];
 		LogMessage("\r\nreadAnswer");
 		for (int i = 0; i < bret.length; i++) {
-			System.out.print((char)bret[i]);
+			//System.out.print((char)bret[i]);
 			ret[i]= (char) bret[i];
 		}
 		
@@ -180,9 +180,14 @@ public class CommTool {
 			LogMessage("getPIDStatue--read nothing");
  
 		}
-		 
-		long setv = (int)((bret[2]&0x0FF)*256+(bret[3]&0x0FF));//RawToLong(bret,2);
-		long pwm = (int)((bret[4]&0x0FF)*256+(bret[5]&0x0FF));//RawToLong(bret,2);
+		char [] ret = new char[20];
+		for (int i = 0; i < bret.length; i++) {
+			ret[i]= (char) bret[i];
+		} 
+		String tem = String.copyValueOf(ret);
+		String[] temp1 = tem.split(",");
+		long setv = (long) Double.valueOf(temp1[0]).doubleValue();;
+		long pwm = (long) Double.valueOf(temp1[1]).doubleValue();;
  
 		return new double[]{setv,pwm};////pos ;
 	}

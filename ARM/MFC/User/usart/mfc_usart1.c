@@ -147,4 +147,5 @@ unsigned char cmd_ready()
 {
 	return uart_flag; 
 }
+
 /*********************************************END OF FILE**********************/
