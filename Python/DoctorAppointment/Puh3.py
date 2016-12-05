@@ -146,7 +146,6 @@ class Puh3(object):
         res = self.client.getSession().post(url, data=data)   
         if res.json()["msg"]== "OK":
             self.appOk = True
-            print(res.text)
             tmp = res.json()["data"][0]
             print("["+tmp["patientName"]+"]\t已经成功预约\t"+tmp["hospitalName"]+"\t["+tmp["departmentName"]+"]\t\r\n"+tmp["dutyDate"]+tmp["ampm"]+"的号")
         else:
