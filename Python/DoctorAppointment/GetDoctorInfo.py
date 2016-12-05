@@ -136,7 +136,9 @@ class GetDoctorInfo(object):
 if __name__ == '__main__':
     instence = GetDoctorInfo()
     department = {1:"妇科门诊",2:"风湿免疫门诊",3:"口腔科门诊",4:"内分泌门诊",5:"运动医学门诊"}
-    mode = "update"
+    mode = "acq"
+    #acq用来自动获取医生信息，但是没有医生名字
+    #update 用来更新医生名字
     if mode =="acq":
         for x in range(5,len(department)+1):
             instence.getDoctorIdDict(department[x])
