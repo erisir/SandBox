@@ -135,7 +135,7 @@ void parseCMD(){
 
 		  case _U_SetTPID:SetTPID();break;//8
 
-		  //case _U_SetVotageTimes:SetVotageTimes(v_data);break;//8
+		  case _U_SetVotageTimes:SetVotageTimes(v_data);break;//8
 
 		  //case _U_SetVotageChanel:SetVotageChanel(v_data);break;//8
 		  

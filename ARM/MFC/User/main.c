@@ -28,11 +28,7 @@
 #include "pid/mfc_pid.h"
 #include "pwm/mfc_pwm.h"
 
-// ADC1转换的电压值通过MDA方式传到SRAM
-extern __IO uint16_t ADC_ConvertedValue;
-
-// 局部变量，用于保存转换计算后的电压值 	 
-float ADC_ConvertedValueLocal;        
+      
 
 // 软件延时
 void Delay(__IO uint32_t nCount)
@@ -54,10 +50,7 @@ int main(void)
 	ADC1_Init();
 	 
 	while (1)
-	{
-		//ADC_ConvertedValueLocal =(float) ADC_ConvertedValue/4096*3.3; // 读取转换的AD值	
-		//printf("\r\n The current AD value = %f V \r\n",ADC_ConvertedValueLocal); 
-		//Delay(0x2fffee);  
+	{ 
 		if(cmd_ready()){
 			parseCMD();
 		}

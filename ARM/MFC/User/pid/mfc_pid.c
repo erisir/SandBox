@@ -16,6 +16,9 @@ unsigned char PIDEnable=0;
               PID函数体 
 51单片机最不擅长浮点数计算，转换成int型计算
 *************************************************/
+unsigned int abs(int value){
+	return value>0?value:(-1*value);
+}
 int PIDCalc( struct PID *pp, unsigned int NextPoint ) 
 { 
   int Error,dError;
@@ -26,10 +29,10 @@ int PIDCalc( struct PID *pp, unsigned int NextPoint )
   pp->PrevError = pp->LastError; 
   pp->LastError = Error; 
 
- /* if(Error< pp->deadZone){
+  if(abs(Error)< pp->deadZone){
   pp->SumError = 0;
   return 0;
-  }*/
+  }
 
   return ( 
             pp->Proportion * Error        //比例 
@@ -38,7 +41,7 @@ int PIDCalc( struct PID *pp, unsigned int NextPoint )
 			);  
 } 
 void GetPIDStatu(){
-	printf("%d,%d",spid.set_point,spid.rout);
+printf("%d,%d,spid.Proportion:%.3f  ,spid.Integral:%.3f ,spid.Derivative:%.3f  ,spid.rout:%d ,spid.set_point:%d  ,spid.deadZone:%d  ",spid.set_point,spid.rout ,spid.Proportion  ,spid.Integral ,spid.Derivative  ,spid.rout ,spid.set_point  ,spid.deadZone  );	
 }  
 /*********************************************************** 
              PID温度控制做动函数
@@ -69,7 +72,6 @@ void PIDInit()
   spid.set_point = 3200;
   spid.deadZone = 20;
 }
-
   
 void SetSetPoint(unsigned int v_data)
 {

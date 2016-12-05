@@ -303,9 +303,9 @@ public  class RoiItem {
 					try{
 						if(temp)
 							{
-							chart_.getDataSeries().get(MMT.CHARTLIST[1]).add(pwmValue,data[0],true);							
+							chart_.getDataSeries().get("Chart-RT").add(pwmValue,data[0],true);							
 							}else{
-							chart_.getDataSeries().get(MMT.CHARTLIST[1]+"SetVotage").add(pwmValue,data[0],true);								 
+							chart_.getDataSeries().get("Chart-RT"+"1").add(pwmValue,data[0],true);								 
 							}
 									
 						

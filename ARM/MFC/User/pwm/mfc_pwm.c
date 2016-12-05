@@ -1,9 +1,5 @@
 #include "mfc_pwm.h"
 
-/* LED亮度等级 PWM表 */
-uint8_t indexWave[] = {1,1,2,2,3,4,6,8,10,14,19,25,33,44,59,80,
-	107,143,191,255,255,191,143,107,80,59,44,33,25,19,14,10,8,6,4,3,2,2,1,1};
-
  /**
   * @brief  配置TIM3复用输出PWM时用到的I/O
   * @param  无
@@ -16,7 +12,7 @@ static void TIM3_GPIO_Config(void)
   /* GPIOB clock enable */
   RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE); 
 
-  /* 配置呼吸灯用到的PB0引脚 */
+  /* 配置PWM用到的PB0引脚 */
   GPIO_InitStructure.GPIO_Pin =  GPIO_Pin_0 ;
   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;		    // 复用推挽输出
   GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
@@ -112,6 +108,7 @@ void TIM3_PWM_Init(void)
 }
 
 /**************** 计算PWM重装值函数 *******************/
+//注意：TIM_SetCompare3的3为ch3的寄存器
 void    LoadPWM(unsigned int pwmval)
 {
     TIM_SetCompare3(TIM3,pwmval);	

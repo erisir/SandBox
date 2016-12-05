@@ -68,7 +68,7 @@ public class CommTool {
 			LogMessage(lastError);
 			isDeviceReady = false;
 		}
-		
+
 	}
 
 	public boolean isDeviceReady()
@@ -118,7 +118,7 @@ public class CommTool {
 		sendCommand(buf);
 		Sleep(50);
 		Sleep((int) sleept);
-		
+
 		boolean err = true;
 		while(err){
 			err = checkError();
@@ -130,13 +130,13 @@ public class CommTool {
 		return false;
 	}
 	public boolean isNumeric(String str){
-        Pattern pattern = Pattern.compile("[0-9]*");
-        Matcher isNum = pattern.matcher(str);
-        if( !isNum.matches() ){
-            return false;
-        }
-        return true;
- }	
+		Pattern pattern = Pattern.compile("[0-9]*");
+		Matcher isNum = pattern.matcher(str);
+		if( !isNum.matches() ){
+			return false;
+		}
+		return true;
+	}	
 	public double getPosition() throws IOException
 	{
 		byte []buf = new byte[5];
@@ -145,12 +145,12 @@ public class CommTool {
 		Sleep(10);
 		byte[] bret = readAnswer();
 		char [] ret = new char[20];
-		LogMessage("\r\nreadAnswer");
-		for (int i = 0; i < bret.length; i++) {
+		//LogMessage("\r\nreadAnswer");
+		for (int i = 0; i < 20; i++) {
 			//System.out.print((char)bret[i]);
 			ret[i]= (char) bret[i];
 		}
-		
+
 		if(bret.length<=0){
 			LogMessage("getPosition--read nothing");
 			return  0;
@@ -158,11 +158,11 @@ public class CommTool {
 		if(ret[0]=='@' && ret[1]=='P' && isNumeric(String.copyValueOf(ret).substring(2,3))){
 			double Vsensor =  Double.valueOf(String.copyValueOf(ret).substring(2,2+6)).doubleValue();//RawToLong(bret,2);		 
 			return Vsensor;
-			}else{
-				return 0;
-			}
+		}else{
+			return 0;
+		}
 	}
-	
+
 	public double[] getPIDStatue() throws IOException
 	{
 		byte []buf = new byte[5];
@@ -175,20 +175,26 @@ public class CommTool {
 			System.out.print((int)bret[i]);
 			System.out.print((char)' ');
 		}
-		*/
+		 */
 		if(bret.length<=0){
 			LogMessage("getPIDStatue--read nothing");
- 
+
 		}
-		char [] ret = new char[20];
+		char [] ret = new char[bret.length];
 		for (int i = 0; i < bret.length; i++) {
 			ret[i]= (char) bret[i];
 		} 
 		String tem = String.copyValueOf(ret);
 		String[] temp1 = tem.split(",");
-		long setv = (long) Double.valueOf(temp1[0]).doubleValue();;
-		long pwm = (long) Double.valueOf(temp1[1]).doubleValue();;
- 
+		this.LogMessage(tem);
+		long setv =0;
+		long pwm  = 0;
+		if(isNumeric(temp1[0]))
+		{
+			setv = (long) Double.valueOf(temp1[0]).doubleValue();
+			pwm = (long) Double.valueOf(temp1[1]).doubleValue();
+		}
+
 		return new double[]{setv,pwm};////pos ;
 	}
 
@@ -204,7 +210,7 @@ public class CommTool {
 	private boolean initCom()
 
 	{
-		
+
 		Enumeration portList = CommPortIdentifier.getPortIdentifiers();
 		while (portList.hasMoreElements()) {
 			CommPortIdentifier portId = (CommPortIdentifier) portList.nextElement();
@@ -247,7 +253,7 @@ public class CommTool {
 	{
 		System.out.print(msg+"\r\n");
 	}
-	
+
 	@SuppressWarnings("unused")
 	private boolean strcp(byte[] buf, String string) {
 		for (int i = 0; i <string.length(); i++) {
@@ -302,12 +308,12 @@ public class CommTool {
 			LogMessage("checkError---checkSumCalc error");
 			return true;
 		}
-		 
-        return false;
+
+		return false;
 	}
 	private byte[] readAnswer()
 	{
-		byte[] readBuffer = new byte[20];
+		byte[] readBuffer = new byte[1024];
 		Sleep(100);
 		try {
 			while (inputStream.available() > 0) {
@@ -403,7 +409,7 @@ public class CommTool {
 	}
 	public void PIDTunel() {
 		// TODO Auto-generated method stub
-        kernel.rout = 0;
+		kernel.rout = 0;
 		MMT.VariablesNUPD.PIDbyPC.value(0);
 		byte buf[] = new byte[5];
 		buf[0] = '@';
@@ -450,7 +456,7 @@ public class CommTool {
 	public void OpenTunel() {
 		// TODO Auto-generated method stub
 		kernel.rout = 0;
-		
+
 		byte buf[] = new byte[5];
 		buf[0] = '@';
 		buf[1] = _U_SetTOpen;
@@ -466,7 +472,7 @@ public class CommTool {
 	}
 	public void SetPWM(int value) {
 		// TODO Auto-generated method stub
-	    byte buf[] = new byte[5];
+		byte buf[] = new byte[5];
 		buf[0] = '@';
 		buf[1] = _U_SetPWMVal;
 		buf[3] = (byte) (value%256);

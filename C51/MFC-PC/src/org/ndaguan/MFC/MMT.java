@@ -118,7 +118,7 @@ public class MMT {
 		PIDbyPC("",0.01,0.0001,0,"ȡ��ѹ����",VariablesClassify.Debug.name()),
 		
 		SetvotageTimes("",1,0,0,"ȡ��ѹ����",VariablesClassify.Debug.name()),
-		SetvotageChanel("",1,0,0,"ȡ��ѹͨ��",VariablesClassify.Other.name());
+		Pause("",1,0,0,"ȡ��ѹͨ��",VariablesClassify.Other.name());
 		private String unit;
 		private double value;
 		private double presicion;

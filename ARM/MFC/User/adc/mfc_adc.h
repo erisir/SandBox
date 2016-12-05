@@ -6,5 +6,6 @@
 void ADC1_Init(void);
 void GetPosition(void);
 unsigned int getADCValue(void);
+void SetVotageTimes(unsigned int val);
 #endif /* __ADC_H */
 

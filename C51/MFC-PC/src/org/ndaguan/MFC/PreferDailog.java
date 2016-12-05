@@ -108,7 +108,7 @@ public class PreferDailog extends JFrame {
 						case "Setvotage":
 							comm_.setVotage((int) MMT.VariablesNUPD.Setvotage.value());
 						case "SetvotageChanel":
-							comm_.setVotageChanel((int) MMT.VariablesNUPD.SetvotageChanel.value());
+							//comm_.setVotageChanel((int) MMT.VariablesNUPD.SetvotageChanel.value());
 							
 							break;
 

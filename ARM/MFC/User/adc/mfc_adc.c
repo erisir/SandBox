@@ -18,10 +18,15 @@
 #include "mfc_adc.h"
 #include <stdio.h>
 #define ADC1_DR_Address    ((u32)0x40012400+0x4c)
+// ADC1转换的电压值通过MDA方式传到SRAM
+uint16_t ADC_ConvertedValue;
+uint16_t ADC_ConvertedSumWindow;
+// 局部变量，用于保存转换计算后的电压值 	 
+float ADC_ConvertedValueLocal;  
 
-__IO uint16_t ADC_ConvertedValue;
-//__IO u16 ADC_ConvertedValueLocal;
-
+void SetVotageTimes(unsigned int val){
+	 ADC_ConvertedSumWindow = val;
+}
 /**
   * @brief  使能ADC1和DMA1的时钟，初始化PC.01
   * @param  无
@@ -113,15 +118,33 @@ static void ADC1_Mode_Config(void)
   */
 void ADC1_Init(void)
 {
+	ADC_ConvertedSumWindow = 1;
 	ADC1_GPIO_Config();
 	ADC1_Mode_Config();
 }
 
 void GetPosition(void){
-	float votage =(float) ADC_ConvertedValue/4096*3300; // 读取转换的AD值	 
+	int i = 0;
+	uint32_t temp=0;
+	float temp1=0.0;
+	float votage = 0.0;
+	for(i=0;i<ADC_ConvertedSumWindow;i++){
+		temp+=ADC_ConvertedValue;
+	}
+	temp1 = (float)temp/ADC_ConvertedSumWindow; 
+	votage =(float) temp1/4096*3300; // 读取转换的AD值	
 	printf("@P%f",votage); 
 } 
 unsigned int  getADCValue(void){
-	return (float) ADC_ConvertedValue/4096*3300; // 读取转换的AD值	 
+	int i = 0;
+	uint32_t temp=0;
+	float temp1=0.0;
+	float votage = 0.0;
+	for(i=0;i<ADC_ConvertedSumWindow;i++){
+		temp+=ADC_ConvertedValue;
+	}
+	temp1 = (float)temp/ADC_ConvertedSumWindow; 
+  votage =(float) temp1/4096*3300; // 读取转换的AD值	
+	return votage; // 读取转换的AD值	 
 }
 /*********************************************END OF FILE**********************/
