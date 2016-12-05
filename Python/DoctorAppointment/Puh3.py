@@ -208,11 +208,11 @@ if __name__ == '__main__':
         time.sleep(10)
         print(time.strftime("%y-%m-%d %H:%M:%S",time.localtime()))
 
-    appInfo = {"农大官,2016-12-06,上午,口腔门诊,李志刚",
-              "张宇微,2016-12-06,上午,妇科门诊,张璐芳"}
+    appInfo = ["农大官,2016-12-06,上午,口腔门诊,李志刚",
+            "张宇微,2016-12-06,上午,妇科门诊,张璐芳"]
     #时间，医生一一对应，按自然优先级抢号
     counter = 0
-    instence = {}
+    instence = [0,1]
     for x in appInfo:
         a = x.split(",")
         instence[counter] = Puh3(a[0],a[1],a[2],a[3],a[4])
