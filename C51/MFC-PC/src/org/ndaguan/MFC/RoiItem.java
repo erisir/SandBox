@@ -260,7 +260,7 @@ public  class RoiItem {
 					try{
 						//chart_.getDataSeries().get(MMT.CHARTLIST[0]).add(eclipes,data[0],true);
 						chart_.getDataSeries().get(MMT.CHARTLIST[0]+"SetVotage").add(eclipes,lon,update&&(0 == selectedIndex));
-						//chart_.getDataSeries().get(MMT.CHARTLIST[0]+"PWMValue").add(eclipes, lat,update&&(0 == selectedIndex));
+						chart_.getDataSeries().get(MMT.CHARTLIST[0]+"PWMValue").add(eclipes, lat,update&&(0 == selectedIndex));
 							
 						
 						

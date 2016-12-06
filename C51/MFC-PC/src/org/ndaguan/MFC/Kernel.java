@@ -58,7 +58,7 @@ public class Kernel {
 				String[] temp = time.substring(11,19).split(":");
 				double dtime =  Double.valueOf(temp[0]).doubleValue()*3600+Double.valueOf(temp[1]).doubleValue()*60+Double.valueOf(temp[2]).doubleValue();
 				rt.get(0).setZ(dtime);
-				rt.get(0).updateDataSeries(j, dtime, 0);
+				rt.get(0).updateDataSeries(j, lat, lon);
 				System.out.print(j);
 				System.out.print("\t");
 				System.out.print(time.substring(11,19)+"\r\n");
@@ -75,7 +75,7 @@ public class Kernel {
 		Kernel kr = new Kernel();
 		
 		rt.get(0).setChartVisible(true);
-		kr.parseXML(rt,"D:\\tracklog\\20161117.gpx");
+		kr.parseXML(rt,"H:\\20161127.gpx");
       	if(true)return;
       	
         CommTool comm = new CommTool(kr,rt);
