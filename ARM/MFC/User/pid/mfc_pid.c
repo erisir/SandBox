@@ -8,120 +8,153 @@
 
 //xdata struct PID spid; // PID Control Structure
 struct PID spid; // PID Control Structure
- 
+
 unsigned int manuPWM = 0;
-
+unsigned int PIDMode = 0;
 unsigned char PIDEnable=0;
-/************************************************
-              PIDº¯ÊýÌå 
-51µ¥Æ¬»ú×î²»ÉÃ³¤¸¡µãÊý¼ÆËã£¬×ª»»³ÉintÐÍ¼ÆËã
-*************************************************/
-unsigned int abs(int value){
-	return value>0?value:(-1*value);
+void SetPIDMode(unsigned int mode){
+	PIDMode = mode;
 }
-int PIDCalc( struct PID *pp, unsigned int NextPoint ) 
-{ 
-  int Error,dError;
-   
-  Error = spid.set_point - NextPoint;       // Æ«²îE(t) 
-  pp->SumError = pp->PrevError+pp->LastError+Error; 	                // »ý·Ö
-  dError=Error - pp->LastError;             // µ±Ç°Î¢·Ö
-  pp->PrevError = pp->LastError; 
-  pp->LastError = Error; 
-
-  if(abs(Error)< pp->deadZone){
-  pp->SumError = 0;
-  return 0;
-  }
-
-  return ( 
-            pp->Proportion * Error        //±ÈÀý 
-            + pp->Integral * pp->SumError     //»ý·ÖÏî 
-            + pp->Derivative * dError	  // Î¢·ÖÏî	 ¸ºÔðÉ²³µ
-			);  
-} 
 void GetPIDStatu(){
-printf("%d,%d,spid.Proportion:%.3f  ,spid.Integral:%.3f ,spid.Derivative:%.3f  ,spid.rout:%d ,spid.set_point:%d  ,spid.deadZone:%d  ",spid.set_point,spid.rout ,spid.Proportion  ,spid.Integral ,spid.Derivative  ,spid.rout ,spid.set_point  ,spid.deadZone  );	
+	printf("%d,%d,spid.Proportion:%.3f  ,spid.Integral:%.3f ,spid.Derivative:%.3f  ,spid.rout:%d ,spid.SetPoint:%d  ,spid.DeadZone:%d  ",spid.SetPoint,spid.Output ,spid.Proportion  ,spid.Integral ,spid.Derivative  ,spid.Output ,spid.SetPoint  ,spid.DeadZone  );	
 }  
 /*********************************************************** 
-             PIDÎÂ¶È¿ØÖÆ×ö¶¯º¯Êý
-***********************************************************/ 
-
-void PIDStart() 		//PID¿ØÖÆÊä³öº¯Êý
+              PIDæ¸©åº¦æŽ§åˆ¶åšåŠ¨å‡½æ•°
+ ***********************************************************/ 
+void PIDStart() 		 
 {  
-   spid.rout += PIDCalc ( &spid,getADCValue() ); 
-	 if(spid.rout >PWM_HIGH_MAX)
-	 	spid.rout = PWM_HIGH_MAX; 
-	 if(spid.rout <PWM_HIGH_MIN)
-	 	spid.rout = PWM_HIGH_MIN;  
-	 LoadPWM(spid.rout) ;
-  
+	switch(PIDMode){
+	case 0:
+		spid.Output += IncAutoPIDCalc ( &spid,GetADCVoltage() );
+		break;
+	case 1:
+		spid.Output += IncPIDCalc ( &spid,GetADCVoltage() );
+		break;
+	case 2:
+		spid.Output = LocPIDCalc ( &spid,GetADCVoltage() );
+		break;
+	default:
+		spid.Output += IncPIDCalc ( &spid,GetADCVoltage() );
+		break;
+	}		
+	if(spid.Output >PWM_HIGH_MAX)
+		spid.Output = PWM_HIGH_MAX; 
+	if(spid.Output <PWM_HIGH_MIN)
+		spid.Output = PWM_HIGH_MIN;  
+	LoadPWM(spid.Output) ;
+
 }
 /************************************************
-				PIDº¯Êý³õÊ¼»¯
-*************************************************/
+				PIDå‡½æ•°åˆå§‹åŒ–
+ *************************************************/
 void PIDInit() 
 { 
 
-  memset (&spid,0,sizeof(struct PID)); 	// Initialize Structure 
-  
-  spid.Proportion = 0.2; // Set PID Coefficients 	0.009¿ªÊ¼Õðµ´£¬È¡60%~70%=	0.006  2 0 9 ok
-  spid.Integral =   0.00; 
-  spid.Derivative =3; 
-  spid.rout = 0;
-  spid.set_point = 3200;
-  spid.deadZone = 20;
+	memset (&spid,0,sizeof(struct PID)); 	// Initialize Structure 
+
+	spid.Proportion = 0.2;  
+	spid.Integral =   0.00; 
+	spid.Derivative =3; 
+	spid.Output = 0;
+	spid.SetPoint = 3200;
+	spid.DeadZone = 20;
 }
-  
+
 void SetSetPoint(unsigned int v_data)
 {
-  spid.set_point =v_data; 	 
+	spid.SetPoint =v_data; 	 
 }
 void SetPWMValue(unsigned int v_data)
 {
-    manuPWM =   v_data;	
+	manuPWM =   v_data;	
 	if(manuPWM >PWM_HIGH_MAX)
 		manuPWM = PWM_HIGH_MAX; 
 	if(manuPWM <PWM_HIGH_MIN)
 		manuPWM = PWM_HIGH_MIN;  
 	LoadPWM(manuPWM); 
-	spid.rout = manuPWM;
+	spid.Output = manuPWM;
 
 }  
 void SetPIDparam_P_inc(unsigned int v_data)
 {
- 
+
 	if(v_data != 9999)spid.Proportion = 	v_data/1000.0;
- 
+
 
 } 
 void SetPIDparam_I_inc(unsigned int v_data)
 {
 	if(v_data != 9999)spid.Integral   = 	 v_data/1000.0;
- 
+
 
 } 
 void SetPIDparam_D_inc(unsigned int v_data)
 {
-    if(v_data != 9999)spid.Derivative  = 	 v_data/1000.0;
- 
+	if(v_data != 9999)spid.Derivative  = 	 v_data/1000.0;
+
 
 } 
 void  SetTClose()
 {
-	 PIDEnable = 0;
-	 LoadPWM(PWM_HIGH_MIN) ;
+	PIDEnable = 0;
+	LoadPWM(PWM_HIGH_MIN) ;
 }
 void  SetTOpen()
 {
-	 PIDEnable = 0;
-	 LoadPWM(PWM_HIGH_MAX) ;
+	PIDEnable = 0;
+	LoadPWM(PWM_HIGH_MAX) ;
 }
 void  SetTPID()
 {
-	 PIDEnable = 1;
+	PIDEnable = 1;
 
 }
 unsigned char isPIDEnable(){
-   return PIDEnable;
+	return PIDEnable;
 } 
+//å¢žé‡å¼PIDæŽ§åˆ¶è®¾è®¡
+int IncPIDCalc(struct PID *spid,int NextPoint)
+{
+	register int iError, iIncpid;
+	//å½“å‰è¯¯å·®
+	iError = spid->SetPoint - NextPoint;
+	//å¢žé‡è®¡ç®—
+	iIncpid = spid->Proportion * iError //E[k]é¡¹
+			- spid->Integral * spid->LastError //E[kï¼1]é¡¹
+			+ spid->Derivative * spid->PrevError; //E[kï¼2]é¡¹
+			//å­˜å‚¨è¯¯å·®ï¼Œç”¨äºŽä¸‹æ¬¡è®¡ç®—
+			spid->PrevError = spid->LastError;
+			spid->LastError = iError;
+			//è¿”å›žå¢žé‡å€¼
+			return(iIncpid);
+}
+
+//å¢žé‡å¼è‡ªé€‚åº”PIDæŽ§åˆ¶è®¾è®¡
+int IncAutoPIDCalc(struct PID *spid,int NextPoint)
+{
+	register int iError, iIncpid;
+	//å½“å‰è¯¯å·®
+	iError = spid->SetPoint - NextPoint;
+	//å¢žé‡è®¡ç®—
+	iIncpid = spid->Proportion * (2.45*iError //E[k]é¡¹
+			- 3.5*spid->LastError //E[kï¼1]é¡¹
+			+ 1.25*spid->PrevError); //E[kï¼2]é¡¹
+	//å­˜å‚¨è¯¯å·®ï¼Œç”¨äºŽä¸‹æ¬¡è®¡ç®—
+	spid->PrevError = spid->LastError;
+	spid->LastError = iError;
+	//è¿”å›žå¢žé‡å€¼
+	return(iIncpid);
+}
+//ä½ç½®å¼PIDæŽ§åˆ¶è®¾è®¡
+unsigned int LocPIDCalc(struct PID *spid,int NextPoint)
+{
+	register int iError,dError;
+	iError = spid->SetPoint - NextPoint; //åå·®
+	spid->SumError += iError; //ç§¯åˆ†
+	dError = iError - spid->LastError; //å¾®åˆ†
+	spid->LastError = iError;
+
+	return(spid->Proportion * iError //æ¯”ä¾‹é¡¹
+			+ spid->Integral * spid->SumError //ç§¯åˆ†é¡¹
+			+ spid->Derivative * dError); //å¾®åˆ†é¡¹
+}

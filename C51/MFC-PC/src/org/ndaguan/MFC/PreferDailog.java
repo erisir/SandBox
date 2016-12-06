@@ -89,14 +89,14 @@ public class PreferDailog extends JFrame {
 						case "chartStatisWindow":
 							roiList_.get(0).setChartRangeWidowSize(MMT.VariablesNUPD.chartStatisWindow.value());
 							break;
-						case "pTerm_x":
-							comm_.setPTerm(MMT.VariablesNUPD.pTerm_x.value());
+						case "Kp":							 
+							comm_.setPTerm(MMT.VariablesNUPD.Kp.value());														 							
 							break;
-						case "iTerm_x":
-							comm_.setITerm(MMT.VariablesNUPD.iTerm_x.value());
+						case "Ki":
+							comm_.setITerm(MMT.VariablesNUPD.Ki.value());
 							break;
-						case "dTerm_x":
-							comm_.setDTerm(MMT.VariablesNUPD.dTerm_x.value());
+						case "Kd":
+							comm_.setDTerm(MMT.VariablesNUPD.Kd.value());
 							break;
 						case "PWMValue":
 							comm_.SetPWM((int) MMT.VariablesNUPD.PWMValue.value());
@@ -107,8 +107,8 @@ public class PreferDailog extends JFrame {
 							break;
 						case "Setvotage":
 							comm_.setVotage((int) MMT.VariablesNUPD.Setvotage.value());
-						case "SetvotageChanel":
-							//comm_.setVotageChanel((int) MMT.VariablesNUPD.SetvotageChanel.value());
+						case "SetPIDMode":
+							comm_.setPIDMode((int) MMT.VariablesNUPD.SetPIDMode.value());
 							
 							break;
 

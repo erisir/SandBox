@@ -15,7 +15,7 @@
 #define _U_SetTOpen      '8'
 #define _U_SetTPID       '9'
 #define _U_SetVotageTimes 'a'
-#define _U_SetVotageChanel 'b'
+#define _U_SetPIDMode 	  'b'
 
 void USART1_Config(void);
 void NVIC_Configuration(void);

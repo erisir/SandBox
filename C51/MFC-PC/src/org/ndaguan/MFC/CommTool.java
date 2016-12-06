@@ -31,7 +31,7 @@ public class CommTool {
 	final byte _U_SetTOpen      = '8';
 	final byte _U_SetTPID       = '9';
 	final byte _U_SetVotageTimes= 'a';
-	final byte _U_SetVotageChanel= 'b';
+	final byte _U_SetPIDMode= 'b';
 	private SerialPort serialPort;
 	private OutputStream outputStream;
 	private int baudRate = 115200;
@@ -392,11 +392,11 @@ public class CommTool {
 			e.printStackTrace();
 		}
 	}
-	public void setVotageChanel(double value) {
+	public void setPIDMode(double value) {
 		// TODO Auto-generated method stub
 		byte buf[] = new byte[5];
 		buf[0] = '@';
-		buf[1] = _U_SetVotageChanel;
+		buf[1] = _U_SetPIDMode;
 		buf[3] = (byte) (value%256);
 		buf[2] = (byte) ((value/256)%256);
 		try {

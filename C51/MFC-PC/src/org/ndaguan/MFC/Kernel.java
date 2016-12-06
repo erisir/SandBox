@@ -40,9 +40,9 @@ public class Kernel {
 		}
 
 		return (int) ( 
-				MMT.VariablesNUPD.pTerm_x.value()/1000 * Error        //���� 
-				+ MMT.VariablesNUPD.iTerm_x.value()/1000 * SumError     //������ 
-				+ MMT.VariablesNUPD.dTerm_x.value()/1000 * dError	  // ΢����	 ����ɲ��
+				MMT.VariablesNUPD.Kp.value()/1000 * Error        //���� 
+				+ MMT.VariablesNUPD.Ki.value()/1000 * SumError     //������ 
+				+ MMT.VariablesNUPD.Kd.value()/1000 * dError	  // ΢����	 ����ɲ��
 				);  
 	} 
 	private void parseXML(List<RoiItem> rt, String path){

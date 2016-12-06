@@ -107,16 +107,12 @@ public class MMT {
 		chartStatisWindow("",200,0,0,"����ͼ����ʾ����Ӧ�仯��֡����̫Сʱͼ�����׶�����̫��ʱͼ�������Զ����ţ��Ƽ�ʹ��200~1000",VariablesClassify.DataSheet.name()),
 		MMTrout("",0.01,0.0001,0,"����ͼ����ʾ������ͼ���֡����̫С�˼����ʱ��̫���˸�����,�Ƽ�ʹ��20~100",VariablesClassify.DataSheet.name()),
 		Setvotage("",50,0,0,"ͼ����ʾ����Ӧ������ʱ�䣬̫С�˼����ʱ��̫������Ӧ�������׳���ѡ�����������ƶ����Ƽ�ʹ��50~100",VariablesClassify.Feedback.name()),
-		//frameToFeedBack("",5,0,0,"����֡����һ��",VariablesClassify.Feedback.name()),
-		//feedBackMaxStepSize("/uM",0.02,0.001,0,"������󲽳�,ÿ�η����ߵ����λ�ƣ�̫���������𵴣�̫С������",VariablesClassify.Feedback.name()),
-		//feedBackMinStepSize("/uM",0.000,0.001,0,"������С��������Ʈ��С�ڴ�ֵʱ����������",VariablesClassify.Feedback.name()),
-		//feedBackWindowSize("",10,0,0,"�����������ڴ�С",VariablesClassify.Feedback.name()),
-		pTerm_x("",-0.2,0.0001,0,"����ϵ��",VariablesClassify.Feedback.name()),
-		iTerm_x("",0.01,0.0001,0,"����ϵ��",VariablesClassify.Feedback.name()),
-		dTerm_x("",0.01,0.0001,0,"΢��ϵ��",VariablesClassify.Feedback.name()),
+		Kp("",-0.2,0.0001,0,"����ϵ��",VariablesClassify.Feedback.name()),
+		Ki("",0.01,0.0001,0,"����ϵ��",VariablesClassify.Feedback.name()),
+		Kd("",0.01,0.0001,0,"΢��ϵ��",VariablesClassify.Feedback.name()),
 		AutoRange("",1,0,0,"�Ƿ��Զ��ػ�ͼ��1���ǣ�0����",VariablesClassify.DataSheet.name()),
-		PIDbyPC("",0.01,0.0001,0,"ȡ��ѹ����",VariablesClassify.Debug.name()),
-		
+		PIDbyPC("",1,1,0,"ȡ��ѹ����",VariablesClassify.Debug.name()),
+		SetPIDMode("",1,1,0,"ȡ��ѹ����",VariablesClassify.Other.name()),
 		SetvotageTimes("",1,0,0,"ȡ��ѹ����",VariablesClassify.Debug.name()),
 		Pause("",1,0,0,"ȡ��ѹͨ��",VariablesClassify.Other.name());
 		private String unit;

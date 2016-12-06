@@ -123,28 +123,50 @@ void ADC1_Init(void)
 	ADC1_Mode_Config();
 }
 
-void GetPosition(void){
-	int i = 0;
-	uint32_t temp=0;
-	float temp1=0.0;
-	float votage = 0.0;
-	for(i=0;i<ADC_ConvertedSumWindow;i++){
-		temp+=ADC_ConvertedValue;
-	}
-	temp1 = (float)temp/ADC_ConvertedSumWindow; 
-	votage =(float) temp1/4096*3300; // 读取转换的AD值	
+void GetPosition(void){//串口调用
+	float votage = 0.0; 
+	votage =(float) ADC_Filter()/4096*3300; // 读取转换的AD值	
 	printf("@P%f",votage); 
 } 
-unsigned int  getADCValue(void){
+unsigned int  GetADCVoltage(void){//PID调用
+	float votage = 0.0; 
+  votage =(float) ADC_Filter()/4096*3300; // 读取转换的AD值	
+	return votage; // 读取转换的AD值	 
+}
+unsigned int ADC_Mean(void) {
 	int i = 0;
 	uint32_t temp=0;
-	float temp1=0.0;
-	float votage = 0.0;
 	for(i=0;i<ADC_ConvertedSumWindow;i++){
 		temp+=ADC_ConvertedValue;
 	}
-	temp1 = (float)temp/ADC_ConvertedSumWindow; 
-  votage =(float) temp1/4096*3300; // 读取转换的AD值	
-	return votage; // 读取转换的AD值	 
+	return (unsigned int)temp/ADC_ConvertedSumWindow; 
 }
+//---------------ADC中值滤波----------------
+#define N 12 
+unsigned int ADC_Filter(void) 
+{ 
+   uint8_t count,i,j; 
+   uint16_t value_buf[N],temp; 
+   uint16_t  sum=0; 
+   for  (count=0;count<N;count++) 
+   { 
+	  value_buf[count] = ADC_ConvertedValue>>1;	   //????2bit,?????????
+	  //Delay(10);
+   } 
+   for (j=0;j<N-1;j++) 
+   { 
+      for (i=0;i<N-j;i++) 
+      { 
+         if ( value_buf[i]>value_buf[i+1] ) 
+         { 
+            temp = value_buf[i]; 
+            value_buf[i] = value_buf[i+1];  
+             value_buf[i+1] = temp; 
+         } 
+      } 
+   } 
+   for(count=2;count<N-2;count++) 
+      sum += value_buf[count]; 
+   return (uint16_t)(sum/(N-4));  
+} 
 /*********************************************END OF FILE**********************/
