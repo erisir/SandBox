@@ -45,7 +45,7 @@ public class GPSTrackService extends Service {
 	private TencentLocationRequest request;
 
 	private  String gpsTrackFolder = "mnt/sdcard/myTrackLog/" ;
-	private static  String gpsTrackLogFolder = "mnt/sdcard/myTrackLog/log/" ;
+	private  String gpsTrackLogFolder = "mnt/sdcard/myTrackLog/log/" ;
 	private  String gpsTrackFileEnd = "</trkseg>\r\n</trk>\r\n</gpx>";	
 
 	private  int GPSAccuracy = 100; 
@@ -93,12 +93,12 @@ public class GPSTrackService extends Service {
 		createConfigFile();
 		int[] v = readConfigFromFile(gpsTrackFolder+"config.txt");
 		if(v[0] != 0 )
-		 {
+		{
 			GPSAccuracy = v[0]; 
 			GPSInterval = v[1];//sec
 			locationBufferSize = v[2];
 			MinErrAllow = v[3]/1000;
-		 }
+		}
 		super.onCreate();
 
 	}
@@ -112,23 +112,24 @@ public class GPSTrackService extends Service {
 		if(request == null)
 			request = TencentLocationRequest.create();
 		request.setInterval(GPSInterval);
-		if(locationManager == null)
+		if(locationManager == null){
 			locationManager = TencentLocationManager.getInstance(context);
-		//判断GPS是否正常启动        
-		int error = locationManager.requestLocationUpdates(request, locationListener);
-		String errorStr = "注册监听器：";
-		switch(error)
-		{
-		case 0:  errorStr += "注册位置监听器成功";break;
-		
-		case 1:  errorStr += "设备缺少使用腾讯定位SDK需要的基本条件";break;
-		
-		case 2:  errorStr += "配置的 key 不正确";break;
-		
-		case 3:  errorStr += "自动加载libtencentloc.so失败";break;
-		
+			//判断GPS是否正常启动        
+			int error = locationManager.requestLocationUpdates(request, locationListener);
+			String errorStr = "注册监听器：";
+			switch(error)
+			{
+			case 0:  errorStr += "注册位置监听器成功";break;
+
+			case 1:  errorStr += "设备缺少使用腾讯定位SDK需要的基本条件";break;
+
+			case 2:  errorStr += "配置的 key 不正确";break;
+
+			case 3:  errorStr += "自动加载libtencentloc.so失败";break;
+
+			}
+			LogMessage(true, errorStr); 
 		}
-		LogMessage(true, errorStr);  
 		return super.onStartCommand(intent, flags, startId);  
 	}
 	@Override
@@ -237,9 +238,11 @@ public class GPSTrackService extends Service {
 				if(locations.size()>0){
 					TencentLocation temp = (locations.get(locations.size()-1));
 					if( Math.abs(temp.getLatitude()-location.getLatitude()) <MinErrAllow &&
-						(Math.abs(temp.getLongitude()-location.getLongitude())<MinErrAllow)){
+							(Math.abs(temp.getLongitude()-location.getLongitude())<MinErrAllow)){
 						locations.add(location);
 					}
+				}else{
+					locations.add(location);
 				}
 				if(locations.size()>locationBufferSize){
 					saveLocations();
@@ -267,8 +270,8 @@ public class GPSTrackService extends Service {
 			}        
 		}                  
 	};
-	public static boolean LogError(String content) {
-		 
+	public  boolean LogError(String content) {
+
 		if (createLogFile()) {
 			FileWriter writer;
 			try {
@@ -320,7 +323,7 @@ public class GPSTrackService extends Service {
 	public String getGPSTrackPath() {
 		return gpsTrackFolder+DateFormat.format("yyyyMMdd", new Date())+".gpx";
 	}
-	public static String getGPSLogPath() {
+	public  String getGPSLogPath() {
 		return gpsTrackLogFolder+DateFormat.format("yyyyMMdd", new Date())+"Log.log";
 	}
 
@@ -347,8 +350,8 @@ public class GPSTrackService extends Service {
 		file = null;
 		return true;
 	}
-	private static  boolean createLogFile(){
-		 
+	private   boolean createLogFile(){
+
 		File file = new File(getGPSLogPath());
 		if(file.exists() == false){
 			try {
@@ -390,7 +393,7 @@ public class GPSTrackService extends Service {
 		Log.i(TAG,string);
 		if(flag){
 			sendMSG(0,DateFormat.format("HH.mm.ss", new Date())+"\t"+string);
-			LogError("\r\n"+DateFormat.format("HH.mm.ss", new Date())+"\t"+string);
+			//LogError("\r\n"+DateFormat.format("HH.mm.ss", new Date())+"\t"+string);
 		}
 
 	}

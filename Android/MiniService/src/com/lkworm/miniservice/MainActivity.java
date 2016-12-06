@@ -72,7 +72,7 @@ public class MainActivity extends Activity {
 		// TODO Auto-generated method stub
 		super.onStart();
 		GPSTrackService.StartService(this);
-		GPSTrackService.LogError(TAG+"onStart");
+//		GPSTrackService.LogError(TAG+"onStart");
 		Log.d(TAG, "onStart");
 	}
 
@@ -81,7 +81,7 @@ public class MainActivity extends Activity {
 		// TODO Auto-generated method stub
 		super.onResume();
 		GPSTrackService.StartService(this);
-		GPSTrackService.LogError(TAG+"onResume");
+//		GPSTrackService.LogError(TAG+"onResume");
 		Log.d(TAG, "onResume");
 	}
 
@@ -90,7 +90,7 @@ public class MainActivity extends Activity {
 		// TODO Auto-generated method stub
 		super.onPause();
 		Log.d(TAG, "onPause");
-		GPSTrackService.LogError(TAG+"onPause");
+//		GPSTrackService.LogError(TAG+"onPause");
 
 	}
 
