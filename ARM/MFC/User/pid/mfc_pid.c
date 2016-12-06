@@ -122,11 +122,11 @@ int IncPIDCalc(struct PID *spid,int NextPoint)
 	iIncpid = spid->Proportion * iError //E[k]项
 			- spid->Integral * spid->LastError //E[k－1]项
 			+ spid->Derivative * spid->PrevError; //E[k－2]项
-			//存储误差，用于下次计算
-			spid->PrevError = spid->LastError;
-			spid->LastError = iError;
-			//返回增量值
-			return(iIncpid);
+	//存储误差，用于下次计算
+	spid->PrevError = spid->LastError;
+	spid->LastError = iError;
+	//返回增量值
+	return(iIncpid);
 }
 
 //增量式自适应PID控制设计
@@ -146,11 +146,16 @@ int IncAutoPIDCalc(struct PID *spid,int NextPoint)
 	return(iIncpid);
 }
 //位置式PID控制设计
+unsigned int abs( int val){
+	return val>0?val:(-1*val);
+}
 unsigned int LocPIDCalc(struct PID *spid,int NextPoint)
 {
 	register int iError,dError;
 	iError = spid->SetPoint - NextPoint; //偏差
 	spid->SumError += iError; //积分
+	if(abs(iError)<spid->DeadZone)
+		spid->SumError= 0;	
 	dError = iError - spid->LastError; //微分
 	spid->LastError = iError;
 

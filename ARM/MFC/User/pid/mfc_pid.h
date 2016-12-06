@@ -17,9 +17,9 @@ PID函数
  *************************************************/ 
 /*************PID**********************************/
 struct PID {
-	float Proportion; // 比例常数 Proportional Const
-	float Integral; // 积分常数 Integral Const
-	float Derivative; // 微分常数 Derivative Const
+	double Proportion; // 比例常数 Proportional Const
+	double Integral; // 积分常数 Integral Const
+	double Derivative; // 微分常数 Derivative Const
 
 	int LastError; // Error[-1]
 	int PrevError; // Error[-2]
@@ -46,7 +46,7 @@ void SetPIDMode(unsigned int mode);
 void GetPIDStatu(void); 
 
 unsigned char isPIDEnable(void);
-
+unsigned int abs( int val);
 unsigned int LocPIDCalc(struct PID *spid,int NextPoint);
 int IncPIDCalc(struct PID *spid,int NextPoint);
 int IncAutoPIDCalc(struct PID *spid,int NextPoint);
