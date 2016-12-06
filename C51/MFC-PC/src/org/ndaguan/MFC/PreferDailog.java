@@ -111,6 +111,10 @@ public class PreferDailog extends JFrame {
 							comm_.setPIDMode((int) MMT.VariablesNUPD.SetPIDMode.value());
 							
 							break;
+						case "SetPIDPeriod":
+							comm_.setPIDPeriod((int) MMT.VariablesNUPD.SetPIDPeriod.value());
+							break;
+							
 
 						}
 					}

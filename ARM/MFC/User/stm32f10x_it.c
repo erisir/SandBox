@@ -27,6 +27,8 @@
 #include "stm32f10x_it.h"
 #include <stdio.h>
 
+extern volatile u32 time;
+
 __IO unsigned char busy; 
 __IO char uart_flag;
 __IO unsigned char uart_start_flag;  
@@ -193,6 +195,19 @@ void TIM3_IRQHandler(void)
  	{					
 		TIM_ClearITPendingBit (TIM3, TIM_IT_Update);	//必须要清除中断标志位
 	}
+}
+/**
+  * @brief  This function handles TIM2 interrupt request.
+  * @param  None
+  * @retval None
+  */
+void TIM4_IRQHandler(void)
+{
+	if ( TIM_GetITStatus(TIM4 , TIM_IT_Update) != RESET ) 
+	{	
+		time++;
+		TIM_ClearITPendingBit(TIM4 , TIM_FLAG_Update);  		 
+	}		 	
 }
 /**
   * @brief  This function handles PPP interrupt request.

@@ -28,6 +28,7 @@ struct PID {
 	int Output;
 	unsigned int SetPoint;
 	unsigned int DeadZone;
+	unsigned int Period;
 };
 
 void PIDInit (void);  
@@ -35,6 +36,7 @@ void PIDStart(void);
 
 void SetSetPoint(unsigned int v_data); 
 void SetPWMValue(unsigned int v_data);
+void SetPIDPeriod(unsigned int v_data);
 void SetPIDparam_P_inc(unsigned int v_data); 
 void SetPIDparam_I_inc(unsigned int v_data); 
 void SetPIDparam_D_inc(unsigned int v_data); 
@@ -44,7 +46,7 @@ void SetTPID(void);
 void SetPIDMode(unsigned int mode);
 
 void GetPIDStatu(void); 
-
+unsigned int getPeriod(void);
 unsigned char isPIDEnable(void);
 unsigned int abs( int val);
 unsigned int LocPIDCalc(struct PID *spid,int NextPoint);

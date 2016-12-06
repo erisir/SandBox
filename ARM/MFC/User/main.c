@@ -28,13 +28,11 @@
 #include "pid/mfc_pid.h"
 #include "pwm/mfc_pwm.h"
 
+#include "led/mfc_led.h"
+#include "TimBase/mfc_TiMbase.h"
 
+volatile u32 time = 0; // ms 计时变量 
 
-// 软件延时
-void Delay(__IO uint32_t nCount)
-{
-	for(; nCount != 0; nCount--);
-} 
 
 /**
  * @brief  主函数
@@ -49,6 +47,20 @@ int main(void)
 	PIDInit() ;
 	ADC1_Init();
 
+	
+	/* led 端口配置 */ 
+	LED_GPIO_Config();
+
+	/* TIM2 定时配置 */	
+  TIM4_Configuration();
+	
+	/* 实战定时器的中断优先级 */
+	TIM4_NVIC_Configuration();
+
+	/* TIM2 重新开时钟，开始计时 */
+	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM4 , ENABLE);
+	
+	
 	while (1)
 	{ 
 		if(cmd_ready()){
@@ -57,6 +69,13 @@ int main(void)
 		if(isPIDEnable()){
 			PIDStart();
 		} 
+		
+		if ( time >= getPeriod() ) /* 1000 * 1 ms = 1s 时间到 */
+    {
+      time = 0;
+			/* LED1 取反 */      
+			LED1_TOGGLE; 
+    }  
 	}
 }
 /*********************************************END OF FILE**********************/

@@ -16,6 +16,7 @@
 #define _U_SetTPID       '9'
 #define _U_SetVotageTimes 'a'
 #define _U_SetPIDMode 	  'b'
+#define _U_SetPIDPeriod   'c'
 
 void USART1_Config(void);
 void NVIC_Configuration(void);

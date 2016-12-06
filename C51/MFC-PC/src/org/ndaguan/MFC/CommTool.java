@@ -32,6 +32,7 @@ public class CommTool {
 	final byte _U_SetTPID       = '9';
 	final byte _U_SetVotageTimes= 'a';
 	final byte _U_SetPIDMode= 'b';
+	final byte  _U_SetPIDPeriod = 'c';
 	private SerialPort serialPort;
 	private OutputStream outputStream;
 	private int baudRate = 115200;
@@ -186,7 +187,7 @@ public class CommTool {
 		} 
 		String tem = String.copyValueOf(ret);
 		String[] temp1 = tem.split(",");
-		this.LogMessage(tem);
+		//this.LogMessage(tem);
 		long setv =0;
 		long pwm  = 0;
 		if(isNumeric(temp1[0]))
@@ -407,6 +408,21 @@ public class CommTool {
 			e.printStackTrace();
 		}
 	}
+	public void setPIDPeriod(double value) {
+		// TODO Auto-generated method stub
+		byte buf[] = new byte[5];
+		buf[0] = '@';
+		buf[1] = _U_SetPIDPeriod;
+		buf[3] = (byte) (value%256);
+		buf[2] = (byte) ((value/256)%256);
+		try {
+			sendCommand(buf);
+			TimeUnit.MILLISECONDS.sleep(200);
+		} catch (IOException | InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 	public void PIDTunel() {
 		// TODO Auto-generated method stub
 		kernel.rout = 0;
@@ -455,7 +471,7 @@ public class CommTool {
 	}
 	public void OpenTunel() {
 		// TODO Auto-generated method stub
-		kernel.rout = 0;
+		kernel.rout = 5000;
 
 		byte buf[] = new byte[5];
 		buf[0] = '@';

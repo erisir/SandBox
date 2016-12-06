@@ -99,10 +99,14 @@ public class Kernel {
 
 				//System.out.print("\r\nVsensor,Vref,Vout=["+poss[0]+"]"+"["+poss[1]+"]"+"["+poss[2]+"]");
 				rt.get(0).setXYZ(poss,0, 0);
-
-				TimeUnit.MILLISECONDS.sleep(2);
 				float eclipes= (float) ((System.nanoTime()-start_time)/10e6);   
-				rt.get(0).writeData("MFC",ind,eclipes);
+				rt.get(0).writeData("MFC",ind,eclipes,rout);
+				if(ind%1000==0)
+					rt.get(0).flush();
+				if(1==1)
+					continue;
+				TimeUnit.MILLISECONDS.sleep(2);
+				
 				//System.out.print(String.format("value:\t%d\tind:\t%d\r\n",value,ind));
 				if((ind>=tmm) && (ind%tmm == 0)){
 					value += 20;
@@ -140,7 +144,7 @@ public class Kernel {
 					MMT.VariablesNUPD.Setvotage.value(temp[0]);
 					rout = (int) temp[1];
 				}
-
+				
 				//counter++;
 				if(MMT.VariablesNUPD.Pause.value() >0){
 					rt.get(0).updateDataSeries1(pwmBack,(long) MMT.VariablesNUPD.Setvotage.value(),rout);//磁滞回线

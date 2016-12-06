@@ -58,8 +58,14 @@ void PIDInit()
 	spid.Output = 0;
 	spid.SetPoint = 3200;
 	spid.DeadZone = 20;
+	spid.Period = 1000;
 }
-
+unsigned int getPeriod(){
+return spid.Period;
+}
+void SetPIDPeriod(unsigned int v_data){
+	spid.Period = v_data;
+}
 void SetSetPoint(unsigned int v_data)
 {
 	spid.SetPoint =v_data; 	 

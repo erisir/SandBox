@@ -193,7 +193,7 @@ public  class RoiItem {
 			stat.clear();
 	}
 
-	public boolean writeData(String acqName,long frameNum_,double elapsed) throws IOException{
+	public boolean writeData(String acqName,long frameNum_,double elapsed, int rout) throws IOException{
 		if (dataFileWriter_ == null) {
 			Calendar cal = new GregorianCalendar();
 			DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
@@ -215,18 +215,25 @@ public  class RoiItem {
 			dataFileWriter_ = new BufferedWriter(new FileWriter(file));
 
 			dataFileWriter_
-			.write("Timestamp/ms, Frame, V-sensor,V-ref,V-out\r\n");
+			.write("Timestamp/ms, Frame, V-sensor,PWM,V-ref,V-out\r\n");
 			dataFileWriter_.flush();
 		}
 		else{
 			dataFileWriter_
-			.write(String.format("%f,%d,%f,%f,%f\r\n",elapsed,frameNum_,z_,x_,y_/*,stdXdY_,skrewness_*/));
+			.write(String.format("%f,%d,%f,%d,%f,%f\r\n",elapsed,frameNum_,z_,rout,x_,y_/*,stdXdY_,skrewness_*/));			
 		}
 		return true;
 
 	}
 
-
+    public void flush(){
+    	try {
+			dataFileWriter_.flush();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    }
 	private double[] getMean() {//z,x,y,l
 		double pointNum = 0.01;
 		double  temp[] = new double[3];

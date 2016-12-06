@@ -138,7 +138,8 @@ void parseCMD(){
 	case _U_SetVotageTimes:SetVotageTimes(v_data);break;//8
 
 	case _U_SetPIDMode:SetPIDMode(v_data);break;//8
-
+	
+	case _U_SetPIDPeriod: SetPIDPeriod(v_data);;break;//8
 
 	default:break;
 	}	    
