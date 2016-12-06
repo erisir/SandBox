@@ -23,6 +23,7 @@ import android.app.Notification;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.location.Location;
 import android.location.LocationProvider;
 import android.os.Build;
 import android.os.Bundle;
@@ -52,10 +53,11 @@ public class GPSTrackService extends Service {
 	private int locationBufferSize = 10;
 	private int runningCounter = 0;
 	private String runningStr = "";
+	private double MinErrAllow = 0.005;
 
 	private  int MSGCODE[] = new int[]{1111,9999};
 	private  Message  message = new Message();
-
+	private Location lastPosition =new Location("last");
 
 	public  void sendMSG(int i, String msg){//0,下方，1上方
 		Bundle data = new Bundle();  
@@ -65,7 +67,7 @@ public class GPSTrackService extends Service {
 	}
 	private int[] readConfigFromFile(String path){
 		String line = null;
-		int[] val = new int[3];
+		int[] val = new int[4];
 		try {
 			InputStream fis = new FileInputStream(path);
 			InputStreamReader isr = new InputStreamReader(fis, Charset.forName("UTF-8"));
@@ -74,7 +76,7 @@ public class GPSTrackService extends Service {
 			br.readLine();
 			line = br.readLine();
 			String[] sV = line.split(",");
-			for(int i = 0;i<3;i++){
+			for(int i = 0;i<4;i++){
 				val[i]= Long.valueOf(sV[i]).intValue();
 			}
 		} catch (FileNotFoundException e) {
@@ -95,6 +97,7 @@ public class GPSTrackService extends Service {
 			GPSAccuracy = v[0]; 
 			GPSInterval = v[1];//sec
 			locationBufferSize = v[2];
+			MinErrAllow = v[3]/1000;
 		 }
 		super.onCreate();
 
@@ -231,7 +234,13 @@ public class GPSTrackService extends Service {
 					+ "                  定位方式:[%s]\t精度：%.0fm\t%s",location.getName(), location.getProvider(),location.getAccuracy(),runningStr);
 			LogMessage(true, str); 
 			if(location != null && location.getAccuracy()<GPSAccuracy && location.getAccuracy()>0.1){
-				locations.add(location);
+				if(locations.size()>0){
+					TencentLocation temp = (locations.get(locations.size()-1));
+					if( Math.abs(temp.getLatitude()-location.getLatitude()) <MinErrAllow &&
+						(Math.abs(temp.getLongitude()-location.getLongitude())<MinErrAllow)){
+						locations.add(location);
+					}
+				}
 				if(locations.size()>locationBufferSize){
 					saveLocations();
 					LogMessage(true, "saveLocations");
@@ -361,7 +370,7 @@ public class GPSTrackService extends Service {
 				FileWriter writer;//写入文件头
 				try {
 					writer = new FileWriter(path,true);
-					String content = "GPSAccuracy,GPSInterval,locationBufferSize\r\n100,5000,10";
+					String content = "GPSAccuracy,GPSInterval,locationBufferSize,MinErrAllow\r\n100,5000,10,5,";
 					writer.write(content);
 					writer.close();
 				} catch (IOException e) {
