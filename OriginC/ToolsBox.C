@@ -24,7 +24,7 @@
 ////////////////////////////////////////////////////////////////////////////////////
 bool outPutPic = false;
 bool clacFRET = true;
-bool drawPic = true;
+bool drawPic = false;
 bool drawHistPic = false;
 int totalOffset = 1000;
 string FRETMODE =  "Manual";
@@ -1056,6 +1056,98 @@ void getALL()
 		printf("\ndelling with:[%s]-[%s]\n",fd.GetName(),wp.Layers(0).GetName());
 		getFRET(wp.Layers(0))
 	}	
+}
+void MFC()
+{
+	foreach(WorksheetPage wp in Project.WorksheetPages){
+		Folder fd = wp.GetFolder();
+		Folder sfd = fd.GetFolder("FRET");
+		if(!sfd.IsValid())
+			sfd = fd.AddSubfolder("FRET");
+		sfd.Activate();
+		printf("\ndelling with:[%s]-[%s]\n",fd.GetName(),wp.Layers(0).GetName());
+		getMinStd(wp.Layers(0))
+	}	
+}
+/*To generate fret chart  
+ *
+ *
+ *
+ *
+ */
+void getMinStd(Worksheet wks)
+{ 
+	//Worksheet wks = Project.ActiveLayer();
+	if( !wks )
+		return;
+	if(16 >wks.GetNumCols()){//Only the dataSheet with correct columns will be calculate	
+	wks.AddCol("G");
+	wks.AddCol("G");
+	wks.AddCol("G");
+	wks.AddCol("H");
+	wks.AddCol("H");
+	wks.Columns(11).SetLongName("Time");
+	wks.Columns(12).SetLongName("Std");
+	wks.Columns(13).SetLongName("Kp");
+	wks.Columns(14).SetLongName("Ki");
+	wks.Columns(15).SetLongName("Kd");
+	}
+	
+	vector std,time,s1,t1,kp,ki,kd,P,I,D;   
+	int counter = 0;
+	int minStd = 1;
+	int maxStd = 999999;
+	getValue(wks,10,&std);
+	getValue(wks,0,&time);
+	getValue(wks,6,&P);
+	getValue(wks,7,&I);
+	getValue(wks,8,&D);
+
+	for(int i=0;i<std.GetSize();i++){
+		if(std[i]>=minStd && std[i]<=maxStd)
+		{
+			s1.Add(std[i]);
+			t1.Add(time[i]/1000);
+			kp.Add(P[i]);
+			ki.Add(I[i]);
+			kd.Add(D[i]);
+		}
+	}
+    setValue(wks,11,t1);
+    setValue(wks,12,s1);
+    setValue(wks,13,kp);
+    setValue(wks,14,ki);
+    setValue(wks,15,kd);
+	if(drawPic){
+		DataRange drPlot;
+		drPlot.Add(wks, 11, "X");
+		drPlot.Add(wks, 12, "Y");
+		drPlot.Add(wks, 13, "Y");
+		drPlot.Add(wks, 14, "Y");
+		drPlot.Add(wks, 15, "Y");
+	
+		string wsName = wks.GetPage().GetLongName();
+		string pstrFileName;
+		string pstrExt;		 
+		separate_file_name_ext(wsName, pstrFileName, pstrExt);
+		foreach(GraphPage gps in Project.GraphPages){	 		 
+			if( strcmp(gps.GetName() , pstrFileName+"_FRET")==0) gps.Destroy();
+		}
+		GraphPage gp;
+		gp.Create("stack");
+		gp.SetLongName(pstrFileName+"_FRET");
+		int nNumYs = 1;
+		while ( gp.Layers.Count() < nNumYs ){
+			page_add_layer(gp, false, false, false, true,ADD_LAYER_INIT_SIZE_POS_MOVE_OFFSET, false, 0, LINK_STRAIGHT); 
+		}
+		GraphLayer gl = gp.Layers(0);
+		int nPlot = gl.AddPlot(drPlot, IDM_PLOT_LINE); // return plot index		 
+	 
+		if( nPlot >= 0 )
+			gl.Rescale();	
+ 
+	}
+	printf("  OK!");
 }
 /*To fix cy5 data to zero if debackground is unsuitable;
  *

@@ -98,24 +98,25 @@ public class MMT {
 	} 
 	public static enum VariablesNUPD {
 		//constructor format:	unit,	default value,	precision,	importance,	toolTip,	classify
-		chartWidth("",8000,0,1,"����ͼ�ĳ��ȣ��Ƽ�2000+",VariablesClassify.DataSheet.name()),
+		chartWidth("",8000,0,1,"chartWidth",VariablesClassify.DataSheet.name()),
 		
 		//advance
-		saveFile(" ",1,0,0,"����ר�ã��Ƿ񱣴�����,1���ǣ�0����",VariablesClassify.Debug.name()),
-		PWMValue("",0,0,0,"����ר�ã�����correlation �� posProfile ͼ���֡��",VariablesClassify.Debug.name()),
+		saveFile(" ",1,0,0,"saveFile",VariablesClassify.Debug.name()),
+		PWMValue("",0,0,0,"PWMValue after ok",VariablesClassify.Debug.name()),
 		
-		chartStatisWindow("",200,0,0,"����ͼ����ʾ����Ӧ�仯��֡����̫Сʱͼ�����׶�����̫��ʱͼ�������Զ����ţ��Ƽ�ʹ��200~1000",VariablesClassify.DataSheet.name()),
-		MMTrout("",0.01,0.0001,0,"����ͼ����ʾ������ͼ���֡����̫С�˼����ʱ��̫���˸�����,�Ƽ�ʹ��20~100",VariablesClassify.DataSheet.name()),
-		Setvotage("",50,0,0,"ͼ����ʾ����Ӧ������ʱ�䣬̫С�˼����ʱ��̫������Ӧ�������׳���ѡ�����������ƶ����Ƽ�ʹ��50~100",VariablesClassify.Feedback.name()),
-		Kp("",-0.2,0.0001,0,"����ϵ��",VariablesClassify.Feedback.name()),
-		Ki("",0.01,0.0001,0,"����ϵ��",VariablesClassify.Feedback.name()),
-		Kd("",0.01,0.0001,0,"΢��ϵ��",VariablesClassify.Feedback.name()),
-		AutoRange("",1,0,0,"�Ƿ��Զ��ػ�ͼ��1���ǣ�0����",VariablesClassify.DataSheet.name()),
-		PIDbyPC("",1,1,0,"ȡ��ѹ����",VariablesClassify.Debug.name()),
-		SetPIDMode("",1,1,0,"ȡ��ѹ����",VariablesClassify.Other.name()),
-		SetvotageTimes("",1,0,0,"ȡ��ѹ����",VariablesClassify.Debug.name()),
-		Pause("",1,0,0,"ȡ��ѹͨ��",VariablesClassify.Other.name()),
-		SetPIDPeriod("",1000,0,0,"ȡ��ѹͨ��",VariablesClassify.Other.name());
+		chartStatisWindow("",200,0,0,"auto range window",VariablesClassify.DataSheet.name()),
+		PWMRate("",0.01,0.0001,0,"rate to show pwm",VariablesClassify.DataSheet.name()),
+		SetPoint("",50,0,0,"set point",VariablesClassify.Feedback.name()),
+		Kp("",-0.2,0.0001,0,"p",VariablesClassify.Feedback.name()),
+		Ki("",0.01,0.0001,0,"i",VariablesClassify.Feedback.name()),
+		Kd("",0.01,0.0001,0,"d",VariablesClassify.Feedback.name()),
+		AutoRange("",1,0,0,"AutoRange",VariablesClassify.DataSheet.name()),
+		PIDbyPC("",1,1,0,"0:show,1:byPC,2:byMCU",VariablesClassify.Feedback.name()),
+		PIDMode("",1,1,0,"PIDMode:0:IncAutoPIDCalc,1:IncPIDCalc,2:LocPIDCalc",VariablesClassify.Feedback.name()),
+		votageSmoothWindow("",1,0,0,"get votage smooth window",VariablesClassify.Debug.name()),
+		Pause("",1,0,0,"stop show chart",VariablesClassify.Debug.name()),
+		Tu("",0.01,0.0001,0,"Tu",VariablesClassify.Feedback.name()),
+		PIDPeriod("",1000,0,0,"data acquire period",VariablesClassify.Feedback.name());
 		private String unit;
 		private double value;
 		private double presicion;

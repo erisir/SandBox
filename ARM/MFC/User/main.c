@@ -66,15 +66,13 @@ int main(void)
 		if(cmd_ready()){
 			parseCMD();
 		}
-		if(isPIDEnable()){
-			PIDStart();
-		} 
-		
-		if ( time >= getPeriod() ) /* 1000 * 1 ms = 1s 时间到 */
+				
+		if (isPIDEnable() && time >= getPeriod() ) /* 1000 * 1 ms = 1s 时间到 */
     {
       time = 0;
 			/* LED1 取反 */      
 			LED1_TOGGLE; 
+			PIDStart();
     }  
 	}
 }

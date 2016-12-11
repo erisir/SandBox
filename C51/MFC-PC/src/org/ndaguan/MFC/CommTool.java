@@ -138,13 +138,19 @@ public class CommTool {
 		}
 		return true;
 	}	
-	public double getPosition() throws IOException
+	public double getPosition()  
 	{
 		byte []buf = new byte[5];
 		PackageCommand(_U_GetVotage,null,buf);
-		sendCommand(buf);
-		Sleep(10);
 		byte[] bret = readAnswer();
+		try {
+			sendCommand(buf);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		Sleep(10);
+		bret = readAnswer();
 		char [] ret = new char[20];
 		//LogMessage("\r\nreadAnswer");
 		for (int i = 0; i < 20; i++) {
@@ -164,11 +170,16 @@ public class CommTool {
 		}
 	}
 
-	public double[] getPIDStatue() throws IOException
+	public double[] getPIDStatue()  
 	{
 		byte []buf = new byte[5];
 		PackageCommand(_U_SetDura,null,buf);
-		sendCommand(buf);
+		try {
+			sendCommand(buf);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		Sleep(10);
 		byte[] bret = readAnswer();
 		/*LogMessage("readAnswer");
@@ -187,18 +198,25 @@ public class CommTool {
 		} 
 		String tem = String.copyValueOf(ret);
 		String[] temp1 = tem.split(",");
-		//this.LogMessage(tem);
 		long setv =0;
 		long pwm  = 0;
-		if(isNumeric(temp1[0]))
-		{
-			setv = (long) Double.valueOf(temp1[0]).doubleValue();
-			pwm = (long) Double.valueOf(temp1[1]).doubleValue();
+		String[] name = new String[]{"Kp","Ki","Kd","DeadZone","SetPoint","Output","LastError","PrevError","voltage","SumErr"};
+		double[] val = new double[name.length];
+		String str = "";
+		for(int i = 0;i<name.length;i++){
+			//if(isNumeric(temp1[i]))
+			//{
+			val[i] =   Double.valueOf(temp1[i]).doubleValue();
+			str += name[i]+" ="+temp1[i]+" ";
+			//}
+
 		}
+		this.LogMessage(str);
 
-		return new double[]{setv,pwm};////pos ;
+
+		return val;////pos ;
 	}
-
+	
 	private  void Sleep(int l) {
 		try {
 			TimeUnit.MILLISECONDS.sleep(l);
@@ -426,7 +444,7 @@ public class CommTool {
 	public void PIDTunel() {
 		// TODO Auto-generated method stub
 		kernel.rout = 0;
-		MMT.VariablesNUPD.PIDbyPC.value(0);
+		MMT.VariablesNUPD.PIDbyPC.value(2);
 		byte buf[] = new byte[5];
 		buf[0] = '@';
 		buf[1] = _U_SetTPID;

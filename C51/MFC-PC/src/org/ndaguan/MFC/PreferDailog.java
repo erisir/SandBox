@@ -43,6 +43,7 @@ public class PreferDailog extends JFrame {
 	private JButton PIDButton;
 	private JButton OpenButton;
 	private Kernel kernel;
+	private JButton PauseButton;
 	public static void main(String[] arg){
 
 		PreferDailog pre = new PreferDailog(null,null, null);
@@ -82,6 +83,7 @@ public class PreferDailog extends JFrame {
 				if(MMT.VariablesNUPD.values()[i].value() != data[i])
 					{
 						MMT.VariablesNUPD.values()[i].value(data[i]);
+						 
 						switch(MMT.VariablesNUPD.values()[i].name()){
 						case "chartWidth":
 							roiList_.get(0).setChartWidth(MMT.VariablesNUPD.chartWidth.value());
@@ -102,17 +104,17 @@ public class PreferDailog extends JFrame {
 							comm_.SetPWM((int) MMT.VariablesNUPD.PWMValue.value());
 							kernel.rout = (int) MMT.VariablesNUPD.PWMValue.value();
 							break;
-						case "SetvotageTimes":
-							comm_.SetVotageTimes(MMT.VariablesNUPD.SetvotageTimes.value());
+						case "votageSmoothWindow":
+							comm_.SetVotageTimes(MMT.VariablesNUPD.votageSmoothWindow.value());
 							break;
-						case "Setvotage":
-							comm_.setVotage((int) MMT.VariablesNUPD.Setvotage.value());
-						case "SetPIDMode":
-							comm_.setPIDMode((int) MMT.VariablesNUPD.SetPIDMode.value());
+						case "SetPoint":
+							comm_.setVotage((int) MMT.VariablesNUPD.SetPoint.value());
+						case "PIDMode":
+							comm_.setPIDMode((int) MMT.VariablesNUPD.PIDMode.value());
 							
 							break;
-						case "SetPIDPeriod":
-							comm_.setPIDPeriod((int) MMT.VariablesNUPD.SetPIDPeriod.value());
+						case "PIDPeriod":
+							comm_.setPIDPeriod((int) MMT.VariablesNUPD.PIDPeriod.value());
 							break;
 							
 
@@ -193,6 +195,7 @@ public class PreferDailog extends JFrame {
 	 * @param flag true save to file,false: update gui
 	 */
 	public void UpdateData(boolean flag) {
+		
 		if(flag){//flush
 			double[] preferences = new double[preferencesLen];
 			for (int i = 0; i <preferencesLen; i++) {
@@ -215,7 +218,27 @@ public class PreferDailog extends JFrame {
 		}
 
 	}
+	public  void updatePID(){
+		double A=0,B=0,C=0;
+		double Ti=0,Td=0;
+		double Tc=1;
+		double T=0.01;
+		double kp=0;
+		
+		T = MMT.VariablesNUPD.PIDPeriod.value();
+		Tc = MMT.VariablesNUPD.Tu.value();
+		kp = MMT.VariablesNUPD.Kp.value();
+		
+		Ti = 0.5*Tc;
+		Td = 0.125*Tc;
 
+		A = kp*(1+T/Ti+Td/T);
+		B = kp*(1+2*Td/T);
+		C = kp*Td/T;
+		MMT.VariablesNUPD.Ki.value(B);
+		MMT.VariablesNUPD.Kd.value(C);
+		System.out.print(String.format("\r\nP:%.4f,I:%.4f,D:%.4f", A,B,C));
+	}
 	private void initialize(){
 		DialogListener = new ActionListener() {
 			public void actionPerformed(ActionEvent e) 
@@ -262,11 +285,13 @@ public class PreferDailog extends JFrame {
 			}			
 			int x = 0;
 			int y = 0;
-			for(int i=0;i<classifyLen;i++){
+			for(int i=0;i<classifyLen;i++){//谁最高取谁
 				y = y<tabY[i]?tabY[i]:y;
 			}
-			y += ITEMHEIGHT;
-			frameHeight = y+ITEMHEIGHT*4;
+			y += ITEMHEIGHT;//tip,edit
+			y += 2*ITEMHEIGHT;//tip,edit
+			 
+			frameHeight = y+4*ITEMHEIGHT;//整体高度
 			setBounds((int)(screen.width -frameWidth)/2,(int)(screen.height-frameHeight)/2,frameWidth ,frameHeight);
 			
 			tabbedPane.setBounds(0,0,(int)(ITEMWIDTH*(columnNum+0.2)), y);
@@ -277,10 +302,10 @@ public class PreferDailog extends JFrame {
 			getContentPane().add(buttonBox);
 			
 			final JSeparator separator2 = new JSeparator();
-			separator2.setBounds(0,y, ITEMWIDTH*4, 50);
+			separator2.setBounds(0,y, ITEMWIDTH, 50);
 			buttonBox.add(separator2);
 			
-			ITEMWIDTH = ITEMWIDTH*3/4;
+			ITEMWIDTH = ITEMWIDTH*3/5;
 			
 			final JButton OK = new JButton("OK");
 			OK.setBounds(0,  y,ITEMWIDTH,(int)(ITEMHEIGHT*1.5));
@@ -290,6 +315,7 @@ public class PreferDailog extends JFrame {
 			final JButton Apply = new JButton("Apply");
 			Apply.setBounds(x,y,ITEMWIDTH,(int)(ITEMHEIGHT*1.5));
 			buttonBox.add(Apply);
+			x += ITEMWIDTH/5;
 			x += ITEMWIDTH;
 
 			CloseButton = new JButton("Close");
@@ -305,12 +331,18 @@ public class PreferDailog extends JFrame {
 			OpenButton = new JButton("Open");
 			OpenButton.setBounds(x,y, ITEMWIDTH,(int)(ITEMHEIGHT*1.5));
 			buttonBox.add(OpenButton);
+			x += ITEMWIDTH/5;
+			x += ITEMWIDTH;
+			PauseButton = new JButton("Pause");
+			PauseButton.setBounds(x,y, ITEMWIDTH,(int)(ITEMHEIGHT*1.5));
+			buttonBox.add(PauseButton);
 
 			OK.addActionListener(DialogListener);
 			Apply.addActionListener(DialogListener);
 			CloseButton.addActionListener(DialogListener);
 			PIDButton.addActionListener(DialogListener);
 			OpenButton.addActionListener(DialogListener);
+			PauseButton.addActionListener(DialogListener);
 			
 			
 			
@@ -375,6 +407,28 @@ public class PreferDailog extends JFrame {
 				@Override
 				public void run() {
 					activateButton(3);
+				}
+			});
+
+		}
+		if (e.getActionCommand().equals("Pause")) {
+			SwingUtilities.invokeLater(new Runnable() {
+
+				@Override
+				public void run() {
+					PauseButton.setText("Resume");
+					MMT.VariablesNUPD.Pause.value(0);
+				}
+			});
+
+		}
+		if (e.getActionCommand().equals("Resume")) {
+			SwingUtilities.invokeLater(new Runnable() {
+
+				@Override
+				public void run() {
+					PauseButton.setText("Pause");
+					MMT.VariablesNUPD.Pause.value(1);
 				}
 			});
 

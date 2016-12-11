@@ -607,6 +607,16 @@
               <FileType>5</FileType>
               <FilePath>..\..\User\pwm\mfc_pwm.h</FilePath>
             </File>
+            <File>
+              <FileName>mfc_led.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\Led\mfc_led.c</FilePath>
+            </File>
+            <File>
+              <FileName>mfc_TiMbase.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\TimBase\mfc_TiMbase.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

@@ -24,6 +24,9 @@ struct PID {
 	int LastError; // Error[-1]
 	int PrevError; // Error[-2]
 	int SumError;
+	
+	unsigned int sumMax;
+	unsigned int sumMin;
 
 	int Output;
 	unsigned int SetPoint;
@@ -52,6 +55,5 @@ unsigned int abs( int val);
 unsigned int LocPIDCalc(struct PID *spid,int NextPoint);
 int IncPIDCalc(struct PID *spid,int NextPoint);
 int IncAutoPIDCalc(struct PID *spid,int NextPoint);
-
 #endif
 /*********************************************END OF FILE**********************/

@@ -15,8 +15,9 @@ unsigned char PIDEnable=0;
 void SetPIDMode(unsigned int mode){
 	PIDMode = mode;
 }
+
 void GetPIDStatu(){
-	printf("%d,%d,spid.Proportion:%.3f  ,spid.Integral:%.3f ,spid.Derivative:%.3f  ,spid.rout:%d ,spid.SetPoint:%d  ,spid.DeadZone:%d  ",spid.SetPoint,spid.Output ,spid.Proportion  ,spid.Integral ,spid.Derivative  ,spid.Output ,spid.SetPoint  ,spid.DeadZone  );	
+	printf("%.3f,%.3f,%.3f,%d,%d,%d,%d,%d,%d,%d",spid.Proportion  ,spid.Integral ,spid.Derivative  ,spid.DeadZone ,spid.SetPoint ,spid.Output,spid.LastError,spid.PrevError,spid.SetPoint-spid.LastError,spid.SumError );	
 }  
 /*********************************************************** 
               PID温度控制做动函数
@@ -32,7 +33,7 @@ void PIDStart()
 		break;
 	case 2:
 		spid.Output = LocPIDCalc ( &spid,GetADCVoltage() );
-		break;
+		break; 
 	default:
 		spid.Output += IncPIDCalc ( &spid,GetADCVoltage() );
 		break;
@@ -59,6 +60,8 @@ void PIDInit()
 	spid.SetPoint = 3200;
 	spid.DeadZone = 20;
 	spid.Period = 1000;
+	spid.sumMax=999999;
+	spid.sumMin=10;
 }
 unsigned int getPeriod(){
 return spid.Period;
@@ -84,19 +87,27 @@ void SetPWMValue(unsigned int v_data)
 void SetPIDparam_P_inc(unsigned int v_data)
 {
 
-	if(v_data != 9999)spid.Proportion = 	v_data/1000.0;
-
+	if(PIDMode != 2)
+		spid.Proportion = 	v_data/1000.0;
+	else
+		spid.Proportion = v_data;
 
 } 
 void SetPIDparam_I_inc(unsigned int v_data)
 {
-	if(v_data != 9999)spid.Integral   = 	 v_data/1000.0;
+	if(PIDMode != 2)
+		spid.Integral   = 	 v_data/1000.0;
+	else
+		spid.Integral   = 	 v_data;
 
 
 } 
 void SetPIDparam_D_inc(unsigned int v_data)
 {
-	if(v_data != 9999)spid.Derivative  = 	 v_data/1000.0;
+	if(PIDMode != 2)
+		spid.Derivative  = 	 v_data/1000.0;
+	else
+		spid.Derivative  = 	 v_data;
 
 
 } 
@@ -160,12 +171,12 @@ unsigned int LocPIDCalc(struct PID *spid,int NextPoint)
 	register int iError,dError;
 	iError = spid->SetPoint - NextPoint; //偏差
 	spid->SumError += iError; //积分
-	if(abs(iError)<spid->DeadZone)
-		spid->SumError= 0;	
+	if(abs(spid->SumError)>spid->sumMax)
+		spid->SumError= spid->SumError>0?spid->sumMax:(-1*spid->sumMax);	
 	dError = iError - spid->LastError; //微分
 	spid->LastError = iError;
 
 	return(spid->Proportion * iError //比例项
 			+ spid->Integral * spid->SumError //积分项
 			+ spid->Derivative * dError); //微分项
-}
+} 

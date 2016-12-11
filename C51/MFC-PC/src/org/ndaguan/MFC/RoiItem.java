@@ -59,6 +59,9 @@ public  class RoiItem {
 	private boolean isBackground_;
 	private double[] calProfileNorm;
 	private double z_;
+	private int Kp;
+	private int Ki;
+	private int Kd;
 
 	public static RoiItem createInstance(double[] itemData) {
 		return new RoiItem(itemData);
@@ -193,7 +196,7 @@ public  class RoiItem {
 			stat.clear();
 	}
 
-	public boolean writeData(String acqName,long frameNum_,double elapsed, int rout) throws IOException{
+	public boolean writeData(String acqName,long frameNum_,double elapsed, int rout, boolean b)  {
 		if (dataFileWriter_ == null) {
 			Calendar cal = new GregorianCalendar();
 			DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
@@ -212,20 +215,39 @@ public  class RoiItem {
 			dateFormat = new SimpleDateFormat("yyyyMMdd_HHmmss");
 			File file = new File(dir, dateFormat.format(cal.getTime()) + "_"
 					+ acqName + "_bean_" + String.format("%d", index_) + "_" + ".txt");
+			try {
 			dataFileWriter_ = new BufferedWriter(new FileWriter(file));
 
-			dataFileWriter_
-			.write("Timestamp/ms, Frame, V-sensor,PWM,V-ref,V-out\r\n");
-			dataFileWriter_.flush();
+				dataFileWriter_
+				.write("Timestamp/ms, Frame, V-sensor,PWM,V-ref,V-out,Kp,Ki,Kd,CloseFlag,std\r\n");
+				dataFileWriter_.flush();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		else{
-			dataFileWriter_
-			.write(String.format("%f,%d,%f,%d,%f,%f\r\n",elapsed,frameNum_,z_,rout,x_,y_/*,stdXdY_,skrewness_*/));			
+			try {
+				dataFileWriter_
+				.write(String.format("%f,%d,%f,%d,%f,%f,%d,%d,%d,%d,%d\r\n",elapsed,frameNum_,z_,rout,x_,y_,Kp,Ki,Kd,b?1:0,0));
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}			
 		}
 		return true;
 
 	}
-
+	public void writeData(String string, long counter2, float eclipes, int out, boolean b, long std) {
+		// TODO Auto-generated method stub
+		try {
+			dataFileWriter_
+			.write(String.format("%f,%d,%f,%d,%f,%f,%d,%d,%d,%d,%d\r\n",eclipes,counter2,z_,out,x_,y_,Kp,Ki,Kd,b?1:0,std));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}	
+	}
     public void flush(){
     	try {
 			dataFileWriter_.flush();
@@ -243,7 +265,7 @@ public  class RoiItem {
 		return temp;
 	}
 	 
-	private double[] getStandardDeviation() {//xyz
+	public double[] getStandardDeviation() {//xyz
 		double  temp[] = new double[3];
 		for (int i = 0; i < 3; i++) {
 			temp[i] = showChartXYZStatis_[i].getStandardDeviation();
@@ -260,7 +282,7 @@ public  class RoiItem {
 		return std;
 	}
 
-	public void updateDataSeries(final float eclipes,final double lon,final double lat) {
+	public void updateDataSeries(final float eclipes,final double setPoint,final double PWM) {
 		if(!chart_.isVisible())return;
 		
 
@@ -272,8 +294,8 @@ public  class RoiItem {
 				for(int i = 0;i<3;i++){
 					try{
 						chart_.getDataSeries().get(MMT.CHARTLIST[i]).add(eclipes,data[i],true);
-						chart_.getDataSeries().get(MMT.CHARTLIST[i]+"1").add(eclipes,lon,true);
-						chart_.getDataSeries().get(MMT.CHARTLIST[i]+"2").add(eclipes,lat,true);
+						chart_.getDataSeries().get(MMT.CHARTLIST[i]+"1").add(eclipes,setPoint,true);
+						chart_.getDataSeries().get(MMT.CHARTLIST[i]+"2").add(eclipes,PWM,true);
 					}catch(Exception e){
 						System.out.print(e.toString());
 					}
@@ -282,8 +304,6 @@ public  class RoiItem {
 				if(update  && (MMT.VariablesNUPD.AutoRange.value() == 1)){
 					double[] mean = getMean();
 					double[] drawScale = getDrawScale();
-					//System.out.print(String.format("\r\n%.1f\t%.1f\t%.1f", drawScale[0],drawScale[1],drawScale[2]));
-					//System.out.print(String.format("\r\n%.1f\t%.1f\t%.1f", mean[0],mean[1],mean[2]));
 					for(int i=0;i<3;i++){
 						chart_.getChartSeries().get(MMT.CHARTLIST[i]).getXYPlot().getRangeAxis().setRange(mean[i] - drawScale[i],mean[i] + drawScale[i]);
 					}
@@ -301,7 +321,6 @@ public  class RoiItem {
 		final int selectedIndex = chart_.getSelectedTap();
 		JFreeChart tem = chart_.getChartSeries().get(MMT.CHARTLIST[1]);
 		int count = tem.getXYPlot().getDatasetCount();
-		MMT.logMessage(String.format("count:%d\r\n", count));
 		SwingUtilities.invokeLater(new Runnable(){
 			@Override
 			public void run() {
@@ -479,5 +498,13 @@ public  class RoiItem {
 	public void setCalProfileNorm(double[] calProfileNorm) {
 		this.calProfileNorm = calProfileNorm;
 	}
+	public void setPID(int p, int i, int d) {
+		// TODO Auto-generated method stub
+		Kp = p;
+		Ki = i;
+		Kd = d;
+	}
+	
+ 
 
 }
