@@ -108,7 +108,9 @@ public class PreferDailog extends JFrame {
 							comm_.SetVotageTimes(MMT.VariablesNUPD.votageSmoothWindow.value());
 							break;
 						case "SetPoint":
-							comm_.setVotage((int) MMT.VariablesNUPD.SetPoint.value());
+							int flow = (int) MMT.VariablesNUPD.SetPoint.value();
+							double voltage = 120.2+30.05*flow;
+							comm_.setVotage(voltage);
 						case "PIDMode":
 							comm_.setPIDMode((int) MMT.VariablesNUPD.PIDMode.value());
 							

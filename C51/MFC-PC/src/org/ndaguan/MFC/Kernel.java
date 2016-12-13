@@ -120,24 +120,24 @@ public class Kernel {
 		System.out.print(String.format("P:%.4f,I:%.4f,D:%.4f", kp,ki,kd));
 	}
 	private double closeTimeout = 5;//s
+	private double closeTimeout0 = 1;//s
 	private boolean pwmBack;
 	public void autoFixPID(PreferDailog preDla,CommTool comm,int setPoint,RoiItem roi){
-		int Kp[]= new int[]{1,700};
-		int T[]= new int[]{5,300};
+		int Kp[]= new int[]{1500,4000};
+		int T[]= new int[]{80,150};
 		comm.setPIDMode(0);
 		MMT.VariablesNUPD.SetPoint.value(setPoint);
 		long start_time = System.nanoTime();
 		long counter = 0;
 
-		for (int t = T[0]; t < T[1]; t+=1) {
+		for (int t = T[0]; t < T[1]; t+=10) {
 			comm.setPIDPeriod(t);
 			Sleep(10);
-			for (int p = Kp[0]; p < Kp[1]; p+=1) {
+			for (int p = Kp[0]; p < Kp[1]; p+=100) {
 
 				System.out.print(String.format("\r\nSeting:\tT:%d,kp:%d,", t,p));
-
 				counter++;
-				roi.setPID(p,t,0);
+				roi.setPID(p,t,0);//save p t
 				comm.setPTerm(p);
 				Sleep(10);
 				comm.CloseTunel();
@@ -146,7 +146,7 @@ public class Kernel {
 				boolean timeOut= false;
 				long timeStart = System.nanoTime();
 				while(!timeOut){
-					timeOut = (System.nanoTime()-timeStart)/10e9 >closeTimeout ;
+					timeOut = (System.nanoTime()-timeStart)/10e9 >closeTimeout0 ;
 					showAndSave(roi,comm,start_time,counter,true,setPoint,null);
 					System.out.print(String.format("\r\n[CloseTunel]Waitfor timeout[%b]\r\n", timeOut));
 				}
@@ -238,6 +238,8 @@ public class Kernel {
 		}
 		roi.setXYZ(pos,0, 0);
 		roi.writeData("MFC",counter,eclipes,out,b);
+		if(counter%10 == 0)
+			roi.flush();
 		roi.updateDataSeries(eclipes, SetPoint,(int)(out*MMT.VariablesNUPD.PWMRate.value() ));
 		try {
 			TimeUnit.MILLISECONDS.sleep(10);
@@ -338,6 +340,8 @@ public class Kernel {
 		//		kr.getPID("PID", 54, 2.47, 0.03);
 		//kr.autoFixPID(preDla, comm, 2800, rt.get(0));
 		comm.OpenTunel();
+		long counter = 0;
+		long std[] = new long[]{0};
 		while(true){
 			try {
 				if(MMT.VariablesNUPD.PIDbyPC.value() ==0)
@@ -348,6 +352,9 @@ public class Kernel {
 					kr.PidByMCU(comm, rt.get(0), start_time);
 				if(MMT.VariablesNUPD.PIDbyPC.value() ==3)
 					kr.PWMVSVOL( comm, rt.get(0));
+				if(MMT.VariablesNUPD.PIDbyPC.value() ==4){
+					kr.showAndSave(rt.get(0), comm, start_time, counter++, true, 2800, std);
+				}
 
 				TimeUnit.MILLISECONDS.sleep(200);
 
