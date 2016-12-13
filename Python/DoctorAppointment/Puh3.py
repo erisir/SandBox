@@ -4,6 +4,7 @@ from bs4 import BeautifulSoup as BS
 import re
 import Conn
 import time
+import datetime
 import requests
 from _winapi import NULL
  
@@ -196,6 +197,7 @@ class Puh3(object):
                
 if __name__ == '__main__':
     today = time.strftime("%y-%m-%d",time.localtime())
+    appDate = (datetime.date.today() + datetime.timedelta(days=7)).strftime("%Y-%m-%d")
     today+= " "
     targetTime = today+"09:29:30" 
     releasedTime = today+"09:30:30" 
@@ -206,15 +208,15 @@ if __name__ == '__main__':
             break
         time.sleep(10)
         print(time.strftime("%y-%m-%d %H:%M:%S",time.localtime()))
-
-    appInfo = ["农大官,2016-12-06,上午,口腔门诊,李志刚",
-            "张宇微,2016-12-06,上午,妇科门诊,张璐芳"]
+    department = {1:"妇科门诊",2:"风湿免疫门诊",3:"口腔科门诊",4:"内分泌门诊",5:"运动医学门诊"}
+    appInfo = ["农大官,上午,3,陈晓红",
+            "张宇微,下午,3,陈晓红"]
     #时间，医生一一对应，按自然优先级抢号
     counter = 0
     instence = [0,1]
     for x in appInfo:
         a = x.split(",")
-        instence[counter] = Puh3(a[0],a[1],a[2],a[3],a[4])
+        instence[counter] = Puh3(a[0],appDate,a[1],department[int(a[2])],a[3])
         counter += 1
         print("*"*50)
         
