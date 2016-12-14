@@ -210,8 +210,8 @@ if __name__ == '__main__':
         time.sleep(10)
         print(time.strftime("%y-%m-%d %H:%M:%S",time.localtime()))
     department = {1:"妇科门诊",2:"风湿免疫门诊",3:"口腔科门诊",4:"内分泌门诊",5:"运动医学门诊"}
-    appInfo = ["农大官,上午,3,陈晓红",
-            "张宇微,下午,3,陈晓红"]
+    appInfo = ["农大官,上午,3,郑旭",
+            "农大官,下午,3,郑旭"]
     #时间，医生一一对应，按自然优先级抢号
     counter = 0
     instence = [0,1]
