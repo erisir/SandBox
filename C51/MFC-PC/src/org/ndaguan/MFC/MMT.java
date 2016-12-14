@@ -116,6 +116,7 @@ public class MMT {
 		votageSmoothWindow("",1,0,0,"get votage smooth window",VariablesClassify.Debug.name()),
 		Pause("",1,0,0,"stop show chart",VariablesClassify.Debug.name()),
 		Tu("",0.01,0.0001,0,"Tu",VariablesClassify.Feedback.name()),
+		TIM4Prescaler("",0.01,0.0001,0,"TIM4Prescaler",VariablesClassify.Debug.name()),
 		PIDPeriod("",1000,0,0,"data acquire period",VariablesClassify.Feedback.name());
 		private String unit;
 		private double value;

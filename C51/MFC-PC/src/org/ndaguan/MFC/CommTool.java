@@ -33,6 +33,8 @@ public class CommTool {
 	final byte _U_SetVotageTimes= 'a';
 	final byte _U_SetPIDMode= 'b';
 	final byte  _U_SetPIDPeriod = 'c';
+	final byte _U_SetTIM4Prescaler = 'd';
+
 	private SerialPort serialPort;
 	private OutputStream outputStream;
 	private int baudRate = 115200;
@@ -174,49 +176,45 @@ public class CommTool {
 	{
 		byte []buf = new byte[5];
 		PackageCommand(_U_SetDura,null,buf);
+		String[] name = new String[]{"Kp","Ki","Kd","DeadZone","SetPoint","Output","LastError","PrevError","voltage","SumErr"};
+		double[] val = new double[name.length];
 		try {
 			sendCommand(buf);
+
+			Sleep(10);
+			byte[] bret = readAnswer();
+	 
+			if(bret.length<=0){
+				LogMessage("getPIDStatue--read nothing");
+
+			}
+			char [] ret = new char[bret.length];
+			for (int i = 0; i < bret.length; i++) {
+				ret[i]= (char) bret[i];
+			} 
+			String tem = String.copyValueOf(ret);
+			String[] temp1 = tem.split(",");
+			long setv =0;
+			long pwm  = 0;
+		
+			String str = "";
+			for(int i = 0;i<temp1.length;i++){
+				if(isNumeric(temp1[i]))
+				{
+				val[i] =   Double.valueOf(temp1[i]).doubleValue();
+				str += name[i]+" ="+temp1[i]+" ";
+				}
+
+			}
+			this.LogMessage(str);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		Sleep(10);
-		byte[] bret = readAnswer();
-		/*LogMessage("readAnswer");
-		for (int i = 0; i < 5; i++) {
-			System.out.print((int)bret[i]);
-			System.out.print((char)' ');
-		}
-		 */
-		if(bret.length<=0){
-			LogMessage("getPIDStatue--read nothing");
-
-		}
-		char [] ret = new char[bret.length];
-		for (int i = 0; i < bret.length; i++) {
-			ret[i]= (char) bret[i];
-		} 
-		String tem = String.copyValueOf(ret);
-		String[] temp1 = tem.split(",");
-		long setv =0;
-		long pwm  = 0;
-		String[] name = new String[]{"Kp","Ki","Kd","DeadZone","SetPoint","Output","LastError","PrevError","voltage","SumErr"};
-		double[] val = new double[name.length];
-		String str = "";
-		for(int i = 0;i<name.length;i++){
-			//if(isNumeric(temp1[i]))
-			//{
-			val[i] =   Double.valueOf(temp1[i]).doubleValue();
-			str += name[i]+" ="+temp1[i]+" ";
-			//}
-
-		}
-		this.LogMessage(str);
-
 
 		return val;////pos ;
 	}
-	
+
 	private  void Sleep(int l) {
 		try {
 			TimeUnit.MILLISECONDS.sleep(l);
@@ -509,6 +507,21 @@ public class CommTool {
 		byte buf[] = new byte[5];
 		buf[0] = '@';
 		buf[1] = _U_SetPWMVal;
+		buf[3] = (byte) (value%256);
+		buf[2] = (byte) ((value/256)%256);
+		try {
+			sendCommand(buf);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	public void setTIM4Prescaler(int value) {
+		// TODO Auto-generated method stub
+		// TODO Auto-generated method stub
+		byte buf[] = new byte[5];
+		buf[0] = '@';
+		buf[1] = _U_SetTIM4Prescaler;
 		buf[3] = (byte) (value%256);
 		buf[2] = (byte) ((value/256)%256);
 		try {

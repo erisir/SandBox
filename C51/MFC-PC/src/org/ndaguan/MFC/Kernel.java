@@ -147,7 +147,12 @@ public class Kernel {
 				long timeStart = System.nanoTime();
 				while(!timeOut){
 					timeOut = (System.nanoTime()-timeStart)/10e9 >closeTimeout0 ;
-					showAndSave(roi,comm,start_time,counter,true,setPoint,null);
+					try {
+						showAndSave(roi,comm,start_time,counter,true,setPoint,null);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 					System.out.print(String.format("\r\n[CloseTunel]Waitfor timeout[%b]\r\n", timeOut));
 				}
 				comm.PIDTunel();
@@ -156,7 +161,65 @@ public class Kernel {
 				timeStart = System.nanoTime();
 				long std[] = new long[]{0};
 				while(!timeOut){		
-					showAndSave(roi,comm,start_time,counter,false,setPoint,std);
+					try {
+						showAndSave(roi,comm,start_time,counter,false,setPoint,std);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					timeOut = (System.nanoTime()-timeStart)/10e9 >closeTimeout ;
+					System.out.print(String.format("\r\n[PID]Waitfor timeout[%b]\r\n", timeOut));
+				}
+				updateStd((long) Math.sqrt(std[0]),counter,comm,start_time,roi);
+			}
+		}
+	}
+	public void autoFixPIDANDTime(PreferDailog preDla,CommTool comm,int setPoint,RoiItem roi){
+		int Kp[]= new int[]{3000,3001};
+		int T[]= new int[]{99,7200};
+		comm.setPIDMode(0);
+		MMT.VariablesNUPD.SetPoint.value(setPoint);
+		long start_time = System.nanoTime();
+		long counter = 0;
+
+		for (int p = Kp[0]; p < Kp[1]; p+=100) {
+			comm.setPTerm(p);
+			comm.CloseTunel();
+			System.out.print("\r\nClose");
+			double pos =   comm.getPosition();//temp[8];					
+			boolean timeOut= false;
+			long timeStart = System.nanoTime();
+			while(!timeOut){
+				timeOut = (System.nanoTime()-timeStart)/10e9 >closeTimeout0 ;
+				try {
+					showAndSave(roi,comm,start_time,counter,true,setPoint,null);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				System.out.print(String.format("\r\n[CloseTunel]Waitfor timeout[%b]\r\n", timeOut));
+			}
+			comm.PIDTunel();
+			System.out.print("\r\nPIDTunel");
+			Sleep(10);
+			for (int t = T[0]; t < T[1]; t+=1){
+
+				System.out.print(String.format("\r\nSeting:\tT:%d,kp:%d,", t,p));
+				counter++;
+				roi.setPID(p,t,0);//save p t
+				comm.setTIM4Prescaler(t);
+				Sleep(10);
+
+				timeOut= false;
+				timeStart = System.nanoTime();
+				long std[] = new long[]{0};
+				while(!timeOut){		
+					try {
+						showAndSave(roi,comm,start_time,counter,false,setPoint,std);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 					timeOut = (System.nanoTime()-timeStart)/10e9 >closeTimeout ;
 					System.out.print(String.format("\r\n[PID]Waitfor timeout[%b]\r\n", timeOut));
 				}
@@ -194,7 +257,12 @@ public class Kernel {
 					long timeStart = System.nanoTime();
 					while(!timeOut){
 						timeOut = (System.nanoTime()-timeStart)/10e9 >closeTimeout ;
-						showAndSave(roi,comm,start_time,counter,true,setPoint,null);
+						try {
+							showAndSave(roi,comm,start_time,counter,true,setPoint,null);
+						} catch (InterruptedException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
 						System.out.print(String.format("\r\n[CloseTunel]Waitfor timeout[%b]\r\n", timeOut));
 					}
 					comm.PIDTunel();
@@ -203,7 +271,12 @@ public class Kernel {
 					timeStart = System.nanoTime();
 					long std[] = new long[]{0};
 					while(!timeOut){		
-						showAndSave(roi,comm,start_time,counter,false,setPoint,std);
+						try {
+							showAndSave(roi,comm,start_time,counter,false,setPoint,std);
+						} catch (InterruptedException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
 						timeOut = (System.nanoTime()-timeStart)/10e9 >closeTimeout ;
 						System.out.print(String.format("\r\n[PID]Waitfor timeout[%b]\r\n", timeOut));
 					}
@@ -221,7 +294,7 @@ public class Kernel {
 		roi.writeData("MFC",counter,eclipes,out,false,std);
 	}
 
-	private void showAndSave(RoiItem roi, CommTool comm, long start_time, long counter, boolean b,int SetPoint,long std[]) {
+	private void showAndSave(RoiItem roi, CommTool comm, long start_time, long counter, boolean b,int SetPoint,long std[]) throws InterruptedException {
 		// TODO Auto-generated method stub
 		float eclipes= (float) ((System.nanoTime()-start_time)/10e6); 
 		int out = 0;
@@ -241,12 +314,9 @@ public class Kernel {
 		if(counter%10 == 0)
 			roi.flush();
 		roi.updateDataSeries(eclipes, SetPoint,(int)(out*MMT.VariablesNUPD.PWMRate.value() ));
-		try {
-			TimeUnit.MILLISECONDS.sleep(10);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+
+		TimeUnit.MILLISECONDS.sleep(10);
+
 	}
 	public void showChart(RoiItem roi, CommTool comm, long start_time) {
 		// TODO Auto-generated method stub
@@ -323,7 +393,7 @@ public class Kernel {
 			rt.updateDataSeries(eclipes,(long) temp[4],(int)(rout*MMT.VariablesNUPD.PWMRate.value() ));
 		}
 	}
-	
+
 	public  static void main(String[] args) {
 		List<RoiItem> rt = Collections.synchronizedList(new ArrayList<RoiItem>());
 		rt.add(RoiItem.createInstance(new double[]{130,130,0})); 
@@ -331,6 +401,7 @@ public class Kernel {
 		rt.get(0).setChartVisible(true);
 		CommTool comm = new CommTool(kr,rt);
 		PreferDailog preDla = new PreferDailog(kr,rt,comm);
+		//rt.get(0).addControlPanel(preDla.Mainpanel);
 		preDla.setVisible(true);
 		comm.OpenTunel();
 		kr.pwmBack = false;
@@ -339,6 +410,7 @@ public class Kernel {
 
 		//		kr.getPID("PID", 54, 2.47, 0.03);
 		//kr.autoFixPID(preDla, comm, 2800, rt.get(0));
+		//kr.autoFixPIDANDTime(preDla, comm, 2800, rt.get(0));
 		comm.OpenTunel();
 		long counter = 0;
 		long std[] = new long[]{0};

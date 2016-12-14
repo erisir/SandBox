@@ -12,6 +12,8 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
+import javax.swing.JFrame;
+import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
@@ -377,6 +379,9 @@ public  class RoiItem {
 	 
 	public void setChartVisible(boolean flag) {
 		chart_.setVisible(flag);
+	}
+	public void addControlPanel(JPanel mainpanel) {
+		chart_.addControlPanel(mainpanel);;
 	}
 	public void addChartData(String string, double x, double y,boolean flag) {
 		XYSeries dataSeries = chart_.getDataSeries().get(string);

@@ -2,6 +2,7 @@ package org.ndaguan.MFC;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.LayoutManager;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -21,7 +22,6 @@ import javax.swing.JSeparator;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
-
 public class PreferDailog extends JFrame {
 	private static final long serialVersionUID = 1L;
 	private int ITEMWIDTH = 140;
@@ -36,6 +36,7 @@ public class PreferDailog extends JFrame {
 	private ActionListener DialogListener;
 	private int preferencesLen;
 	private int columnNum = 4;
+	public JPanel Mainpanel ;
 	String userDataDir_ = "";
 	private List<RoiItem> roiList_;
 	private CommTool comm_;
@@ -117,6 +118,9 @@ public class PreferDailog extends JFrame {
 							break;
 						case "PIDPeriod":
 							comm_.setPIDPeriod((int) MMT.VariablesNUPD.PIDPeriod.value());
+							break;
+						case "TIM4Prescaler":
+							comm_.setTIM4Prescaler((int) MMT.VariablesNUPD.TIM4Prescaler.value());
 							break;
 							
 
@@ -249,9 +253,9 @@ public class PreferDailog extends JFrame {
 			Toolkit kit = Toolkit.getDefaultToolkit();
 			Dimension screen = kit.getScreenSize();
 			getContentPane().setLayout(null);
+			setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 			int frameWidth = (int)(ITEMWIDTH*columnNum);
 			int frameHeight = 4*ITEMHEIGHT*preferencesLen/columnNum + ITEMHEIGHT*ITEMROW/3 ;
-			setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 			final JTabbedPane tabbedPane = new JTabbedPane();
 	 
 			int classifyLen = MMT.VariablesClassify.values().length;
@@ -297,11 +301,11 @@ public class PreferDailog extends JFrame {
 			setBounds((int)(screen.width -frameWidth)/2,(int)(screen.height-frameHeight)/2,frameWidth ,frameHeight);
 			
 			tabbedPane.setBounds(0,0,(int)(ITEMWIDTH*(columnNum+0.2)), y);
-			getContentPane().add(tabbedPane);
+			
 			final JPanel buttonBox = new JPanel();
 			buttonBox.setLayout(null);
 			buttonBox.setBounds(0, 10,  frameWidth,frameHeight);
-			getContentPane().add(buttonBox);
+			
 			
 			final JSeparator separator2 = new JSeparator();
 			separator2.setBounds(0,y, ITEMWIDTH, 50);
@@ -347,7 +351,8 @@ public class PreferDailog extends JFrame {
 			PauseButton.addActionListener(DialogListener);
 			
 			
-			
+			getContentPane().add(tabbedPane);
+			getContentPane().add(buttonBox);
 	}
 	public void activateButton(int num)
 	{

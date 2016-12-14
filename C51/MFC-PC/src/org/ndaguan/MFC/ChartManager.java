@@ -89,6 +89,11 @@ public class ChartManager extends JFrame  {
 			tabbedPane.addTab( dataSet[i], null, createChartPanel(dataSet[i]), null);
 		}
 	}
+	public void addControlPanel(JPanel mainpanel){
+		mainpanel.setBounds(0, DEFAULT_HEIGHT, mainpanel.WIDTH, mainpanel.HEIGHT);
+		getContentPane().add(mainpanel);
+		setSize(DEFAULT_WIDTH, DEFAULT_HEIGHT+mainpanel.HEIGHT);
+	}
 	public int getSelectedTap(){
 		return tabbedPane.getSelectedIndex();
 	}

@@ -20,6 +20,7 @@
 #include "../pid/mfc_pid.h"
 #include "../adc/mfc_adc.h"
 #include "../pwm/mfc_pwm.h"
+#include "../TimBase/mfc_TiMbase.h"
 
 extern __IO unsigned char busy; 
 extern __IO  char uart_flag;
@@ -139,8 +140,9 @@ void parseCMD(){
 
 	case _U_SetPIDMode:SetPIDMode(v_data);break;//8
 	
-	case _U_SetPIDPeriod: SetPIDPeriod(v_data);;break;//8
-
+	case _U_SetPIDPeriod: SetPIDPeriod(v_data);break;//8
+	
+	case _U_SetTIM4Prescaler: TIM3_Set_Prescaler(v_data);break;//8TIM4_Set_Prescaler(unsigned int Prescaler)
 	default:break;
 	}	    
 }

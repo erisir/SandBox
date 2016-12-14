@@ -4,6 +4,7 @@
 #include "stm32f10x.h"
 
 void TIM4_NVIC_Configuration(void);
-void TIM4_Configuration(void);
-
+void TIM4_Configuration(unsigned int Prescaler);
+void TIM4_PID_Init(void);
+void TIM4_Set_Prescaler(unsigned int Prescaler);
 #endif	/* TIME_TEST_H */

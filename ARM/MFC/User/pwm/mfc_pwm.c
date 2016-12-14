@@ -5,7 +5,7 @@
  * @param  无
  * @retval 无
  */
-static void TIM3_GPIO_Config(void) 
+void TIM3_GPIO_Config(void) 
 {
 	GPIO_InitTypeDef GPIO_InitStructure;
 
@@ -26,7 +26,7 @@ static void TIM3_GPIO_Config(void)
  * @param  无
  * @retval 无
  */
-static void NVIC_Config_PWM(void)
+void NVIC_Config_PWM(void)
 {
 	NVIC_InitTypeDef NVIC_InitStructure;
 
@@ -58,7 +58,7 @@ static void NVIC_Config_PWM(void)
 /*    _______    ______     _____      ____       ___        __         _
  * |_|       |__|      |___|     |____|    |_____|   |______|  |_______| |________|
  */
-static void TIM3_Mode_Config(void)
+void TIM3_Mode_Config(unsigned int Prescaler)
 {
 	TIM_TimeBaseInitTypeDef  TIM_TimeBaseStructure;
 	TIM_OCInitTypeDef  TIM_OCInitStructure;																				
@@ -68,7 +68,7 @@ static void TIM3_Mode_Config(void)
 
 	/* 基本定时器配置 */		 
 	TIM_TimeBaseStructure.TIM_Period = PWM_HIGH_MAX;   				  //当定时器从0计数到255，即为266次，为一个定时周期
-	TIM_TimeBaseStructure.TIM_Prescaler = 2;	    							//设置预分频：
+	TIM_TimeBaseStructure.TIM_Prescaler = Prescaler;	    							//设置预分频：
 	TIM_TimeBaseStructure.TIM_ClockDivision = TIM_CKD_DIV1 ;			//设置时钟分频系数：不分频(这里用不到)
 	TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;  	//向上计数模式
 	TIM_TimeBaseInit(TIM3, &TIM_TimeBaseStructure);
@@ -91,7 +91,7 @@ static void TIM3_Mode_Config(void)
 
 	TIM_ITConfig(TIM3,TIM_IT_Update, ENABLE);										//使能update中断
 
-	NVIC_Config_PWM();																					//配置中断优先级		
+																			
 
 }
 
@@ -103,10 +103,13 @@ static void TIM3_Mode_Config(void)
  */
 void TIM3_PWM_Init(void)
 {
-	TIM3_GPIO_Config();
-	TIM3_Mode_Config();	
+	TIM3_GPIO_Config();//引脚
+	TIM3_Mode_Config(2);	//TIMER 相关
+	NVIC_Config_PWM();//中断优先级					
 }
-
+void TIM3_Set_Prescaler(unsigned int Prescaler){
+	TIM3_Mode_Config(Prescaler);	//TIMER 相关
+}
 /**************** 计算PWM重装值函数 *******************/
 //注意：TIM_SetCompare3的3为ch3的寄存器
 void    LoadPWM(unsigned int pwmval)

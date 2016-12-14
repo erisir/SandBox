@@ -17,6 +17,7 @@
 #define _U_SetVotageTimes 'a'
 #define _U_SetPIDMode 	  'b'
 #define _U_SetPIDPeriod   'c'
+#define _U_SetTIM4Prescaler 'd'
 
 void USART1_Config(void);
 void NVIC_Configuration(void);

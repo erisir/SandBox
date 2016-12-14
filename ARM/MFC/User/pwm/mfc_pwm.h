@@ -17,7 +17,10 @@
 
 #define     PWM_HIGH_MIN    10              //限制PWM输出的最小占空比。用户请勿修改。
 #define     PWM_HIGH_MAX    (PWM_DUTY-PWM_HIGH_MIN) //限制PWM输出的最大占空比。用户请勿修改。
- 
+void TIM3_GPIO_Config(void) ;
+void NVIC_Config_PWM(void);
+void TIM3_Mode_Config(unsigned int Prescaler);
 void TIM3_PWM_Init(void);
 void LoadPWM(unsigned int high);
+void TIM3_Set_Prescaler(unsigned int Prescaler);
 #endif

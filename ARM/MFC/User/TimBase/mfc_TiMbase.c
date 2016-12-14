@@ -16,8 +16,21 @@
   */ 
 
 #include "mfc_TiMbase.h" 
+void TIM4_PID_Init(void){
+	/* TIM2 定时配置 */	
+  TIM4_Configuration(71);
+	
+	/* 实战定时器的中断优先级 */
+	TIM4_NVIC_Configuration();
 
-/// TIM2中断优先级配置
+	/* TIM2 重新开时钟，开始计时 */
+	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM4 , ENABLE);
+}
+void TIM4_Set_Prescaler(unsigned int Prescaler){
+	TIM4_Configuration(Prescaler);
+	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM4 , ENABLE);
+}
+/// TIM4中断优先级配置
 void TIM4_NVIC_Configuration(void)
 {
     NVIC_InitTypeDef NVIC_InitStructure; 
@@ -36,7 +49,7 @@ void TIM4_NVIC_Configuration(void)
  *
  * TIMxCLK/CK_PSC --> TIMxCNT --> TIM_Period(ARR) --> 中断 且TIMxCNT重置为0重新计数 
  */
-void TIM4_Configuration(void)
+void TIM4_Configuration(unsigned int Prescaler)
 {
     TIM_TimeBaseInitTypeDef  TIM_TimeBaseStructure;
 		
@@ -49,7 +62,7 @@ void TIM4_Configuration(void)
 	
     /* 累计 TIM_Period个频率后产生一个更新或者中断 */
 	  /* 时钟预分频数为72 */
-    TIM_TimeBaseStructure.TIM_Prescaler= 71;
+    TIM_TimeBaseStructure.TIM_Prescaler= Prescaler;
 	
 		/* 对外部时钟进行采样的时钟分频,这里没有用到 */
     TIM_TimeBaseStructure.TIM_ClockDivision=TIM_CKD_DIV1;

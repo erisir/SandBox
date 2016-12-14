@@ -44,22 +44,13 @@ int main(void)
 	USART1_Config();
 	NVIC_Configuration();
 	TIM3_PWM_Init();
+	/* led 端口配置 */ 
+	LED_GPIO_Config();
+	/* PID采样周期使用time4中断 */ 
+	TIM4_PID_Init();
 	PIDInit() ;
 	ADC1_Init();
 
-	
-	/* led 端口配置 */ 
-	LED_GPIO_Config();
-
-	/* TIM2 定时配置 */	
-  TIM4_Configuration();
-	
-	/* 实战定时器的中断优先级 */
-	TIM4_NVIC_Configuration();
-
-	/* TIM2 重新开时钟，开始计时 */
-	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM4 , ENABLE);
-	
 	
 	while (1)
 	{ 
