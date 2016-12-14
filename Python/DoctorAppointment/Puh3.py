@@ -73,7 +73,8 @@ class Puh3(object):
         "高洪伟":"201105794",
         "王敏":"201106050",
         #妇科
-        "test":"201105712"
+        "test":"201105712",
+        "正畸":"201123194"
         }
     
     def __init__(self,patientName,date,time,deparmentName,doctorName):
