@@ -189,6 +189,14 @@ void USART1_IRQHandler(void)
 
 
 /* PWM中断服务函数 */
+void TIM2_IRQHandler(void)
+{	
+	if (TIM_GetITStatus(TIM2, TIM_IT_Update) != RESET)	//TIM_IT_Update
+ 	{					
+		TIM_ClearITPendingBit (TIM2, TIM_IT_Update);	//必须要清除中断标志位
+	}
+}
+/* PWM中断服务函数 */
 void TIM3_IRQHandler(void)
 {	
 	if (TIM_GetITStatus(TIM3, TIM_IT_Update) != RESET)	//TIM_IT_Update

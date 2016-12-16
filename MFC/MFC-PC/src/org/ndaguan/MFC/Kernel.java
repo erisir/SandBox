@@ -148,7 +148,7 @@ public class Kernel {
 				while(!timeOut){
 					timeOut = (System.nanoTime()-timeStart)/10e9 >closeTimeout0 ;
 					try {
-						showAndSave(roi,comm,start_time,counter,true,setPoint,null);
+						showAndSave(roi,comm,start_time,counter,true,null);
 					} catch (InterruptedException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -162,7 +162,7 @@ public class Kernel {
 				long std[] = new long[]{0};
 				while(!timeOut){		
 					try {
-						showAndSave(roi,comm,start_time,counter,false,setPoint,std);
+						showAndSave(roi,comm,start_time,counter,false,std);
 					} catch (InterruptedException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -176,14 +176,14 @@ public class Kernel {
 	}
 	public void autoFixPIDANDTime(PreferDailog preDla,CommTool comm,int setPoint,RoiItem roi){
 		int Kp[]= new int[]{3000,3001};
-		int T[]= new int[]{99,7200};
-		comm.setPIDMode(0);
+		int T[]= new int[]{1,99};
+		//comm.setPIDMode(0);
 		MMT.VariablesNUPD.SetPoint.value(setPoint);
 		long start_time = System.nanoTime();
 		long counter = 0;
 
 		for (int p = Kp[0]; p < Kp[1]; p+=100) {
-			comm.setPTerm(p);
+			//comm.setPTerm(p);
 			comm.CloseTunel();
 			System.out.print("\r\nClose");
 			double pos =   comm.getPosition();//temp[8];					
@@ -192,7 +192,7 @@ public class Kernel {
 			while(!timeOut){
 				timeOut = (System.nanoTime()-timeStart)/10e9 >closeTimeout0 ;
 				try {
-					showAndSave(roi,comm,start_time,counter,true,setPoint,null);
+					showAndSave(roi,comm,start_time,counter,true,null);
 				} catch (InterruptedException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -215,7 +215,7 @@ public class Kernel {
 				long std[] = new long[]{0};
 				while(!timeOut){		
 					try {
-						showAndSave(roi,comm,start_time,counter,false,setPoint,std);
+						showAndSave(roi,comm,start_time,counter,false,std);
 					} catch (InterruptedException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -258,7 +258,7 @@ public class Kernel {
 					while(!timeOut){
 						timeOut = (System.nanoTime()-timeStart)/10e9 >closeTimeout ;
 						try {
-							showAndSave(roi,comm,start_time,counter,true,setPoint,null);
+							showAndSave(roi,comm,start_time,counter,true,null);
 						} catch (InterruptedException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
@@ -272,7 +272,7 @@ public class Kernel {
 					long std[] = new long[]{0};
 					while(!timeOut){		
 						try {
-							showAndSave(roi,comm,start_time,counter,false,setPoint,std);
+							showAndSave(roi,comm,start_time,counter,false,std);
 						} catch (InterruptedException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
@@ -294,10 +294,11 @@ public class Kernel {
 		roi.writeData("MFC",counter,eclipes,out,false,std);
 	}
 
-	private void showAndSave(RoiItem roi, CommTool comm, long start_time, long counter, boolean b,int SetPoint,long std[]) throws InterruptedException {
+	private void showAndSave(RoiItem roi, CommTool comm, long start_time, long counter, boolean b,long std[]) throws InterruptedException {
 		// TODO Auto-generated method stub
 		float eclipes= (float) ((System.nanoTime()-start_time)/10e6); 
 		int out = 0;
+		double  SetPoint = MMT.VariablesNUPD.SetPoint.value();
 		double pos = 0;
 		if(b){
 			pos =   comm.getPosition();
@@ -340,7 +341,7 @@ public class Kernel {
 		}
 	}
 	public void PidByPC(CommTool comm,RoiItem rt,long start_time){
-		if(MMT.VariablesNUPD.PIDbyPC.value() == 1){
+		if(MMT.VariablesNUPD.WorkMode.value() == 1){
 			double pos = comm.getPosition();
 			float eclipes= (float) ((System.nanoTime()-start_time)/10e6);
 			rout += PIDCalc((long) pos);
@@ -382,17 +383,6 @@ public class Kernel {
 		rt.setXYZ(pos,0, 0);
 		rt.updateDataSeries1(pwmBack,(long) MMT.VariablesNUPD.SetPoint.value(), rout);
 	}
-	public void PidByMCU(CommTool comm,RoiItem rt,long start_time){
-		if(MMT.VariablesNUPD.Pause.value() >0){
-			double[] temp = comm.getPIDStatue();
-			rt.setXYZ(temp[8],0, 0);
-			float eclipes= (float) ((System.nanoTime()-start_time)/10e6);
-			rout = (int) temp[5];
-			///System.out.println(eclipes);
-			//System.out.print("\r\n");
-			rt.updateDataSeries(eclipes,(long) temp[4],(int)(rout*MMT.VariablesNUPD.PWMRate.value() ));
-		}
-	}
 
 	public  static void main(String[] args) {
 		List<RoiItem> rt = Collections.synchronizedList(new ArrayList<RoiItem>());
@@ -410,22 +400,22 @@ public class Kernel {
 		comm.OpenTunel();
 		long counter = 0;
 		long std[] = new long[]{0};
+		//kr.autoFixPIDANDTime( preDla, comm, 2800, rt.get(0));
+		
 		while(true){
 			if(MMT.VariablesNUPD.Pause.value() ==1){
 				try {
-					if(MMT.VariablesNUPD.PIDbyPC.value() ==0)
-						kr.showChart( rt.get(0), comm, start_time);
-					if(MMT.VariablesNUPD.PIDbyPC.value() ==1)
-						kr.PidByPC(comm, rt.get(0), start_time);
-					if(MMT.VariablesNUPD.PIDbyPC.value() ==2)
-						kr.PidByMCU(comm, rt.get(0), start_time);
-					if(MMT.VariablesNUPD.PIDbyPC.value() ==3)
+					if(MMT.VariablesNUPD.WorkMode.value() ==0)
+						kr.showChart( rt.get(0), comm, start_time);								
+					if(MMT.VariablesNUPD.WorkMode.value() ==1)//get position
+						kr.showAndSave(rt.get(0), comm, start_time, counter++, true, std);
+					if(MMT.VariablesNUPD.WorkMode.value() ==2)//get pid statu
+						kr.showAndSave(rt.get(0), comm, start_time, counter++, false, std);
+					if(MMT.VariablesNUPD.WorkMode.value() ==3)
 						kr.PWMVSVOL( comm, rt.get(0));
-					if(MMT.VariablesNUPD.PIDbyPC.value() ==4){
-						kr.showAndSave(rt.get(0), comm, start_time, counter++, true, 2800, std);
-					}
-
-					TimeUnit.MILLISECONDS.sleep(200);
+					if(MMT.VariablesNUPD.WorkMode.value() ==4)
+						kr.PidByPC(comm, rt.get(0), start_time);	
+					TimeUnit.MILLISECONDS.sleep(10);
 
 				} catch (InterruptedException e) {
 					e.printStackTrace();

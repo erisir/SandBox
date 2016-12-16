@@ -44,7 +44,7 @@ int main(void)
 {	
 	USART1_Config();
 	NVIC_Configuration();
-	TIM3_PWM_Init();
+	TIM2_PWM_Init();
 	/* led 端口配置 */ 
 	LED_GPIO_Config();
 	/* PID采样周期使用time4中断 */ 

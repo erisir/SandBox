@@ -441,7 +441,7 @@ public class CommTool {
 	public void PIDTunel() {
 		// TODO Auto-generated method stub
 		kernel.rout = 0;
-		MMT.VariablesNUPD.PIDbyPC.value(2);
+		MMT.VariablesNUPD.WorkMode.value(2);
 		ChartManager.getInstance().slider.setValue((int) (MMT.VariablesNUPD.SetPoint.value()*10));
 		byte buf[] = new byte[5];
 		buf[0] = '@';
@@ -484,7 +484,7 @@ public class CommTool {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		MMT.VariablesNUPD.PIDbyPC.value(0);
+		MMT.VariablesNUPD.WorkMode.value(0);
 	}
 	public void OpenTunel() {
 		// TODO Auto-generated method stub
@@ -501,7 +501,7 @@ public class CommTool {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		MMT.VariablesNUPD.PIDbyPC.value(0);
+		MMT.VariablesNUPD.WorkMode.value(0);
 	}
 	public void SetPWM(int value) {
 		// TODO Auto-generated method stub

@@ -370,7 +370,7 @@ public  class RoiItem {
  
 	public void setXYZ(double zPos, double xPos, double yPos) {//moving ROI
 		double votage = zPos;
-		double flow = (zPos-120.2)/30.05;
+		double flow = zPos;//(zPos-120.2)/30.05;
 		x_ = xPos;
 		y_ = yPos;
 		z_ = flow;

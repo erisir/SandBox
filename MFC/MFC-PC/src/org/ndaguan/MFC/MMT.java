@@ -110,7 +110,7 @@ public class MMT {
 		Ki("",0.01,0.0001,0,"i",VariablesClassify.Feedback.name()),
 		Kd("",0.01,0.0001,0,"d",VariablesClassify.Feedback.name()),
 		AutoRange("",1,0,0,"AutoRange",VariablesClassify.DataSheet.name()),
-		PIDbyPC("",1,1,0,"0:show,1:byPC,2:byMCU",VariablesClassify.Feedback.name()),
+		WorkMode("",1,1,0,"0:show,1:savePos,2:savePid,3:PWMVsVotage:4:pidbyPC",VariablesClassify.Feedback.name()),
 		PIDMode("",1,1,0,"PIDMode:0:IncAutoPIDCalc,1:IncPIDCalc,2:LocPIDCalc",VariablesClassify.Feedback.name()),
 		votageSmoothWindow("",1,0,0,"get votage smooth window",VariablesClassify.Debug.name()),
 		Pause("",1,0,0,"stop show chart",VariablesClassify.Debug.name()),
