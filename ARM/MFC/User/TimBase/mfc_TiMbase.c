@@ -17,13 +17,13 @@
 
 #include "mfc_TiMbase.h" 
 void TIM4_PID_Init(void){
-	/* TIM2 定时配置 */	
+	/* TIM4 定时配置 */	
   TIM4_Configuration(71);
 	
 	/* 实战定时器的中断优先级 */
 	TIM4_NVIC_Configuration();
 
-	/* TIM2 重新开时钟，开始计时 */
+	/* TIM4 重新开时钟，开始计时 */
 	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM4 , ENABLE);
 }
 void TIM4_Set_Prescaler(unsigned int Prescaler){
