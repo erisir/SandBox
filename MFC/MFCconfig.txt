@@ -1,0 +1,3 @@
+2016年12月14日21:52:20(相应时间：<3s,精度%0.5)
+feedback: kp :4250,ki:6300,kd:2250,pidperiod:100ms;tim4(PWM)prescaler:15
+debug:votagesmoothwindow:100
