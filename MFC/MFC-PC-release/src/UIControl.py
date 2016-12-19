@@ -11,8 +11,8 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
-        Dialog.resize(510, 282)
-        self.BoxCtrl = BoxCtrl(Dialog)
+        Dialog.resize(591, 477)
+        self.BoxCtrl = QtWidgets.QGroupBox(Dialog)
         self.BoxCtrl.setGeometry(QtCore.QRect(13, 10, 120, 80))
         self.BoxCtrl.setObjectName("BoxCtrl")
         self.PWMOpen = QtWidgets.QRadioButton(self.BoxCtrl)
@@ -24,7 +24,7 @@ class Ui_Dialog(object):
         self.PWMPID = QtWidgets.QRadioButton(self.BoxCtrl)
         self.PWMPID.setGeometry(QtCore.QRect(23, 60, 89, 16))
         self.PWMPID.setObjectName("PWMPID")
-        self.BoxMode = BoxMode(Dialog)
+        self.BoxMode = QtWidgets.QGroupBox(Dialog)
         self.BoxMode.setGeometry(QtCore.QRect(13, 100, 120, 101))
         self.BoxMode.setObjectName("BoxMode")
         self.CtrlMode_Dig = QtWidgets.QRadioButton(self.BoxMode)
@@ -65,21 +65,29 @@ class Ui_Dialog(object):
         self.groupBox_4.setGeometry(QtCore.QRect(73, 10, 141, 51))
         self.groupBox_4.setObjectName("groupBox_4")
         self.label_3 = QtWidgets.QLabel(self.groupBox_4)
-        self.label_3.setGeometry(QtCore.QRect(98, 20, 51, 20))
+        self.label_3.setGeometry(QtCore.QRect(80, 20, 51, 20))
         self.label_3.setObjectName("label_3")
         self.SetPoint = QtWidgets.QLCDNumber(self.groupBox_4)
-        self.SetPoint.setGeometry(QtCore.QRect(23, 18, 64, 23))
+        self.SetPoint.setGeometry(QtCore.QRect(10, 18, 64, 23))
         self.SetPoint.setObjectName("SetPoint")
         self.groupBox_5 = QtWidgets.QGroupBox(self.groupBox_3)
         self.groupBox_5.setGeometry(QtCore.QRect(73, 80, 141, 51))
         self.groupBox_5.setObjectName("groupBox_5")
         self.label_4 = QtWidgets.QLabel(self.groupBox_5)
-        self.label_4.setGeometry(QtCore.QRect(98, 20, 51, 20))
+        self.label_4.setGeometry(QtCore.QRect(80, 20, 51, 20))
         self.label_4.setObjectName("label_4")
         self.GetPoint = QtWidgets.QLCDNumber(self.groupBox_5)
-        self.GetPoint.setGeometry(QtCore.QRect(23, 18, 64, 23))
+        self.GetPoint.setGeometry(QtCore.QRect(10, 18, 64, 23))
+        self.GetPoint.setAutoFillBackground(False)
+        self.GetPoint.setStyleSheet("color: rgb(85, 255, 0);\n"
+"selection-color: rgb(255, 0, 0);\n"
+"font: 75 9pt \"Aharoni\";\n"
+"gridline-color: rgb(85, 0, 0);\n"
+"border-color: rgb(0, 0, 255);\n"
+"background-color: rgb(170, 255, 0);")
+        self.GetPoint.setSmallDecimalPoint(False)
         self.GetPoint.setObjectName("GetPoint")
-        self.BoxUnit = BoxUnit(self.groupBox_3)
+        self.BoxUnit = QtWidgets.QGroupBox(self.groupBox_3)
         self.BoxUnit.setGeometry(QtCore.QRect(243, 10, 120, 121))
         self.BoxUnit.setObjectName("BoxUnit")
         self.ShowUnit_FS = QtWidgets.QRadioButton(self.BoxUnit)
@@ -129,5 +137,4 @@ class Ui_Dialog(object):
         self.ShowUnit_V.setText(_translate("Dialog", "V"))
         self.ShowUnit_mv.setText(_translate("Dialog", "mV"))
 
-from UIAction import BoxCtrl, BoxMode, BoxUnit
 from mplCanvasWrapper import MyDynamicMplCanvas

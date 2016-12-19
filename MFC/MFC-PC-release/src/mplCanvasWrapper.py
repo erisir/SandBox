@@ -10,7 +10,7 @@ from PyQt5.QtWidgets import QApplication, QMainWindow, QMenu, QVBoxLayout, QSize
 from numpy import arange, sin, pi
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
-
+import UIComm,UIControl,UIDetail,UIOther
 
 class MyMplCanvas(FigureCanvas):
     """这是一个窗口部件，即QWidget（当然也是FigureCanvasAgg）"""
@@ -34,6 +34,9 @@ class MyMplCanvas(FigureCanvas):
 
 class MyDynamicMplCanvas(MyMplCanvas):
     """动态画布：每秒自动更新，更换一条折线。"""
+    def setGetPoint(self,getpoint,getpointbar):
+        self.getpoint=getpoint
+        self.getpointbar = getpointbar
     def __init__(self, *args, **kwargs):
         MyMplCanvas.__init__(self, *args, **kwargs)
         timer = QtCore.QTimer(self)
@@ -45,8 +48,10 @@ class MyDynamicMplCanvas(MyMplCanvas):
 
     def update_figure(self):
         # 构建4个随机整数，位于闭区间[0, 10]
-        l = [random.randint(0, 10) for i in range(4)]
-
+        l = [random.randint(0, 100) for i in range(4)]
+        flow = l[0]
+        self.getpoint.display(flow)
+        self.getpointbar.setValue(flow)
         self.axes.plot([0, 1, 2, 3], l, 'r')
         self.draw()
  

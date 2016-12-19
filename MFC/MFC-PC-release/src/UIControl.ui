@@ -6,14 +6,14 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>510</width>
-    <height>282</height>
+    <width>591</width>
+    <height>477</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Dialog</string>
   </property>
-  <widget class="BoxCtrl" name="BoxCtrl">
+  <widget class="QGroupBox" name="BoxCtrl">
    <property name="geometry">
     <rect>
      <x>13</x>
@@ -65,7 +65,7 @@
     </property>
    </widget>
   </widget>
-  <widget class="BoxMode" name="BoxMode">
+  <widget class="QGroupBox" name="BoxMode">
    <property name="geometry">
     <rect>
      <x>13</x>
@@ -221,7 +221,7 @@
     <widget class="QLabel" name="label_3">
      <property name="geometry">
       <rect>
-       <x>98</x>
+       <x>80</x>
        <y>20</y>
        <width>51</width>
        <height>20</height>
@@ -234,7 +234,7 @@
     <widget class="QLCDNumber" name="SetPoint">
      <property name="geometry">
       <rect>
-       <x>23</x>
+       <x>10</x>
        <y>18</y>
        <width>64</width>
        <height>23</height>
@@ -257,7 +257,7 @@
     <widget class="QLabel" name="label_4">
      <property name="geometry">
       <rect>
-       <x>98</x>
+       <x>80</x>
        <y>20</y>
        <width>51</width>
        <height>20</height>
@@ -270,15 +270,29 @@
     <widget class="QLCDNumber" name="GetPoint">
      <property name="geometry">
       <rect>
-       <x>23</x>
+       <x>10</x>
        <y>18</y>
        <width>64</width>
        <height>23</height>
       </rect>
      </property>
+     <property name="autoFillBackground">
+      <bool>false</bool>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">color: rgb(85, 255, 0);
+selection-color: rgb(255, 0, 0);
+font: 75 9pt &quot;Aharoni&quot;;
+gridline-color: rgb(85, 0, 0);
+border-color: rgb(0, 0, 255);
+background-color: rgb(170, 255, 0);</string>
+     </property>
+     <property name="smallDecimalPoint">
+      <bool>false</bool>
+     </property>
     </widget>
    </widget>
-   <widget class="BoxUnit" name="BoxUnit">
+   <widget class="QGroupBox" name="BoxUnit">
     <property name="geometry">
      <rect>
       <x>243</x>
@@ -373,24 +387,6 @@
    <class>MyDynamicMplCanvas</class>
    <extends>QWidget</extends>
    <header>mplCanvasWrapper.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>BoxUnit</class>
-   <extends>QGroupBox</extends>
-   <header>UIAction.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>BoxMode</class>
-   <extends>QGroupBox</extends>
-   <header>UIAction.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>BoxCtrl</class>
-   <extends>QGroupBox</extends>
-   <header>UIAction.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
