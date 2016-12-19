@@ -1,1 +1,1 @@
-pyuic4 -o UIControl.py UIControl.ui
+pyuic5 -o UIControl.py UIControl.ui

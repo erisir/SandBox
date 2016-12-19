@@ -1,1 +1,1 @@
-pyuic4 -o UIDetail.py UIDetail.ui
+pyuic5 -o UIDetail.py UIDetail.ui

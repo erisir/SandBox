@@ -1,18 +1,18 @@
-from PyQt5.QtGui import *  
-from PyQt5.QtCore import *  
+from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5.QtWidgets import  *
 import UIComm,UIControl,UIDetail,UIOther
 import sys  
-  
-class TestDialog(QDialog):  
+ 
+class UIMainWindow(QDialog):  
     def __init__(self,parent=None):  
-        super(TestDialog,self).__init__(parent)  
+        super(UIMainWindow,self).__init__(parent)  
           
         firstUIComm=UIComm.Ui_Dialog()  
         secondUIDetail=UIDetail.Ui_Dialog()  
-        thirdUIControl=UIControl.Ui_Dialog()  
+        thirdUIControl=UIControl.Ui_Dialog()
         FourUIOther=UIOther.Ui_Dialog()  
-          
-        tabWidget=QTabWidget(self)  
+ 
+        tabWidget=QtWidgets.QTabWidget(self)  
         w1=QWidget()  
         firstUIComm.setupUi(w1)  
         w2=QWidget()  
@@ -33,7 +33,7 @@ class TestDialog(QDialog):
         
      
           
-app=QApplication(sys.argv)  
-dialog=TestDialog()  
+app=QApplication (sys.argv)  
+dialog=UIMainWindow()  
 dialog.show()  
 app.exec_()  

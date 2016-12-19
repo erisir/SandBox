@@ -1,1 +1,1 @@
-pyuic4 -o UIOther.py UIOther.ui
+pyuic5 -o UIOther.py UIOther.ui
