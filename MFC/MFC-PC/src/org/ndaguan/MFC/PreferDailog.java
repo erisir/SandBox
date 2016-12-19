@@ -111,7 +111,7 @@ public class PreferDailog extends JFrame {
 						case "SetPoint":
 							int flow = (int) MMT.VariablesNUPD.SetPoint.value();
 							ChartManager.getInstance().slider.setValue((int) (flow*10));
-							double voltage = 120.2+30.05*flow;
+							double voltage = MMT.getFlowToVotage(flow);
 							comm_.setVotage(voltage);
 						case "PIDMode":
 							comm_.setPIDMode((int) MMT.VariablesNUPD.PIDMode.value());

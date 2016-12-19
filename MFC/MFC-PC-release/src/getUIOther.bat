@@ -1,0 +1,1 @@
+pyuic4 -o UIOther.py UIOther.ui

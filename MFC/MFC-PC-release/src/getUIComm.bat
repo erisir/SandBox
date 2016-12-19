@@ -1,0 +1,1 @@
+pyuic4 -o UIComm.py UIComm.ui

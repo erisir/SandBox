@@ -298,7 +298,7 @@ public class Kernel {
 		// TODO Auto-generated method stub
 		float eclipes= (float) ((System.nanoTime()-start_time)/10e6); 
 		int out = 0;
-		double  SetPoint = MMT.VariablesNUPD.SetPoint.value();
+		double  SetPoint =0; 
 		double pos = 0;
 		if(b){
 			pos =   comm.getPosition();
@@ -307,6 +307,7 @@ public class Kernel {
 			double[] temp = comm.getPIDStatue();
 			pos = temp[8];
 			out = (int) temp[5];
+			SetPoint =  (int) temp[4];
 			double delta = pos - SetPoint;
 			std[0] += (delta*delta);
 		}

@@ -33,7 +33,12 @@ public class MMT {
 	public static String[] CHARTLIST = new String[]{
 		"V-sensor,V-setPoint,v_PWM"
 	};
-
+	public static double getVotageToFlow(double Votage){
+    	return (Votage-MMT.VariablesNUPD.Interception.value())/MMT.VariablesNUPD.Slope.value();
+    }
+	public static double getFlowToVotage(double Flow){
+    	return MMT.VariablesNUPD.Interception.value()+MMT.VariablesNUPD.Slope.value()*Flow;
+    }
 	public static void logError(String string) 
 	{
 		 
@@ -116,7 +121,9 @@ public class MMT {
 		Pause("",1,0,0,"stop show chart",VariablesClassify.Debug.name()),
 		Tu("",0.01,0.0001,0,"Tu",VariablesClassify.Feedback.name()),
 		TIM4Prescaler("",0.01,0.0001,0,"TIM4Prescaler",VariablesClassify.Debug.name()),
-		PIDPeriod("",1000,0,0,"data acquire period",VariablesClassify.Feedback.name());
+		PIDPeriod("",1000,0,0,"data acquire period",VariablesClassify.Feedback.name()),
+		Interception("",660,0.0001,0,"flowtovotagefix",VariablesClassify.Debug.name()),
+		Slope("",23,0.0001,0,"flowtovotagefix",VariablesClassify.Debug.name());
 		private String unit;
 		private double value;
 		private double presicion;

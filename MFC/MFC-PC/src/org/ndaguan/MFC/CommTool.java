@@ -441,7 +441,6 @@ public class CommTool {
 	public void PIDTunel() {
 		// TODO Auto-generated method stub
 		kernel.rout = 0;
-		MMT.VariablesNUPD.WorkMode.value(2);
 		ChartManager.getInstance().slider.setValue((int) (MMT.VariablesNUPD.SetPoint.value()*10));
 		byte buf[] = new byte[5];
 		buf[0] = '@';
@@ -454,6 +453,7 @@ public class CommTool {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		MMT.VariablesNUPD.WorkMode.value(2);
 	}
 	public void SetVotageTimes(double value) {
 		// TODO Auto-generated method stub
@@ -471,8 +471,8 @@ public class CommTool {
 	}
 	public void CloseTunel() {
 		// TODO Auto-generated method stub
-		kernel.rout = 0;
         ChartManager.getInstance().slider.setValue(0);
+        MMT.VariablesNUPD.SetPoint.value(MMT.getFlowToVotage(0));
 		byte buf[] = new byte[5];
 		buf[0] = '@';
 		buf[1] = _U_SetTClose;
@@ -484,7 +484,8 @@ public class CommTool {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		MMT.VariablesNUPD.WorkMode.value(0);
+		//SetPWM(1000);
+		MMT.VariablesNUPD.WorkMode.value(1);
 	}
 	public void OpenTunel() {
 		// TODO Auto-generated method stub
@@ -501,7 +502,8 @@ public class CommTool {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		MMT.VariablesNUPD.WorkMode.value(0);
+		MMT.VariablesNUPD.SetPoint.value(0);
+		MMT.VariablesNUPD.WorkMode.value(1);
 	}
 	public void SetPWM(int value) {
 		// TODO Auto-generated method stub

@@ -276,10 +276,10 @@ public  class RoiItem {
 		return temp;
 	}
 	private double[] getDrawScale() {
-		double min = 50;
+		double min = 2;
 		double[] std = getStandardDeviation();
 		for(int i = 0;i<std.length;i++){
-			std[i] = std[i]*6;
+			std[i] = std[i]*2;
 			std[i] = std[i]<min?min:std[i];
 		}
 		return std;
@@ -288,7 +288,7 @@ public  class RoiItem {
 	public void updateDataSeries(final float eclipes,double setVotage,final double PWM) {
 		if(!chart_.isVisible())return;
 		
-		final double setPoint = (setVotage-120.2)/30.05;
+		final double setPoint = MMT.getVotageToFlow(setVotage);
 		final boolean update = true;
 		SwingUtilities.invokeLater(new Runnable(){
 			@Override
@@ -370,7 +370,7 @@ public  class RoiItem {
  
 	public void setXYZ(double zPos, double xPos, double yPos) {//moving ROI
 		double votage = zPos;
-		double flow = zPos;//(zPos-120.2)/30.05;
+		double flow = MMT.getVotageToFlow(zPos); 
 		x_ = xPos;
 		y_ = yPos;
 		z_ = flow;
@@ -383,7 +383,7 @@ public  class RoiItem {
 		
 	}
 	 
- 
+    
 	 
 	public void setChartVisible(boolean flag) {
 		chart_.setVisible(flag);

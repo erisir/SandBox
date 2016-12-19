@@ -1,0 +1,1 @@
+pyuic4 -o UIDetail.py UIDetail.ui
