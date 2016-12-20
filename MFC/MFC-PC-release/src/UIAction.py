@@ -29,9 +29,10 @@ class UIAction():
         print("ShowUnit_V")
     def ShowUnit_mv (self):
         print("ShowUnit_mv")
-    def CommInit(self,commName,boteli): 
-        t = serial.Serial(commName,boteli)  
-        n = t.write('you are my world')  
-        str = t.read(n)  
+        
+    def CommInit(self,commName,baut): 
+        self.comm = serial.Serial(commName,baut)  
+        n = self.comm.write('you are my world')  
+        str = self.comm.read(n)  
  
- 
+    

@@ -35,6 +35,7 @@ class UIMainWindow(QDialog):
         tabWidget.resize(520,480)
         
         self.ConnectEvent()
+        UIAction.CommInit("COM4",119200)
         
     def ConnectEvent(self):
         self.thirdUIControl.PWMOpen.clicked.connect(UIAction.UIAction.PWMOpen)
