@@ -6,7 +6,7 @@ from PyQt5.QtWidgets import  *
 
 import UIComm,UIControl,UIDetail,UIOther
 import sys  
-import UIAction  
+from UIAction import   UIAction
 
 class UIMainWindow(QDialog):  
     def __init__(self,parent=None):  
@@ -34,23 +34,27 @@ class UIMainWindow(QDialog):
         tabWidget.addTab(w4,"其他项目")  
         tabWidget.resize(520,480)
         
+        self.uiAction = UIAction(self.firstUIComm,self.secondUIDetail,self.thirdUIControl,self.fourUIOther)
         self.ConnectEvent()
-        UIAction.CommInit("COM4",119200)
+        
         
     def ConnectEvent(self):
-        self.thirdUIControl.PWMOpen.clicked.connect(UIAction.UIAction.PWMOpen)
-        self.thirdUIControl.PWMClose.clicked.connect(UIAction.UIAction.PWMClose)
-        self.thirdUIControl.PWMPID.clicked.connect(UIAction.UIAction.PWMPID)
-        self.thirdUIControl.CtrlMode_Dig.clicked.connect(UIAction.UIAction.CtrlMode_Dig)
-        self.thirdUIControl.CtrlMode_Vot.clicked.connect(UIAction.UIAction.CtrlMode_Vot)
-        self.thirdUIControl.CtrlMode_Cur.clicked.connect(UIAction.UIAction.CtrlMode_Cur)
-        self.thirdUIControl.CtrlMode_Der.clicked.connect(UIAction.UIAction.CtrlMode_Der)
-        self.thirdUIControl.ShowUnit_FS.clicked.connect(UIAction.UIAction.ShowUnit_FS)
-        self.thirdUIControl.ShowUnit_sccm.clicked.connect(UIAction.UIAction.ShowUnit_sccm)
-        self.thirdUIControl.ShowUnit_slm.clicked.connect(UIAction.UIAction.ShowUnit_slm)
-        self.thirdUIControl.ShowUnit_V.clicked.connect(UIAction.UIAction.ShowUnit_V)
-        self.thirdUIControl.ShowUnit_mv.clicked.connect(UIAction.UIAction.ShowUnit_mv)
-        self.thirdUIControl.mplCanvas.setGetPoint(self.thirdUIControl.GetPoint,self.thirdUIControl.GetPointBar)
+        self.thirdUIControl.PWMOpen.clicked.connect(self.uiAction.PWMOpen)
+        self.thirdUIControl.PWMClose.clicked.connect(self.uiAction.PWMClose)
+        self.thirdUIControl.PWMPID.clicked.connect(self.uiAction.PWMPID)
+        self.thirdUIControl.CtrlMode_Dig.clicked.connect(self.uiAction.CtrlMode_Dig)
+        self.thirdUIControl.CtrlMode_Vot.clicked.connect(self.uiAction.CtrlMode_Vot)
+        self.thirdUIControl.CtrlMode_Cur.clicked.connect(self.uiAction.CtrlMode_Cur)
+        self.thirdUIControl.CtrlMode_Der.clicked.connect(self.uiAction.CtrlMode_Der)
+        self.thirdUIControl.ShowUnit_FS.clicked.connect(self.uiAction.ShowUnit_FS)
+        self.thirdUIControl.ShowUnit_sccm.clicked.connect(self.uiAction.ShowUnit_sccm)
+        self.thirdUIControl.ShowUnit_slm.clicked.connect(self.uiAction.ShowUnit_slm)
+        self.thirdUIControl.ShowUnit_V.clicked.connect(self.uiAction.ShowUnit_V)
+        self.thirdUIControl.ShowUnit_mv.clicked.connect(self.uiAction.ShowUnit_mv)
+        self.thirdUIControl.mplCanvas.InitGUI(self.uiAction,self.thirdUIControl.GetPoint,self.thirdUIControl.GetPointBar)
+        
+        self.firstUIComm.connectTest.clicked.connect(self.uiAction.ConnectTest)
+       
 
  
 

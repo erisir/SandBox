@@ -1,6 +1,6 @@
 import sys
 import random
-
+import time
 import matplotlib
 matplotlib.use("Qt5Agg")
 
@@ -14,12 +14,19 @@ import UIComm,UIControl,UIDetail,UIOther
 
 class MyMplCanvas(FigureCanvas):
     """这是一个窗口部件，即QWidget（当然也是FigureCanvasAgg）"""
-    def __init__(self, parent=None, width=5, height=4, dpi=100):
+    Interception=655
+    Slope=25
+    startTime =0
+    def __init__(self, parent=None, width=500, height=400, dpi=100):
+        timesec =  time.strftime("%S",time.localtime())
+        timemin =  time.strftime("%M",time.localtime())
+        timehour =  time.strftime("%H",time.localtime())
+        currTime = int(timehour)*3600+int(timemin)*60+int(timesec)
+        self.startTime = currTime
         fig = Figure(figsize=(width, height), dpi=dpi)
         self.axes = fig.add_subplot(111)
         # 每次plot()调用的时候，我们希望原来的坐标轴被清除(所以False)
-        self.axes.hold(False)
-
+        self.axes.hold(True)
         self.compute_initial_figure()
 
         #
@@ -34,7 +41,8 @@ class MyMplCanvas(FigureCanvas):
 
 class MyDynamicMplCanvas(MyMplCanvas):
     """动态画布：每秒自动更新，更换一条折线。"""
-    def setGetPoint(self,getpoint,getpointbar):
+    def InitGUI(self,action,getpoint,getpointbar):
+        self.UIAction = action
         self.getpoint=getpoint
         self.getpointbar = getpointbar
     def __init__(self, *args, **kwargs):
@@ -44,16 +52,30 @@ class MyDynamicMplCanvas(MyMplCanvas):
         timer.start(1000)
 
     def compute_initial_figure(self):
-        self.axes.plot([0, 1, 2, 3], [1, 2, 0, 4], 'r')
-
+        self.axes.plot([0, 1, 2, 3,2,1,2,2,2,3,2,2,2,2,2,2,2,2,2], [0, 1, 2, 3,2,1,2,2,2,3,2,2,2,2,2,2,2,2,2], 'r')
+ 
+    
+    def VotageToFlow(self,votage):
+        return (votage-self.Interception)/self.Slope;
+    def FlowToVotage(self,flow):
+        return self.Slope*flow+self.Interception;
+    
     def update_figure(self):
         # 构建4个随机整数，位于闭区间[0, 10]
-        l = [random.randint(0, 100) for i in range(4)]
-        flow = l[0]
+        res = self.UIAction.GetVotage()
+        votage = int(res)
+        flow = self.VotageToFlow(votage)
         self.getpoint.display(flow)
         self.getpointbar.setValue(flow)
-        self.axes.plot([0, 1, 2, 3], l, 'r')
+        timesec =  time.strftime("%S",time.localtime())
+        timemin =  time.strftime("%M",time.localtime())
+        timehour =  time.strftime("%H",time.localtime())
+        currTime = int(timehour)*3600+int(timemin)*60+int(timesec)-self.startTime
+ 
+
+        self.axes.plot(currTime, flow, 'r')
         self.draw()
+
  
 class ApplicationWindow(QMainWindow):
     def __init__(self):
