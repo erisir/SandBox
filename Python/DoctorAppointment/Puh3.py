@@ -110,17 +110,20 @@ class Puh3(object):
     def getSMSCode(self):
         getsmscodeurl = self.homeurl+"/v/sendorder.htm"
         smsSaveUrl = "http://sm4.iphy.ac.cn/g.php"
-        print("正在发送验证码")
+        smsCoder =requests.get(smsSaveUrl) 
+        smsCoder = smsCoder.text
+ 
+        while smsCoder !="0":#清零
+                smsCoder =  requests.get(smsSaveUrl).text
+ 
+        print("[02]正在发送验证码")
         res = self.client.getSession().post(getsmscodeurl,data="")#点击获取验证码按钮
-        print(res.text) 
-        print("="*50)
         acqmode = "auto"
-        smsCoder = 0
-        print("正在尝试接收验证码\r\n")
+        print("[03]正在尝试接收验证码\r\n")
         if acqmode == "auto" :
-            while smsCoder<1:
+            while smsCoder =="0":
                 res1 =  requests.get(smsSaveUrl) 
-                smsCoder = int(res1.text)
+                smsCoder = res1.text
                  
         else :
             smsCoder = input("请输入手机中的验证码\r\n")
@@ -176,10 +179,11 @@ class Puh3(object):
               
                     x =backup.pop()
                     while x:
-                        if x["doctorId"] == self.doctorId:#目标医生                        
+                        if x["doctorId"] == self.doctorId:#目标医生       
+                            print("[01]已匹配医生信息\t"+x["doctorTitleName"]+"["+x["skill"]+"]\t  剩余\t["+str(x["remainAvailableNumber"])+"]\t可约")                 
                             self.dutySourceId = x["dutySourceId"]                      
                             smsCode = self.getSMSCode()
-                            print("已收到验证码"+str(smsCode)+"，正在提交订单")
+                            print("[04]已收到验证码["+str(smsCode)+"]，正在提交订单")
                             self.confirm(smsCode)   
                             break
                         
@@ -210,8 +214,7 @@ if __name__ == '__main__':
         time.sleep(10)
         print(time.strftime("%y-%m-%d %H:%M:%S",time.localtime()))
     department = {1:"妇科门诊",2:"风湿免疫门诊",3:"口腔科门诊",4:"内分泌门诊",5:"运动医学门诊"}
-    appInfo = ["农大官,上午,3,郑旭",
-            "农大官,下午,3,郑旭"]
+    appInfo = ["张宇微,上午,1,张璐芳"]
     #时间，医生一一对应，按自然优先级抢号
     counter = 0
     instence = [0,1]
@@ -220,7 +223,6 @@ if __name__ == '__main__':
         instence[counter] = Puh3(a[0],appDate,a[1],department[int(a[2])],a[3])
         counter += 1
         print("*"*50)
-        
     print("*"*50+"开始刷["+instence[0].doctorName+"]的号")
     timeOut = False
     while not (instence[0].appOk or instence[0].outOfService or timeOut):
