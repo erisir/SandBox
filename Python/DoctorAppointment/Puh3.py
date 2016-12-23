@@ -240,5 +240,5 @@ if __name__ == '__main__':
         time.sleep( 2 )
     
     print("\r\n"+"=" * 50+"结束")     
-    time.sleep( 2000 )
+    while True:
         
