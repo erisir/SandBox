@@ -164,7 +164,7 @@ class Puh3(object):
             res = self.client.open(self.keshiurl).text
             soup = BS(res, "html.parser")
             
-            for avilable in soup.find_all(class_="ksorder_kyy"):#检查是否已经放号
+            for avilable in soup.find_all(class_="ksorder_ym"):#检查是否已经放号
                 temp = avilable.input["value"].split('_', 3 )
                 if temp[2] == self.appDate and  temp[1] == self.appTime:
                     data = {
@@ -241,4 +241,4 @@ if __name__ == '__main__':
     
     print("\r\n"+"=" * 50+"结束")     
     while True:
-        
+        time.sleep( 2000 )
