@@ -41,7 +41,8 @@ public class MainActivity extends Activity {
 				}
 				break;
 			case 9999:
-				msgText.setText(msgText.getText()+"\r\n"+val);
+				Log.i("TAG",val);
+				msgText.setText(val);
 				break;
 
 			}

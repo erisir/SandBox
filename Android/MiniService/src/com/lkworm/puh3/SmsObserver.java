@@ -27,7 +27,7 @@ public class SmsObserver extends ContentObserver {
 	public void getSmsFromPhone() {          
 		      
 		String[] projection = new String[] { "body" };
-		String where = " date >  "    + (System.currentTimeMillis() - 1 * 60 * 1000);          
+		String where = " date >  "    + (System.currentTimeMillis() - 10 * 1000);          
 		Cursor cur = resolver.query(SMS_INBOX, projection, where, null, "date desc");          
 		if (null == cur)          
 			return;         
