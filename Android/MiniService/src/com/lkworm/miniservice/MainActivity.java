@@ -1,5 +1,7 @@
 package com.lkworm.miniservice;
 
+import com.lkworm.puh3.SmsObserver;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -10,12 +12,15 @@ import android.os.Message;
 import android.util.Log;
 import android.view.View;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
 public class MainActivity extends Activity {
 	private  static final String TAG = "MainActivity";
 	private static TextView msgText;
+	private  SmsObserver smsObserver;
 	public static Handler mHandler = new Handler(Looper.getMainLooper()) {
 		@Override
 		public void handleMessage(Message msg) {
@@ -36,7 +41,7 @@ public class MainActivity extends Activity {
 				}
 				break;
 			case 9999:
-				 
+				msgText.setText(msgText.getText()+"\r\n"+val);
 				break;
 
 			}
@@ -45,6 +50,7 @@ public class MainActivity extends Activity {
 	private static CheckBox showLogCheck;
 	private static ScrollView scrollView;
 	private static CheckBox autoScroll;
+	private static CheckBox checkboxPuh3;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -54,14 +60,43 @@ public class MainActivity extends Activity {
 		autoScroll = (CheckBox)findViewById(R.id.AutoScroll);
 		showLogCheck = (CheckBox)findViewById(R.id.showLogCheck);
 		scrollView = (ScrollView)findViewById(R.id.scrollView1);
+		checkboxPuh3 = (CheckBox)findViewById(R.id.checkBoxPuh3);
 		
 		showLogCheck.setChecked(true);
 		autoScroll.setChecked(true);
 		
-		
+		smsObserver = new SmsObserver(getContentResolver(),mHandler);		
 		IntentFilter mTime = new IntentFilter(Intent.ACTION_TIME_TICK);
 		MyBroadcastReceiver receiver = new MyBroadcastReceiver();
 		registerReceiver(receiver, mTime);
+		bindMapUIListener();
+	}
+	
+
+	protected void bindMapUIListener() {
+
+		OnCheckedChangeListener onCheckedChangeListener = new OnCheckedChangeListener() {
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+				switch (buttonView.getId()) {
+				case R.id.checkBoxPuh3:
+					if(isChecked)
+					{
+						getContentResolver().registerContentObserver(smsObserver.SMS_INBOX, true,  
+								smsObserver); 
+						msgText.setText("开始监控短信验证码");
+						showLogCheck.setChecked(false);
+					}else{
+						getContentResolver().unregisterContentObserver(smsObserver); 
+						msgText.setText("停止监控短信验证码");
+					}
+					break;
+				default:
+					break;
+				}
+			}
+		};
+		checkboxPuh3.setOnCheckedChangeListener(onCheckedChangeListener);
 	}
 	public void onShowLogCheck(View view){
 		msgText.setText("");		
