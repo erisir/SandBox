@@ -32,11 +32,11 @@ class UIMainWindow(QDialog):
         tabWidget.addTab(w2,"产品信息")  
         tabWidget.addTab(w1,"控制信息")  
         tabWidget.addTab(w4,"其他项目")  
-        tabWidget.resize(620,580)
+        tabWidget.resize(520,560)
         
         self.uiAction = UIAction(self.firstUIComm,self.secondUIDetail,self.thirdUIControl,self.fourUIOther)
         self.ConnectEvent()
-        
+        QThread.sleep(3)
         
     def ConnectEvent(self):
         self.thirdUIControl.PWMOpen.clicked.connect(self.uiAction.PWMOpen)
@@ -55,17 +55,21 @@ class UIMainWindow(QDialog):
         self.thirdUIControl.startPlot.clicked.connect(self.thirdUIControl.mplCanvas.startPlot)
         self.thirdUIControl.pausePlot.setEnabled(False)
         self.thirdUIControl.pausePlot.clicked.connect(self.thirdUIControl.mplCanvas.pausePlot)
-        self.thirdUIControl.Quit.clicked.connect(self.Quit)
+        self.thirdUIControl.Clear.clicked.connect(self.Clear)
         
         self.firstUIComm.connectTest.clicked.connect(self.uiAction.ConnectTest)
        
 
  
-    def Quit(self):
+    def Clear(self):
         pass
      
           
 app=QApplication (sys.argv)  
+splash=QSplashScreen(QPixmap("../image/logo.png"))  
+splash.show()  
+app.processEvents()  
 dialog=UIMainWindow()  
 dialog.show()  
+splash.finish(dialog)  
 app.exec_()  

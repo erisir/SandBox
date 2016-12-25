@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>525</width>
-    <height>541</height>
+    <width>520</width>
+    <height>560</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -29,7 +29,7 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>23</y>
+      <y>18</y>
       <width>71</width>
       <height>62</height>
      </rect>
@@ -134,7 +134,7 @@
      </rect>
     </property>
     <property name="title">
-     <string>设定点</string>
+     <string>总流量</string>
     </property>
     <widget class="QWidget" name="horizontalLayoutWidget_2">
      <property name="geometry">
@@ -297,9 +297,9 @@ background-color: rgb(170, 255, 0);</string>
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="Quit">
+      <widget class="QPushButton" name="Clear">
        <property name="text">
-        <string>退出</string>
+        <string>清零</string>
        </property>
       </widget>
      </item>
@@ -364,7 +364,7 @@ background-color: rgb(170, 255, 0);</string>
      <x>10</x>
      <y>209</y>
      <width>491</width>
-     <height>301</height>
+     <height>341</height>
     </rect>
    </property>
   </widget>

@@ -155,14 +155,15 @@ public class CommTool {
 		char [] ret = new char[20];
 		//LogMessage("\r\nreadAnswer");
 		for (int i = 0; i < 20; i++) {
-			//System.out.print((char)bret[i]);
 			ret[i]= (char) bret[i];
+			System.out.print(ret[i]);
 		}
 
 		if(bret.length<=0){
 			LogMessage("getPosition--read nothing");
 			return  0;
 		}
+		 
 		if(ret[0]=='@' && ret[1]=='P' && isNumeric(String.copyValueOf(ret).substring(2,3))){
 			double Vsensor =  Double.valueOf(String.copyValueOf(ret).substring(2,2+6)).doubleValue();//RawToLong(bret,2);		 
 			return Vsensor;

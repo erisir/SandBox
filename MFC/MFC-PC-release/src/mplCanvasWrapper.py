@@ -76,6 +76,8 @@ class MplCanvas(FigureCanvas):
 
             self.curveObj, = self.ax.plot_date(np.array(datax), np.array(datay),'b-')
             self.curveObj1, = self.ax.plot_date(np.array(datax), np.array(datay),'r-')
+           # self.ax.legend(self.curveObj, "电曲线")
+            #self.ax.legend(self.curveObj1, "气曲线")
 
         else:
 
