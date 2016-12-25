@@ -143,6 +143,7 @@ void parseCMD(){
 	case _U_SetPIDPeriod: SetPIDPeriod(v_data);break;//8
 	
 	case _U_SetTIM4Prescaler: TIM2_Set_Prescaler(v_data);break;//8TIM4_Set_Prescaler(unsigned int Prescaler)
+	case _U_SetPIDVotageChanel: SetPIDVotageChanel(v_data);break;
 	default:break;
 	}	    
 }

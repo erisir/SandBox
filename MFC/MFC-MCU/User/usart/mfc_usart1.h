@@ -18,6 +18,7 @@
 #define _U_SetPIDMode 	  'b'
 #define _U_SetPIDPeriod   'c'
 #define _U_SetTIM4Prescaler 'd'
+#define _U_SetPIDVotageChanel 'e'
 
 void USART1_Config(void);
 void NVIC_Configuration(void);

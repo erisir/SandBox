@@ -13,7 +13,7 @@ class Ui_Dialog(object):
         Dialog.setObjectName("Dialog")
         Dialog.resize(520, 440)
         self.horizontalLayoutWidget = QtWidgets.QWidget(Dialog)
-        self.horizontalLayoutWidget.setGeometry(QtCore.QRect(30, 390, 471, 21))
+        self.horizontalLayoutWidget.setGeometry(QtCore.QRect(30, 390, 471, 25))
         self.horizontalLayoutWidget.setObjectName("horizontalLayoutWidget")
         self.horizontalLayout = QtWidgets.QHBoxLayout(self.horizontalLayoutWidget)
         self.horizontalLayout.setContentsMargins(0, 0, 0, 0)
@@ -55,6 +55,8 @@ class Ui_Dialog(object):
         self.graphicsView.setObjectName("graphicsView")
 
         self.retranslateUi(Dialog)
+        self.CommName.setCurrentIndex(3)
+        self.Baudrate.setCurrentIndex(7)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
 
     def retranslateUi(self, Dialog):

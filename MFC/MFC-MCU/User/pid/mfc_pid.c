@@ -9,33 +9,36 @@
 //xdata struct PID spid; // PID Control Structure
 struct PID spid; // PID Control Structure
 
-unsigned int manuPWM = 0;
+unsigned int PIDVotageChanel = 0;
 unsigned int PIDMode = 0;
 unsigned char PIDEnable=0;
 void SetPIDMode(unsigned int mode){
 	PIDMode = mode;
 }
+void SetPIDVotageChanel(unsigned int ch){
+	PIDVotageChanel = ch;
+}
 
 void GetPIDStatu(){
-	printf("%.3f,%.3f,%.3f,%d,%d,%d,%d,%d,%d,%d",spid.Proportion  ,spid.Integral ,spid.Derivative  ,spid.DeadZone ,spid.SetPoint ,spid.Output,spid.LastError,spid.PrevError,spid.SetPoint-spid.LastError,spid.SumError );	
+	printf("%.3f,%.3f,%.3f,%d,%d,%d,%d,%d,%d,%d\n",spid.Proportion  ,spid.Integral ,spid.Derivative  ,spid.DeadZone ,spid.SetPoint ,spid.Output,spid.LastError,spid.PrevError,spid.SetPoint-spid.LastError,spid.SumError );	
 }  
 /*********************************************************** 
-              PID温度控制做动函数
+              PID温度控制动作函数
  ***********************************************************/ 
 void PIDStart() 		 
 {  
 	switch(PIDMode){
 	case 0:
-		spid.Output += IncAutoPIDCalc ( &spid,GetADCVoltage() );
+		spid.Output += IncAutoPIDCalc ( &spid,GetADCVoltage(PIDVotageChanel) );
 		break;
 	case 1:
-		spid.Output += IncPIDCalc ( &spid,GetADCVoltage() );
+		spid.Output += IncPIDCalc ( &spid,GetADCVoltage(PIDVotageChanel) );
 		break;
 	case 2:
-		spid.Output = LocPIDCalc ( &spid,GetADCVoltage() );
+		spid.Output = LocPIDCalc ( &spid,GetADCVoltage(PIDVotageChanel) );
 		break; 
 	default:
-		spid.Output += IncPIDCalc ( &spid,GetADCVoltage() );
+		spid.Output += IncPIDCalc ( &spid,GetADCVoltage(PIDVotageChanel) );
 		break;
 	}		
 	if(spid.Output >PWM_HIGH_MAX)
@@ -75,7 +78,7 @@ void SetSetPoint(unsigned int v_data)
 }
 void SetPWMValue(unsigned int v_data)
 {
-	manuPWM =   v_data;	
+	unsigned int manuPWM =   v_data;	
 	if(manuPWM >PWM_HIGH_MAX)
 		manuPWM = PWM_HIGH_MAX; 
 	if(manuPWM <PWM_HIGH_MIN)

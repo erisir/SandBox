@@ -16,7 +16,7 @@ class UIMainWindow(QDialog):
         self.secondUIDetail=UIDetail.Ui_Dialog()  
         self.thirdUIControl=UIControl.Ui_Dialog()
         self.fourUIOther=UIOther.Ui_Dialog()  
-         
+        QtWidgets.QWidget
  
         tabWidget=QtWidgets.QTabWidget(self)  
         w1=QWidget()  
@@ -28,11 +28,11 @@ class UIMainWindow(QDialog):
         w4=QWidget()  
         self.fourUIOther.setupUi(w4)  
   
-        tabWidget.addTab(w1,"通讯信息")  
+        tabWidget.addTab(w3,"通讯信息")  
         tabWidget.addTab(w2,"产品信息")  
-        tabWidget.addTab(w3,"控制信息")  
+        tabWidget.addTab(w1,"控制信息")  
         tabWidget.addTab(w4,"其他项目")  
-        tabWidget.resize(520,480)
+        tabWidget.resize(620,580)
         
         self.uiAction = UIAction(self.firstUIComm,self.secondUIDetail,self.thirdUIControl,self.fourUIOther)
         self.ConnectEvent()
@@ -52,12 +52,17 @@ class UIMainWindow(QDialog):
         self.thirdUIControl.ShowUnit_V.clicked.connect(self.uiAction.ShowUnit_V)
         self.thirdUIControl.ShowUnit_mv.clicked.connect(self.uiAction.ShowUnit_mv)
         self.thirdUIControl.mplCanvas.InitGUI(self.uiAction,self.thirdUIControl.GetPoint,self.thirdUIControl.GetPointBar)
+        self.thirdUIControl.startPlot.clicked.connect(self.thirdUIControl.mplCanvas.startPlot)
+        self.thirdUIControl.pausePlot.setEnabled(False)
+        self.thirdUIControl.pausePlot.clicked.connect(self.thirdUIControl.mplCanvas.pausePlot)
+        self.thirdUIControl.Quit.clicked.connect(self.Quit)
         
         self.firstUIComm.connectTest.clicked.connect(self.uiAction.ConnectTest)
        
 
  
-
+    def Quit(self):
+        pass
      
           
 app=QApplication (sys.argv)  

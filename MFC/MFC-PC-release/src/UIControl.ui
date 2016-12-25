@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>591</width>
-    <height>477</height>
+    <width>525</width>
+    <height>541</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -25,277 +25,194 @@
    <property name="title">
     <string>阀控制</string>
    </property>
-   <widget class="QRadioButton" name="PWMOpen">
+   <widget class="QWidget" name="verticalLayoutWidget_2">
     <property name="geometry">
      <rect>
-      <x>23</x>
-      <y>20</y>
-      <width>89</width>
-      <height>16</height>
+      <x>10</x>
+      <y>23</y>
+      <width>71</width>
+      <height>62</height>
      </rect>
     </property>
-    <property name="text">
-     <string>全开</string>
-    </property>
-   </widget>
-   <widget class="QRadioButton" name="PWMClose">
-    <property name="geometry">
-     <rect>
-      <x>23</x>
-      <y>40</y>
-      <width>89</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>关闭</string>
-    </property>
-   </widget>
-   <widget class="QRadioButton" name="PWMPID">
-    <property name="geometry">
-     <rect>
-      <x>23</x>
-      <y>60</y>
-      <width>89</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>常规</string>
-    </property>
+    <layout class="QVBoxLayout" name="verticalLayout_2">
+     <item>
+      <widget class="QRadioButton" name="PWMOpen">
+       <property name="text">
+        <string>全开</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QRadioButton" name="PWMClose">
+       <property name="text">
+        <string>关闭</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QRadioButton" name="PWMPID">
+       <property name="text">
+        <string>常规</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </widget>
   </widget>
   <widget class="QGroupBox" name="BoxMode">
    <property name="geometry">
     <rect>
      <x>13</x>
-     <y>100</y>
-     <width>120</width>
-     <height>101</height>
+     <y>94</y>
+     <width>121</width>
+     <height>111</height>
     </rect>
    </property>
    <property name="title">
     <string>控制模式</string>
    </property>
-   <widget class="QRadioButton" name="CtrlMode_Dig">
+   <widget class="QWidget" name="verticalLayoutWidget">
     <property name="geometry">
      <rect>
-      <x>23</x>
+      <x>10</x>
       <y>20</y>
-      <width>89</width>
-      <height>16</height>
+      <width>81</width>
+      <height>84</height>
      </rect>
     </property>
-    <property name="text">
-     <string>数字</string>
-    </property>
-   </widget>
-   <widget class="QRadioButton" name="CtrlMode_Vot">
-    <property name="geometry">
-     <rect>
-      <x>23</x>
-      <y>40</y>
-      <width>89</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>模拟电压</string>
-    </property>
-   </widget>
-   <widget class="QRadioButton" name="CtrlMode_Cur">
-    <property name="geometry">
-     <rect>
-      <x>23</x>
-      <y>60</y>
-      <width>89</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>模拟电流</string>
-    </property>
-   </widget>
-   <widget class="QRadioButton" name="CtrlMode_Der">
-    <property name="geometry">
-     <rect>
-      <x>23</x>
-      <y>80</y>
-      <width>89</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>直接控制</string>
-    </property>
+    <layout class="QVBoxLayout" name="verticalLayout">
+     <item>
+      <widget class="QRadioButton" name="CtrlMode_Dig">
+       <property name="text">
+        <string>数字</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QRadioButton" name="CtrlMode_Vot">
+       <property name="text">
+        <string>模拟电压</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QRadioButton" name="CtrlMode_Cur">
+       <property name="text">
+        <string>模拟电流</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QRadioButton" name="CtrlMode_Der">
+       <property name="text">
+        <string>直接控制</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </widget>
   </widget>
   <widget class="QGroupBox" name="groupBox_3">
    <property name="geometry">
     <rect>
      <x>143</x>
-     <y>17</y>
+     <y>14</y>
      <width>361</width>
-     <height>181</height>
+     <height>191</height>
     </rect>
    </property>
    <property name="title">
     <string/>
    </property>
-   <widget class="QProgressBar" name="SetPointBar">
-    <property name="geometry">
-     <rect>
-      <x>13</x>
-      <y>0</y>
-      <width>20</width>
-      <height>161</height>
-     </rect>
-    </property>
-    <property name="layoutDirection">
-     <enum>Qt::LeftToRight</enum>
-    </property>
-    <property name="value">
-     <number>24</number>
-    </property>
-    <property name="orientation">
-     <enum>Qt::Vertical</enum>
-    </property>
-   </widget>
-   <widget class="QProgressBar" name="GetPointBar">
-    <property name="geometry">
-     <rect>
-      <x>43</x>
-      <y>0</y>
-      <width>20</width>
-      <height>161</height>
-     </rect>
-    </property>
-    <property name="layoutDirection">
-     <enum>Qt::LeftToRight</enum>
-    </property>
-    <property name="value">
-     <number>24</number>
-    </property>
-    <property name="orientation">
-     <enum>Qt::Vertical</enum>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label">
-    <property name="geometry">
-     <rect>
-      <x>13</x>
-      <y>160</y>
-      <width>16</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>SP.</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_2">
-    <property name="geometry">
-     <rect>
-      <x>43</x>
-      <y>160</y>
-      <width>16</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>RO.</string>
-    </property>
-   </widget>
    <widget class="QGroupBox" name="groupBox_4">
     <property name="geometry">
      <rect>
       <x>73</x>
       <y>10</y>
-      <width>141</width>
+      <width>151</width>
       <height>51</height>
      </rect>
     </property>
     <property name="title">
      <string>设定点</string>
     </property>
-    <widget class="QLabel" name="label_3">
+    <widget class="QWidget" name="horizontalLayoutWidget_2">
      <property name="geometry">
       <rect>
-       <x>80</x>
-       <y>20</y>
-       <width>51</width>
-       <height>20</height>
+       <x>5</x>
+       <y>12</y>
+       <width>141</width>
+       <height>31</height>
       </rect>
      </property>
-     <property name="text">
-      <string>% of F.S.</string>
-     </property>
-    </widget>
-    <widget class="QLCDNumber" name="SetPoint">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>18</y>
-       <width>64</width>
-       <height>23</height>
-      </rect>
-     </property>
+     <layout class="QHBoxLayout" name="horizontalLayout_2">
+      <item>
+       <widget class="QLCDNumber" name="SetPoint"/>
+      </item>
+      <item>
+       <widget class="QLabel" name="label_3">
+        <property name="text">
+         <string>% of F.S.</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
     </widget>
    </widget>
    <widget class="QGroupBox" name="groupBox_5">
     <property name="geometry">
      <rect>
       <x>73</x>
-      <y>80</y>
-      <width>141</width>
+      <y>70</y>
+      <width>151</width>
       <height>51</height>
      </rect>
     </property>
     <property name="title">
      <string>瞬时流量</string>
     </property>
-    <widget class="QLabel" name="label_4">
+    <widget class="QWidget" name="horizontalLayoutWidget_3">
      <property name="geometry">
       <rect>
-       <x>80</x>
-       <y>20</y>
-       <width>51</width>
-       <height>20</height>
+       <x>5</x>
+       <y>13</y>
+       <width>141</width>
+       <height>31</height>
       </rect>
      </property>
-     <property name="text">
-      <string>% of F.S.</string>
-     </property>
-    </widget>
-    <widget class="QLCDNumber" name="GetPoint">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>18</y>
-       <width>64</width>
-       <height>23</height>
-      </rect>
-     </property>
-     <property name="autoFillBackground">
-      <bool>false</bool>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">color: rgb(85, 255, 0);
+     <layout class="QHBoxLayout" name="horizontalLayout_3">
+      <item>
+       <widget class="QLCDNumber" name="GetPoint">
+        <property name="autoFillBackground">
+         <bool>false</bool>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">color: rgb(85, 255, 0);
 selection-color: rgb(255, 0, 0);
 font: 75 9pt &quot;Aharoni&quot;;
 gridline-color: rgb(85, 0, 0);
 border-color: rgb(0, 0, 255);
 background-color: rgb(170, 255, 0);</string>
-     </property>
-     <property name="smallDecimalPoint">
-      <bool>false</bool>
-     </property>
+        </property>
+        <property name="smallDecimalPoint">
+         <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="label_4">
+        <property name="text">
+         <string>% of F.S.</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
     </widget>
    </widget>
    <widget class="QGroupBox" name="BoxUnit">
     <property name="geometry">
      <rect>
-      <x>243</x>
+      <x>230</x>
       <y>10</y>
       <width>120</width>
       <height>121</height>
@@ -304,80 +221,150 @@ background-color: rgb(170, 255, 0);</string>
     <property name="title">
      <string>单位</string>
     </property>
-    <widget class="QRadioButton" name="ShowUnit_FS">
+    <widget class="QWidget" name="verticalLayoutWidget_3">
      <property name="geometry">
       <rect>
-       <x>23</x>
-       <y>20</y>
-       <width>89</width>
-       <height>16</height>
+       <x>10</x>
+       <y>10</y>
+       <width>61</width>
+       <height>106</height>
       </rect>
      </property>
-     <property name="text">
-      <string>% F.S.</string>
-     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_3">
+      <item>
+       <widget class="QRadioButton" name="ShowUnit_FS">
+        <property name="text">
+         <string>% F.S.</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QRadioButton" name="ShowUnit_sccm">
+        <property name="text">
+         <string>sccm</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QRadioButton" name="ShowUnit_slm">
+        <property name="text">
+         <string>slm</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QRadioButton" name="ShowUnit_V">
+        <property name="text">
+         <string>V</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QRadioButton" name="ShowUnit_mv">
+        <property name="text">
+         <string>mV</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
     </widget>
-    <widget class="QRadioButton" name="ShowUnit_sccm">
-     <property name="geometry">
-      <rect>
-       <x>23</x>
-       <y>40</y>
-       <width>89</width>
-       <height>16</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>sccm</string>
-     </property>
-    </widget>
-    <widget class="QRadioButton" name="ShowUnit_slm">
-     <property name="geometry">
-      <rect>
-       <x>23</x>
-       <y>60</y>
-       <width>89</width>
-       <height>16</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>slm</string>
-     </property>
-    </widget>
-    <widget class="QRadioButton" name="ShowUnit_V">
-     <property name="geometry">
-      <rect>
-       <x>23</x>
-       <y>80</y>
-       <width>89</width>
-       <height>16</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>V</string>
-     </property>
-    </widget>
-    <widget class="QRadioButton" name="ShowUnit_mv">
-     <property name="geometry">
-      <rect>
-       <x>23</x>
-       <y>100</y>
-       <width>89</width>
-       <height>16</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>mV</string>
-     </property>
-    </widget>
+   </widget>
+   <widget class="QWidget" name="horizontalLayoutWidget">
+    <property name="geometry">
+     <rect>
+      <x>112</x>
+      <y>141</y>
+      <width>239</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QPushButton" name="startPlot">
+       <property name="text">
+        <string>开始</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pausePlot">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+       <property name="text">
+        <string>暂停</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="Quit">
+       <property name="text">
+        <string>退出</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QWidget" name="gridLayoutWidget">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>10</y>
+      <width>51</width>
+      <height>161</height>
+     </rect>
+    </property>
+    <layout class="QGridLayout" name="gridLayout">
+     <item row="0" column="0">
+      <widget class="QProgressBar" name="SetPointBar">
+       <property name="layoutDirection">
+        <enum>Qt::LeftToRight</enum>
+       </property>
+       <property name="value">
+        <number>24</number>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0">
+      <widget class="QLabel" name="label">
+       <property name="text">
+        <string>SP.</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QProgressBar" name="GetPointBar">
+       <property name="layoutDirection">
+        <enum>Qt::LeftToRight</enum>
+       </property>
+       <property name="value">
+        <number>24</number>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="QLabel" name="label_2">
+       <property name="text">
+        <string>RO.</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </widget>
   </widget>
   <widget class="MyDynamicMplCanvas" name="mplCanvas" native="true">
    <property name="geometry">
     <rect>
-     <x>19</x>
+     <x>10</x>
      <y>209</y>
-     <width>481</width>
-     <height>211</height>
+     <width>491</width>
+     <height>301</height>
     </rect>
    </property>
   </widget>

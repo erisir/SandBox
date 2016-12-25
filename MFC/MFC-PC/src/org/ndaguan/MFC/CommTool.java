@@ -38,7 +38,7 @@ public class CommTool {
 	private SerialPort serialPort;
 	private OutputStream outputStream;
 	private int baudRate = 115200;
-	private String comId = "COM4";
+	private String comId = "COM2";
 	private InputStream inputStream;
 	private String lastError = "No error";
 	private boolean isDeviceReady;
@@ -485,7 +485,7 @@ public class CommTool {
 			e.printStackTrace();
 		}
 		//SetPWM(1000);
-		MMT.VariablesNUPD.WorkMode.value(1);
+		MMT.VariablesNUPD.WorkMode.value(0);
 	}
 	public void OpenTunel() {
 		// TODO Auto-generated method stub

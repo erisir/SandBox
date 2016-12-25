@@ -19,16 +19,16 @@
 #include <stdio.h>
 #define ADC1_DR_Address    ((u32)0x40012400+0x4c)
 // ADC1转换的电压值通过MDA方式传到SRAM
-uint16_t ADC_ConvertedValue;
+uint16_t ADC_ConvertedValue[2];
 uint16_t ADC_ConvertedSumWindow;
 // 局部变量，用于保存转换计算后的电压值 	 
-float ADC_ConvertedValueLocal;  
+  
 
 void SetVotageTimes(unsigned int val){
 	ADC_ConvertedSumWindow = val;
 }
 /**
- * @brief  使能ADC1和DMA1的时钟，初始化PC.01
+ * @brief  使能ADC1和DMA1的时钟，初始化PB.0/1
  * @param  无
  * @retval 无
  */
@@ -43,7 +43,7 @@ static void ADC1_GPIO_Config(void)
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_ADC1 | RCC_APB2Periph_GPIOB, ENABLE);
 
 	/* Configure PB.01  as analog input */
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_1;
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0|GPIO_Pin_1;
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AIN;
 	GPIO_Init(GPIOB, &GPIO_InitStructure);				// PC1,输入时不用设置速率
 }
@@ -64,9 +64,10 @@ static void ADC1_Mode_Config(void)
 	DMA_InitStructure.DMA_PeripheralBaseAddr = ADC1_DR_Address;	 			//ADC地址
 	DMA_InitStructure.DMA_MemoryBaseAddr = (u32)&ADC_ConvertedValue;	//内存地址
 	DMA_InitStructure.DMA_DIR = DMA_DIR_PeripheralSRC;
-	DMA_InitStructure.DMA_BufferSize = 1;
+	DMA_InitStructure.DMA_BufferSize = 2;//两路adc
 	DMA_InitStructure.DMA_PeripheralInc = DMA_PeripheralInc_Disable;	//外设地址固定
-	DMA_InitStructure.DMA_MemoryInc = DMA_MemoryInc_Disable;  				//内存地址固定
+	DMA_InitStructure.DMA_MemoryInc = DMA_MemoryInc_Enable; //内存地址递加
+	//DMA_InitStructure.DMA_MemoryInc = DMA_MemoryInc_Disable;  				//内存地址固定、单通道
 	DMA_InitStructure.DMA_PeripheralDataSize = DMA_PeripheralDataSize_HalfWord;	//半字
 	DMA_InitStructure.DMA_MemoryDataSize = DMA_MemoryDataSize_HalfWord;
 	DMA_InitStructure.DMA_Mode = DMA_Mode_Circular;										//循环传输
@@ -79,17 +80,19 @@ static void ADC1_Mode_Config(void)
 
 	/* ADC1 configuration */	
 	ADC_InitStructure.ADC_Mode = ADC_Mode_Independent;			//独立ADC模式
-	ADC_InitStructure.ADC_ScanConvMode = DISABLE ; 	 				//禁止扫描模式，扫描模式用于多通道采集
+	ADC_InitStructure.ADC_ScanConvMode = ENABLE;
+	//ADC_InitStructure.ADC_ScanConvMode = DISABLE ; 	 				//禁止扫描模式，扫描模式用于多通道采集
 	ADC_InitStructure.ADC_ContinuousConvMode = ENABLE;			//开启连续转换模式，即不停地进行ADC转换
 	ADC_InitStructure.ADC_ExternalTrigConv = ADC_ExternalTrigConv_None;	//不使用外部触发转换
 	ADC_InitStructure.ADC_DataAlign = ADC_DataAlign_Right; 	//采集数据右对齐
-	ADC_InitStructure.ADC_NbrOfChannel = 1;	 								//要转换的通道数目1
+	ADC_InitStructure.ADC_NbrOfChannel = 2;	 								//要转换的通道数2
 	ADC_Init(ADC1, &ADC_InitStructure);
 
 	/*配置ADC时钟，为PCLK2的8分频，即9MHz*/
 	RCC_ADCCLKConfig(RCC_PCLK2_Div8); 
 	/*配置ADC1的通道11为55.	5个采样周期，序列为1 */ 
-	ADC_RegularChannelConfig(ADC1, ADC_Channel_9, 1, ADC_SampleTime_55Cycles5);
+	ADC_RegularChannelConfig(ADC1, ADC_Channel_8, 1, ADC_SampleTime_55Cycles5);//PB0
+	ADC_RegularChannelConfig(ADC1, ADC_Channel_9, 2, ADC_SampleTime_55Cycles5);//PB1
 
 	/* Enable ADC1 DMA */
 	ADC_DMACmd(ADC1, ENABLE);
@@ -124,29 +127,31 @@ void ADC1_Init(void)
 }
 
 void GetPosition(void){//串口调用
-	printf("@P%d",GetADCVoltage()); 
+	printf("@P%d,%d\n",GetADCVoltage(0),GetADCVoltage(1)); 
 } 
-unsigned int  GetADCVoltage(void){//PID调用
+unsigned int  GetADCVoltage(unsigned char ch){//PID调用
 	float votage = 0.0; 
-  votage =(float) ADC_Mean()/2048*3300; 
+  votage =(float) ADC_Mean(ch)/2048*3300; 
 	return votage; // 读取转换的AD值	 
 }
-unsigned int ADC_Mean(void) {//去掉最大最小值
+unsigned int ADC_Mean(unsigned char ch) {//去掉最大最小值
 	int i = 0;
 	uint32_t sum=0;
-	uint16_t min=ADC_ConvertedValue;
-	uint16_t max=ADC_ConvertedValue;
+	uint16_t min=ADC_ConvertedValue[ch];
+	uint16_t max=ADC_ConvertedValue[ch];
 	uint16_t temp;
+
 	
 	for(i=0;i<ADC_ConvertedSumWindow;i++){
-		temp = ADC_ConvertedValue>>1;
+		temp = ADC_ConvertedValue[ch]>>1;
 		sum+=temp;
 		if(temp>max)
 			max = temp;
 		if(temp<min)
-			temp = min;
+			min = temp;
 	}
 	sum -=(min+max);
+	
 	return (unsigned int)sum/(ADC_ConvertedSumWindow-2); 
 }
 /*****************************************
@@ -154,7 +159,7 @@ unsigned int ADC_Mean(void) {//去掉最大最小值
 采样N点，排序，去掉最大最小值，取平均
 *****************************************/
 #define N 40 
-unsigned int ADC_Filter(void) 
+unsigned int ADC_Filter(unsigned char ch) 
 { 
 	unsigned int count,i,j; 
 	unsigned int value_buf[N],temp; 
@@ -162,7 +167,7 @@ unsigned int ADC_Filter(void)
 	uint32_t  sum=0; 
 	for  (count=0;count<N;count++) 
 	{ 
-		value_buf[count] = ADC_ConvertedValue>>1;	   //去掉最低位
+		value_buf[count] = ADC_ConvertedValue[ch]>>1;	   //去掉最低位
 	} 
 	for (j=0;j<N-1;j++) //冒泡排序
 	{ 

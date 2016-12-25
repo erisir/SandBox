@@ -47,6 +47,7 @@ void SetTClose(void);
 void SetTOpen(void);
 void SetTPID(void);
 void SetPIDMode(unsigned int mode);
+void SetPIDVotageChanel(unsigned int ch);
 
 void GetPIDStatu(void); 
 unsigned int getPeriod(void);
