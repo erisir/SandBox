@@ -36,7 +36,7 @@ class UIMainWindow(QDialog):
         
         self.uiAction = UIAction(self.firstUIComm,self.secondUIDetail,self.thirdUIControl,self.fourUIOther)
         self.ConnectEvent()
-        QThread.sleep(3)
+        #QThread.sleep(3)
         
     def ConnectEvent(self):
         self.thirdUIControl.PWMOpen.clicked.connect(self.uiAction.PWMOpen)
@@ -66,10 +66,10 @@ class UIMainWindow(QDialog):
      
           
 app=QApplication (sys.argv)  
-splash=QSplashScreen(QPixmap("../image/logo.png"))  
-splash.show()  
-app.processEvents()  
+#splash=QSplashScreen(QPixmap("../image/logo.png"))  
+#splash.show()  
+#app.processEvents()  
 dialog=UIMainWindow()  
 dialog.show()  
-splash.finish(dialog)  
+#splash.finish(dialog)  
 app.exec_()  

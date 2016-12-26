@@ -9,7 +9,7 @@
 //xdata struct PID spid; // PID Control Structure
 struct PID spid; // PID Control Structure
 
-unsigned int PIDVotageChanel = 0;
+unsigned int PIDVotageChanel = 1;
 unsigned int PIDMode = 0;
 unsigned char PIDEnable=0;
 void SetPIDMode(unsigned int mode){

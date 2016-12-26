@@ -67,7 +67,7 @@ void TIM2_Mode_Config(unsigned int Prescaler)
 	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM2, ENABLE); 					//使能TIM2时钟
 
 	/* 基本定时器配置 */		 
-	TIM_TimeBaseStructure.TIM_Period = PWM_HIGH_MAX;   				  //当定时器从0计数到255，即为266次，为一个定时周期
+	TIM_TimeBaseStructure.TIM_Period = PWM_DUTY;   				  //当定时器从0计数到255，即为266次，为一个定时周期
 	TIM_TimeBaseStructure.TIM_Prescaler = Prescaler;	    							//设置预分频：
 	TIM_TimeBaseStructure.TIM_ClockDivision = TIM_CKD_DIV1 ;			//设置时钟分频系数：不分频(这里用不到)
 	TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;  	//向上计数模式

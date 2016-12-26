@@ -142,7 +142,7 @@ public class Kernel {
 				Sleep(10);
 				comm.CloseTunel();
 				System.out.print("\r\nClose");
-				double pos =   comm.getPosition();//temp[8];					
+				double[] pos =   comm.getPosition();//temp[8];					
 				boolean timeOut= false;
 				long timeStart = System.nanoTime();
 				while(!timeOut){
@@ -186,7 +186,7 @@ public class Kernel {
 			//comm.setPTerm(p);
 			comm.CloseTunel();
 			System.out.print("\r\nClose");
-			double pos =   comm.getPosition();//temp[8];					
+			double[] pos =   comm.getPosition();//temp[8];					
 			boolean timeOut= false;
 			long timeStart = System.nanoTime();
 			while(!timeOut){
@@ -252,7 +252,7 @@ public class Kernel {
 					Sleep(10);
 					comm.CloseTunel();
 					System.out.print("\r\nClose");
-					double pos =   comm.getPosition();//temp[8];					
+					double[] pos =   comm.getPosition();//temp[8];					
 					boolean timeOut= false;
 					long timeStart = System.nanoTime();
 					while(!timeOut){
@@ -299,23 +299,24 @@ public class Kernel {
 		float eclipes= (float) ((System.nanoTime()-start_time)/10e6); 
 		int out = 0;
 		double  SetPoint =MMT.VariablesNUPD.SetPoint.value(); 
-		double pos = 0;
+		double[] pos = new double[2];
+		pos =   comm.getPosition();
 		if(b){
-			pos =   comm.getPosition();
 			out = 32;
 		}else{
 			double[] temp = comm.getPIDStatue();
-			pos = temp[8];
+			pos[1] = temp[8];
 			out = (int) temp[5];
 			SetPoint =  (int) temp[4];
-			double delta = pos - SetPoint;
+			double delta = pos[1] - SetPoint;
 			std[0] += (delta*delta);
 		}
-		roi.setXYZ(pos,0, 0);
+		roi.setXYZ(pos[1],0, 0);
 		roi.writeData("MFC",counter,eclipes,out,b);
 		if(counter%10 == 0)
 			roi.flush();
-		roi.updateDataSeries(eclipes, SetPoint,(int)(out*MMT.VariablesNUPD.PWMRate.value() ));
+		//roi.updateDataSeries(eclipes, SetPoint,(int)(out*MMT.VariablesNUPD.PWMRate.value() ));
+		roi.updateDataSeries(eclipes, pos[0],(int)(out*MMT.VariablesNUPD.PWMRate.value() ));
 
 		TimeUnit.MILLISECONDS.sleep(10);
 
@@ -323,9 +324,9 @@ public class Kernel {
 	public void showChart(RoiItem roi, CommTool comm, long start_time) {
 		// TODO Auto-generated method stub
 		float eclipes= (float) ((System.nanoTime()-start_time)/10e6); 
-		double pos = comm.getPosition();
-		roi.setXYZ(pos,0, 0);
-		roi.updateDataSeries(eclipes, 600,(int)(rout*MMT.VariablesNUPD.PWMRate.value() ));
+		double[] pos = comm.getPosition();
+		roi.setXYZ(pos[1],0, 0);
+		roi.updateDataSeries(eclipes, pos[0],(int)(rout*MMT.VariablesNUPD.PWMRate.value() ));
 	}
 	private boolean isStable(RoiItem roi) {
 		// TODO Auto-generated method stub
@@ -343,13 +344,13 @@ public class Kernel {
 	}
 	public void PidByPC(CommTool comm,RoiItem rt,long start_time){
 		if(MMT.VariablesNUPD.WorkMode.value() == 1){
-			double pos = comm.getPosition();
+			double[] pos = comm.getPosition();
 			float eclipes= (float) ((System.nanoTime()-start_time)/10e6);
-			rout += PIDCalc((long) pos);
+			rout += PIDCalc((long) pos[1]);
 			if(rout <10)rout=10;
 			if(rout>5000)rout=5000;
 			comm.SetPWM(rout) ;		
-			rt.setXYZ(pos,0, 0);
+			rt.setXYZ(pos[0],0, 0);
 			rt.updateDataSeries(eclipes,MMT.VariablesNUPD.SetPoint.value(),(int)(rout*MMT.VariablesNUPD.PWMRate.value() ));
 		} 
 	}
@@ -375,13 +376,13 @@ public class Kernel {
 		}
 		comm.SetPWM(temp) ;		
 		Sleep(10);
-		double pos = comm.getPosition();
-		rt.setXYZ(pos,0, 0);
+		double[] pos = comm.getPosition();
+		rt.setXYZ(pos[1],0, 0);
 		rt.updateDataSeries1(!pwmBack,(long) MMT.VariablesNUPD.SetPoint.value(), temp);
 		comm.SetPWM(rout) ;	
 		Sleep(10);
 		pos = comm.getPosition();
-		rt.setXYZ(pos,0, 0);
+		rt.setXYZ(pos[1],0, 0);
 		rt.updateDataSeries1(pwmBack,(long) MMT.VariablesNUPD.SetPoint.value(), rout);
 	}
 

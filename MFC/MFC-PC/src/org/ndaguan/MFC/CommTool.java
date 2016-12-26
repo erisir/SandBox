@@ -38,7 +38,7 @@ public class CommTool {
 	private SerialPort serialPort;
 	private OutputStream outputStream;
 	private int baudRate = 115200;
-	private String comId = "COM2";
+	private String comId = "COM4";
 	private InputStream inputStream;
 	private String lastError = "No error";
 	private boolean isDeviceReady;
@@ -109,8 +109,8 @@ public class CommTool {
 	}
 	public boolean setPosition(double step) throws IOException//um
 	{
-		double  curr = getPosition();
-		double delta = curr - step;
+		double[]  curr = getPosition();
+		double delta = curr[1] - step;
 		double step2Um = 0.49827043;
 		double sleept =Math.abs( 0.2*delta/step2Um);
 		byte[] rawData = new byte[4];
@@ -139,7 +139,7 @@ public class CommTool {
 		}
 		return true;
 	}	
-	public double getPosition()  
+	public double[] getPosition()  
 	{
 		byte []buf = new byte[5];
 		PackageCommand(_U_GetVotage,null,buf);
@@ -156,19 +156,25 @@ public class CommTool {
 		//LogMessage("\r\nreadAnswer");
 		for (int i = 0; i < 20; i++) {
 			ret[i]= (char) bret[i];
-			System.out.print(ret[i]);
+			//System.out.print(ret[i]);
 		}
 
 		if(bret.length<=0){
 			LogMessage("getPosition--read nothing");
-			return  0;
+			return new double[]{0,0};
 		}
 		 
-		if(ret[0]=='@' && ret[1]=='P' && isNumeric(String.copyValueOf(ret).substring(2,3))){
-			double Vsensor =  Double.valueOf(String.copyValueOf(ret).substring(2,2+6)).doubleValue();//RawToLong(bret,2);		 
-			return Vsensor;
+		if(ret[0]=='@' && ret[1]=='P' ){
+			try{
+			String[] temp = String.copyValueOf(ret).substring(2,ret.length).trim().split(",");
+			double Vsensor =   Double.valueOf(temp[0]).doubleValue();	
+			double Vsensor1 =  Double.valueOf(temp[1]).doubleValue();	
+			return new double[]{Vsensor,Vsensor1};
+			}catch (Exception e) {
+				return new double[]{0,0};
+			}
 		}else{
-			return 0;
+			return new double[]{0,0};
 		}
 	}
 

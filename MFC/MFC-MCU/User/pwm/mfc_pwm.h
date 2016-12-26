@@ -13,7 +13,7 @@
 //Copyright(C) 广州市星翼电子科技有限公司 2009-2019
 //All rights reserved									  
 //********************************************************************************
-#define     PWM_DUTY        5000            //定义PWM的周期，数值为时钟周期数，假如使用24.576MHZ的主频，则PWM频率为6000HZ。
+#define     PWM_DUTY        65535            //定义PWM的周期，数值为时钟周期数，假如使用24.576MHZ的主频，则PWM频率为6000HZ。
 
 #define     PWM_HIGH_MIN    10              //限制PWM输出的最小占空比。用户请勿修改。
 #define     PWM_HIGH_MAX    (PWM_DUTY-PWM_HIGH_MIN) //限制PWM输出的最大占空比。用户请勿修改。

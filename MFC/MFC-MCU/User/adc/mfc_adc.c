@@ -91,8 +91,8 @@ static void ADC1_Mode_Config(void)
 	/*配置ADC时钟，为PCLK2的8分频，即9MHz*/
 	RCC_ADCCLKConfig(RCC_PCLK2_Div8); 
 	/*配置ADC1的通道11为55.	5个采样周期，序列为1 */ 
-	ADC_RegularChannelConfig(ADC1, ADC_Channel_8, 1, ADC_SampleTime_55Cycles5);//PB0
-	ADC_RegularChannelConfig(ADC1, ADC_Channel_9, 2, ADC_SampleTime_55Cycles5);//PB1
+	ADC_RegularChannelConfig(ADC1, ADC_Channel_8, 1, ADC_SampleTime_71Cycles5);//PB0
+	ADC_RegularChannelConfig(ADC1, ADC_Channel_9, 2, ADC_SampleTime_71Cycles5);//PB1
 
 	/* Enable ADC1 DMA */
 	ADC_DMACmd(ADC1, ENABLE);
@@ -131,7 +131,7 @@ void GetPosition(void){//串口调用
 } 
 unsigned int  GetADCVoltage(unsigned char ch){//PID调用
 	float votage = 0.0; 
-  votage =(float) ADC_Mean(ch)/2048*3300; 
+  votage =(float) ADC_Mean(ch)/4096*3300; 
 	return votage; // 读取转换的AD值	 
 }
 unsigned int ADC_Mean(unsigned char ch) {//去掉最大最小值
@@ -143,7 +143,7 @@ unsigned int ADC_Mean(unsigned char ch) {//去掉最大最小值
 
 	
 	for(i=0;i<ADC_ConvertedSumWindow;i++){
-		temp = ADC_ConvertedValue[ch]>>1;
+		temp = ADC_ConvertedValue[ch];
 		sum+=temp;
 		if(temp>max)
 			max = temp;
@@ -167,7 +167,7 @@ unsigned int ADC_Filter(unsigned char ch)
 	uint32_t  sum=0; 
 	for  (count=0;count<N;count++) 
 	{ 
-		value_buf[count] = ADC_ConvertedValue[ch]>>1;	   //去掉最低位
+		value_buf[count] = ADC_ConvertedValue[ch];	   //去掉最低位
 	} 
 	for (j=0;j<N-1;j++) //冒泡排序
 	{ 
