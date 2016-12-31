@@ -543,6 +543,11 @@
               <FileType>1</FileType>
               <FilePath>..\lib\src\stm32f37x_misc.c</FilePath>
             </File>
+            <File>
+              <FileName>stm32f37x_pwr.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\lib\src\stm32f37x_pwr.c</FilePath>
+            </File>
           </Files>
         </Group>
       </Groups>

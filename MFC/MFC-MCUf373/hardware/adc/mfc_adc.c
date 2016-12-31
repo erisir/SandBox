@@ -40,15 +40,14 @@ void SetVotageTimes(unsigned int val){
  * @retval 无
  */
 void GetPosition(void){//串口调用
-	//printf("@P%d,%d\n",GetADCVoltage(0),GetADCVoltage(1)); 
-	printf("@P%d,%d\n",InjectedConvData[0],ADC_Mean(0)); 
+	printf("@P%.3f,%.3f\n",GetADCVoltage(0),GetADCVoltage(1));
 } 
-unsigned int  GetADCVoltage(unsigned char ch){//PID调用
+float  GetADCVoltage(unsigned char ch){//PID调用
 	float votage = 0.0; 
 	votage = (((ADC_Mean(ch) + 32768) * SDADC_VREF) / (SDADC_GAIN * SDADC_RESOL));
 	return votage; // 读取转换的AD值	 
 }
-int16_t ADC_Mean(unsigned char ch) {//去掉最大最小值
+float ADC_Mean(unsigned char ch) {//去掉最大最小值
 	int i = 0;
 	uint32_t sum=0;
 	int16_t min=InjectedConvData[ch];
@@ -66,14 +65,14 @@ int16_t ADC_Mean(unsigned char ch) {//去掉最大最小值
 	}
 	sum -=(min+max);
 	
-	return (unsigned int)sum/(ADC_ConvertedSumWindow-2); 
+	return (float)sum/(ADC_ConvertedSumWindow-2); 
 }
 /*****************************************
 ---------------ADC中值滤波----------------
 采样N点，排序，去掉最大最小值，取平均
 *****************************************/
 #define N 40 
-int16_t ADC_Filter(unsigned char ch) 
+float ADC_Filter(unsigned char ch) 
 { 
 	unsigned int count,i,j; 
 	int16_t value_buf[N],temp; 
@@ -97,7 +96,7 @@ int16_t ADC_Filter(unsigned char ch)
 	} 
 	for(count=trimEnd;count<N-trimEnd;count++) 
 		sum += value_buf[count]; 
-	return (unsigned int)(sum/(N-trimEnd*2));  
+	return (float)(sum/(N-trimEnd*2));  
 }
  
 /* Private function prototypes -----------------------------------------------*/
