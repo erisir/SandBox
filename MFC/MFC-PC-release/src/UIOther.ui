@@ -13,17 +13,17 @@
   <property name="windowTitle">
    <string>Dialog</string>
   </property>
-  <widget class="QPushButton" name="pushButton">
+  <widget class="QPushButton" name="ProfControl">
    <property name="geometry">
     <rect>
-     <x>280</x>
-     <y>230</y>
+     <x>160</x>
+     <y>220</y>
      <width>75</width>
      <height>23</height>
     </rect>
    </property>
    <property name="text">
-    <string>子窗口</string>
+    <string>高级控制</string>
    </property>
   </widget>
  </widget>

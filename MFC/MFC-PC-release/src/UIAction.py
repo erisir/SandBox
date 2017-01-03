@@ -15,6 +15,7 @@ class UIAction():
     thirdUIControl= None
     fourUIOther= None
     isDeviceReady = False
+    
     _U_SetVotage     = '0';
     _U_SetPTerm      = '1';
     _U_SetITerm      = '2';
@@ -37,15 +38,22 @@ class UIAction():
         self.secondUIDetail = secondUIDetail
         self.thirdUIControl = thirdUIControl
         self.fourUIOther = fourUIOther
+        
+        self.comm = None
  
     def SendCommand(self,cmd):
         buf ='@'+cmd+'X'+'X'+'a'
         self.log("发送字符串\t"+buf)
- 
-        self.comm.write(buf.encode('ascii')) 
+        try:
+            self.comm.write(buf.encode('ascii')) 
+        except:
+            self.errorMessage("发送命令失败")
     def SendDataCommand(self,cmd,value):
         buf ='@'+cmd+str(((value/256)%256))+str((value%256))
-        self.comm.write(buf.encode('ascii')) 
+        try:
+            self.comm.write(buf.encode('ascii')) 
+        except:
+            self.errorMessage("发送命令失败")
     def PWMOpen (self):
         self.SendCommand(self._U_SetTOpen)
         self.log("PWMOpen")
@@ -115,16 +123,18 @@ class UIAction():
 
             if res is None or len(res)<3:
                 self.errorMessage("读取位置信息返回长度出错")
-                return 0
+                #return None
+                return [random.randint(660, 3200),random.randint(660, 3200)]
             temp = str(res[2:]).split(',')
             if len(temp)==2:
                 return [float(temp[0]),float(temp[1])]
             else:
                 self.errorMessage("读取位置信息返回数据出错")
-                return None
+                # return None
+                return [random.randint(660, 3200),random.randint(660, 3200)]
         except:
             self.logMessage("读取串口出错")            
-            return random.randint(660, 3200)
+            return [random.randint(660, 3200),random.randint(660, 3200)]
         
         
     def read(self,terminator='\n', size=None):
@@ -156,7 +166,11 @@ class UIAction():
             self.errorMessage("连接失败，请检查串口参数")
         #self.comm.close()
     def CloseComm(self):
-        self.comm.close()
+        if  self.comm is None:
+            pass
+        else:
+            print(self.comm)
+            self.comm.close()
     def logMessage(self,str):
         print('-'*10+str)
     def log(self,str):

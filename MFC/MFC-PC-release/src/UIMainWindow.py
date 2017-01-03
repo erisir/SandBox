@@ -4,7 +4,7 @@ from PyQt5.QtCore import *
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import  *
 
-import UIComm,UIControl,UIDetail,UIOther
+import UIComm,UIControl,UIDetail,UIOther,UIControlProf
 import sys  
 from UIAction import   UIAction
 
@@ -16,6 +16,9 @@ class UIMainWindow(QDialog):
         self.secondUIDetail=UIDetail.Ui_Dialog()  
         self.thirdUIControl=UIControl.Ui_Dialog()
         self.fourUIOther=UIOther.Ui_Dialog()  
+        
+        self.UIControlProf=UIControlProf.Ui_Dialog()
+        
         QtWidgets.QWidget
  
         tabWidget=QtWidgets.QTabWidget(self)  
@@ -27,6 +30,8 @@ class UIMainWindow(QDialog):
         self.thirdUIControl.setupUi(w3)  
         w4=QWidget()  
         self.fourUIOther.setupUi(w4)  
+      
+        
   
         tabWidget.addTab(w3,"通讯信息")  
         tabWidget.addTab(w2,"产品信息")  
@@ -58,12 +63,16 @@ class UIMainWindow(QDialog):
         self.thirdUIControl.Clear.clicked.connect(self.Clear)
         
         self.firstUIComm.connectTest.clicked.connect(self.uiAction.ConnectTest)
-       
-
+        self.fourUIOther.ProfControl.clicked.connect(self.showProfControlDlg)
  
     def Clear(self):
+        self.showProfControlDlg()
         pass
      
+    def showProfControlDlg(self):  
+        dlg=QDialog()  
+        self.UIControlProf.setupUi(dlg)  
+        dlg.exec_()  
           
 app=QApplication (sys.argv)  
 #splash=QSplashScreen(QPixmap("../image/logo.png"))  

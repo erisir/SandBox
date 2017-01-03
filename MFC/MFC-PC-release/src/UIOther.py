@@ -12,9 +12,9 @@ class Ui_Dialog(object):
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
         Dialog.resize(400, 300)
-        self.pushButton = QtWidgets.QPushButton(Dialog)
-        self.pushButton.setGeometry(QtCore.QRect(280, 230, 75, 23))
-        self.pushButton.setObjectName("pushButton")
+        self.ProfControl = QtWidgets.QPushButton(Dialog)
+        self.ProfControl.setGeometry(QtCore.QRect(160, 220, 75, 23))
+        self.ProfControl.setObjectName("ProfControl")
 
         self.retranslateUi(Dialog)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
@@ -22,5 +22,5 @@ class Ui_Dialog(object):
     def retranslateUi(self, Dialog):
         _translate = QtCore.QCoreApplication.translate
         Dialog.setWindowTitle(_translate("Dialog", "Dialog"))
-        self.pushButton.setText(_translate("Dialog", "子窗口"))
+        self.ProfControl.setText(_translate("Dialog", "高级控制"))
 
