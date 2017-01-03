@@ -9,7 +9,7 @@
   */
 #define ON  0
 #define OFF 1
-
+#define BSRR_VAL 0x0003
 /* 带参宏，可以像内联函数一样使用 */
 #define LED1(a)	if (a)	\
 					GPIO_SetBits(GPIOB,GPIO_Pin_9);\

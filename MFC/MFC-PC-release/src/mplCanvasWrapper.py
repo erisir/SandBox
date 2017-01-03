@@ -33,9 +33,9 @@ Y_MAX = 3200
 
 Y_MIN = 1
 
-INTERVAL = 0.1
+INTERVAL = 0.01
 
-MAXCOUNTER = int(X_MINUTES * 60*2/ INTERVAL)
+MAXCOUNTER = int(X_MINUTES * 60*2/ 0.1)
 
 class MplCanvas(FigureCanvas):
 
@@ -148,10 +148,8 @@ class  MyDynamicMplCanvas(QWidget):
         #self.dataX.clear()
         #self.dataY.clear()
         self.__generating = False
-
+        self.UIAction.CloseComm()
         pass
-
-   
 
     def initDataGenerator(self):
 

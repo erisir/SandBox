@@ -276,7 +276,7 @@ public  class RoiItem {
 		return temp;
 	}
 	private double[] getDrawScale() {
-		double min = 2;
+		double min = 10;
 		double[] std = getStandardDeviation();
 		for(int i = 0;i<std.length;i++){
 			std[i] = std[i]*2;

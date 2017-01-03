@@ -37,6 +37,7 @@
 
 volatile u32 time = 0; // ms 计时变量 
 __IO uint32_t TimingDelay = 0;
+char led = 0;
 /**
  * @brief  主函数
  * @param  无
@@ -79,10 +80,10 @@ int main(void)
 		if (isPIDEnable() && time >= getPeriod() ) /* 1000 * 1 ms = 1s 时间到 */
     {
       time = 0;
-			/* LED1 取反 */      
-			LED1_TOGGLE; 
 			PIDStart();
+		  LED1_TOGGLE
     } 
+
 	}
 }
 

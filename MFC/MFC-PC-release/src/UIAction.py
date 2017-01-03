@@ -117,9 +117,8 @@ class UIAction():
                 self.errorMessage("读取位置信息返回长度出错")
                 return 0
             temp = str(res[2:]).split(',')
-            print(temp)
-            if len(temp)==2 and temp[0].isnumeric() and temp[1].isnumeric() :
-                return [int(temp[0]),int(temp[1])]
+            if len(temp)==2:
+                return [float(temp[0]),float(temp[1])]
             else:
                 self.errorMessage("读取位置信息返回数据出错")
                 return None
@@ -156,7 +155,8 @@ class UIAction():
             self.isDeviceReady = False
             self.errorMessage("连接失败，请检查串口参数")
         #self.comm.close()
-        
+    def CloseComm(self):
+        self.comm.close()
     def logMessage(self,str):
         print('-'*10+str)
     def log(self,str):

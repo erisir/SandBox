@@ -45,6 +45,8 @@ void GetPosition(void){//串口调用
 float  GetADCVoltage(unsigned char ch){//PID调用
 	float votage = 0.0; 
 	votage = (((ADC_Mean(ch) + 32768) * SDADC_VREF) / (SDADC_GAIN * SDADC_RESOL));
+	if(votage>SDADC_VREF)
+		votage =0;
 	return votage; // 读取转换的AD值	 
 }
 float ADC_Mean(unsigned char ch) {//去掉最大最小值

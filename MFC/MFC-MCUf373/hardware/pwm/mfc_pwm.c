@@ -7,17 +7,17 @@
  */
 void TIM2_GPIO_Config(void) 
 {
+ 
 	GPIO_InitTypeDef GPIO_InitStructure;
+ /* GPIOC Periph clock enable */
+  RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOA, ENABLE);
 
-	/* GPIOB clock enable */
-	RCC_APB2PeriphClockCmd(RCC_AHBPeriph_GPIOB, ENABLE); 
-
-	/* 配置PWM用到的PB0引脚 */
-	GPIO_InitStructure.GPIO_Pin =  GPIO_Pin_1 ;
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;		    // 复用推挽输出
-	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-
-	GPIO_Init(GPIOA, &GPIO_InitStructure);
+  /* Configure PC0 and PC1 in output pushpull mode */
+  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_1;
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;
+  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+  GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
+  GPIO_Init(GPIOA, &GPIO_InitStructure);
 }
 
 
@@ -85,7 +85,7 @@ void TIM2_Mode_Config(unsigned int Prescaler)
 	TIM_OC2PreloadConfig(TIM2, TIM_OCPreload_Enable);						//使能预装载2	
 
 	TIM_ARRPreloadConfig(TIM2, ENABLE);			 										//使能TIM2重载寄存器ARR
-
+	GPIO_PinAFConfig(GPIOA, GPIO_PinSource1, GPIO_AF_1);
 	/* TIM2 enable counter */
 	TIM_Cmd(TIM2, ENABLE);                   										//使能定时器2	
 
