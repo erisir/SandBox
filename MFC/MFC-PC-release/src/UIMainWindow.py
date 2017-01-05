@@ -3,7 +3,6 @@ from PyQt5.QtGui import *
 from PyQt5.QtCore import *  
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import  *
-
 import UIComm,UIControl,UIDetail,UIOther,UIControlProf
 import sys  
 from UIAction import   UIAction
@@ -31,7 +30,8 @@ class UIMainWindow(QDialog):
         w4=QWidget()  
         self.fourUIOther.setupUi(w4)  
       
-        
+        self.ProfControldlg = QDialog()  
+        self.UIControlProf.setupUi(self.ProfControldlg )  
   
         tabWidget.addTab(w3,"通讯信息")  
         tabWidget.addTab(w2,"产品信息")  
@@ -62,6 +62,23 @@ class UIMainWindow(QDialog):
         self.thirdUIControl.pausePlot.clicked.connect(self.thirdUIControl.mplCanvas.pausePlot)
         self.thirdUIControl.Clear.clicked.connect(self.Clear)
         
+        self.UIControlProf.PID_AutoInc.clicked.connect(self.uiAction.Set_PID_AutoInc)
+        self.UIControlProf.PID_ManuInc.clicked.connect(self.uiAction.Set_PID_ManuInc)
+        
+        self.UIControlProf.PID_Kp.valueChanged.connect(self.uiAction.PID_Kp_valueChanged ) 
+        self.UIControlProf.PID_Ki.valueChanged.connect(self.uiAction.PID_Ki_valueChanged ) 
+        self.UIControlProf.PID_Kd.valueChanged.connect(self.uiAction.PID_Kd_valueChanged ) 
+        self.UIControlProf.PID_Kd.valueChanged.connect(self.uiAction.PID_Kd_valueChanged ) 
+        self.UIControlProf.PID_Inteval.valueChanged.connect(self.uiAction.PID_Inteval_valueChanged ) 
+        self.UIControlProf.PID_SetPoint.valueChanged.connect(self.uiAction.PID_SetPoint_valueChanged ) 
+        self.UIControlProf.SmoothWindow.valueChanged.connect(self.uiAction.SmoothWindow_valueChanged ) 
+        self.UIControlProf.Prescaler.valueChanged.connect(self.uiAction.Prescaler_valueChanged ) 
+        self.UIControlProf.PWMValue.valueChanged.connect(self.uiAction.PWMValue_valueChanged ) 
+        self.UIControlProf.PWMRate.valueChanged.connect(self.uiAction.PWMRate_valueChanged ) 
+        self.UIControlProf.Slope.valueChanged.connect(self.uiAction.Slope_valueChanged ) 
+        self.UIControlProf.Interception.valueChanged.connect(self.uiAction.Interception_valueChanged ) 
+
+        
         self.firstUIComm.connectTest.clicked.connect(self.uiAction.ConnectTest)
         self.fourUIOther.ProfControl.clicked.connect(self.showProfControlDlg)
  
@@ -69,10 +86,9 @@ class UIMainWindow(QDialog):
         self.showProfControlDlg()
         pass
      
-    def showProfControlDlg(self):  
-        dlg=QDialog()  
-        self.UIControlProf.setupUi(dlg)  
-        dlg.exec_()  
+    def showProfControlDlg(self):
+        #self.ProfControldlg.exec_()  #遮挡
+        self.ProfControldlg.show()  #不遮挡
           
 app=QApplication (sys.argv)  
 #splash=QSplashScreen(QPixmap("../image/logo.png"))  

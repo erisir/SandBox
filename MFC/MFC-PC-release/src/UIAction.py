@@ -49,7 +49,9 @@ class UIAction():
         except:
             self.errorMessage("发送命令失败")
     def SendDataCommand(self,cmd,value):
-        buf ='@'+cmd+str(((value/256)%256))+str((value%256))
+        c0 = int(((value/256)%256))
+        c1 = int((value%256))
+        buf ='@'+cmd+chr(c0)+chr(c1)
         try:
             self.comm.write(buf.encode('ascii')) 
         except:
@@ -86,6 +88,44 @@ class UIAction():
     def ShowUnit_mv (self):
         self.showUnit = "mv"
         self.log("ShowUnit_mv")
+    
+    def Set_PID_AutoInc(self):
+        self.SendDataCommand(self._U_SetPIDMode,0)
+    
+    def Set_PID_ManuInc(self):
+        self.SendDataCommand(self._U_SetPIDMode,1)
+    
+    def PID_Kp_valueChanged(self,value):
+        self.SendDataCommand(self._U_SetPTerm,value)
+    
+    def PID_Ki_valueChanged(self,value):
+        self.SendDataCommand(self._U_SetITerm,value)
+        
+    def PID_Kd_valueChanged(self,value):
+        self.SendDataCommand(self._U_SetDTerm,value)
+        
+    def PID_Inteval_valueChanged(self,value):
+        self.SendDataCommand(self._U_SetPIDPeriod,value)
+        
+    def PID_SetPoint_valueChanged(self,value):
+        self.SendDataCommand(self._U_SetVotage,value)
+        
+    def SmoothWindow_valueChanged(self,value):
+        self.SendDataCommand(self._U_SetVotageTimes,value)
+        
+    def Prescaler_valueChanged(self,value):
+        self.SendDataCommand(self._U_SetTIM4Prescaler,value)
+        
+    def PWMValue_valueChanged(self,value):
+        self.SendDataCommand(self._U_SetPWMVal,value)
+        
+    def PWMRate_valueChanged(self,value):
+        self.PWMRate = value
+    def Slope_valueChanged(self,value):
+        self.Slope=value
+    def Interception_valueChanged(self,value):
+        self.Interception=value
+
         
     def VotageToFlow(self,votage):
         Flow = (votage-self.Interception)/self.Slope
