@@ -61,7 +61,6 @@ class UIMainWindow(QDialog):
         self.thirdUIControl.pausePlot.setEnabled(False)
         self.thirdUIControl.pausePlot.clicked.connect(self.thirdUIControl.mplCanvas.pausePlot)
         self.thirdUIControl.Clear.clicked.connect(self.Clear)
-        
         self.UIControlProf.PID_AutoInc.clicked.connect(self.uiAction.Set_PID_AutoInc)
         self.UIControlProf.PID_ManuInc.clicked.connect(self.uiAction.Set_PID_ManuInc)
         
@@ -78,10 +77,16 @@ class UIMainWindow(QDialog):
         self.UIControlProf.Slope.valueChanged.connect(self.uiAction.Slope_valueChanged ) 
         self.UIControlProf.Interception.valueChanged.connect(self.uiAction.Interception_valueChanged ) 
 
-        
+        self.UIControlProf.PID_Kp.value()
         self.firstUIComm.connectTest.clicked.connect(self.uiAction.ConnectTest)
         self.fourUIOther.ProfControl.clicked.connect(self.showProfControlDlg)
- 
+        self.Debug()
+    def Debug(self):
+        self.uiAction.ConnectTest()
+        self.showProfControlDlg()
+        
+    def PIDControlDataInit(self):
+        self.UIControlProf.PID_Kp.value(200)
     def Clear(self):
         self.showProfControlDlg()
         pass

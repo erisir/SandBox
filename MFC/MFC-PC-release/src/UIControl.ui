@@ -47,6 +47,9 @@
        <property name="text">
         <string>关闭</string>
        </property>
+       <property name="checked">
+        <bool>true</bool>
+       </property>
       </widget>
      </item>
      <item>
@@ -85,6 +88,9 @@
       <widget class="QRadioButton" name="CtrlMode_Dig">
        <property name="text">
         <string>数字</string>
+       </property>
+       <property name="checked">
+        <bool>true</bool>
        </property>
       </widget>
      </item>
@@ -147,7 +153,14 @@
      </property>
      <layout class="QHBoxLayout" name="horizontalLayout_2">
       <item>
-       <widget class="QLCDNumber" name="SetPoint"/>
+       <widget class="QLCDNumber" name="SetPoint">
+        <property name="autoFillBackground">
+         <bool>false</bool>
+        </property>
+        <property name="value" stdset="0">
+         <double>123.400000000000006</double>
+        </property>
+       </widget>
       </item>
       <item>
        <widget class="QLabel" name="label_3">
@@ -196,6 +209,9 @@ background-color: rgb(170, 255, 0);</string>
         </property>
         <property name="smallDecimalPoint">
          <bool>false</bool>
+        </property>
+        <property name="value" stdset="0">
+         <double>123.500000000000000</double>
         </property>
        </widget>
       </item>
@@ -263,6 +279,9 @@ background-color: rgb(170, 255, 0);</string>
        <widget class="QRadioButton" name="ShowUnit_mv">
         <property name="text">
          <string>mV</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
         </property>
        </widget>
       </item>

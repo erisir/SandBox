@@ -38,32 +38,29 @@ class UIAction():
         self.secondUIDetail = secondUIDetail
         self.thirdUIControl = thirdUIControl
         self.fourUIOther = fourUIOther
-        
+        self.pidPara =["Kp","Ki","Kd","DeadZone","SetPoint","Output","LastError","PrevError","voltage","SumErr"];
         self.comm = None
- 
-    def SendCommand(self,cmd):
-        buf ='@'+cmd+'X'+'X'+'a'
-        self.log("发送字符串\t"+buf)
-        try:
-            self.comm.write(buf.encode('ascii')) 
-        except:
-            self.errorMessage("发送命令失败")
+
     def SendDataCommand(self,cmd,value):
-        c0 = int(((value/256)%256))
-        c1 = int((value%256))
-        buf ='@'+cmd+chr(c0)+chr(c1)
+        High = int(((value/256)%256))
+        Low = int((value%256))
+        buf = bytes([ord('@'),ord(cmd),High,Low])
+        #print(buf)
+        #self.log("发送字符串\t"buf)  
+        #print("发送字符串")      
+        #print(buf)
         try:
-            self.comm.write(buf.encode('ascii')) 
+            self.comm.write(buf) 
         except:
             self.errorMessage("发送命令失败")
     def PWMOpen (self):
-        self.SendCommand(self._U_SetTOpen)
+        self.SendDataCommand(self._U_SetTOpen,0)
         self.log("PWMOpen")
     def PWMClose (self):
-        self.SendCommand(self._U_SetTClose)
+        self.SendDataCommand(self._U_SetTClose,0)
         self.log("PWMClose")
     def PWMPID (self):
-        self.SendCommand(self._U_SetTPID)
+        self.SendDataCommand(self._U_SetTPID,0)
         self.log("PWMPID")
     def CtrlMode_Dig (self):
         self.log("CtrlMode_Dig")
@@ -153,30 +150,47 @@ class UIAction():
         votage = self.GetVotage()
         if votage is None:
             return None
-        return [self.GetShowValue(votage[0]),self.GetShowValue(votage[1])]
+        return [self.GetShowValue(votage[0]),self.GetShowValue(votage[1]),votage[2]]
 
     def GetVotage(self):
         try:
-            self.SendCommand(self._U_GetVotage)
+            ouput = 0
+            if self.thirdUIControl.PWMPID.isChecked():
+                self.SendDataCommand(self._U_SetDura,0)
+                time.sleep(0.1)
+                res=self.read()
+                ret = res.split(",")
+                str = ""
+                i=0                
+                for x in ret:                                    
+                    str += self.pidPara[i]+":"+x+" , "
+                    if i == 5:
+                        ouput = int(x)
+                    i = i+1
+                print(str)
+                
+            self.SendDataCommand(self._U_GetVotage,0)
             time.sleep(0.1)
             res=self.read()
-
+            return self.getRandom() 
             if res is None or len(res)<3:
                 self.errorMessage("读取位置信息返回长度出错")
-                #return None
-                return [random.randint(660, 3200),random.randint(660, 3200)]
-            temp = str(res[2:]).split(',')
+                return self.getRandom() 
+            temp = res[2:].split(',')
             if len(temp)==2:
-                return [float(temp[0]),float(temp[1])]
+                return [float(temp[0]),float(temp[1]),float(ouput)]
             else:
                 self.errorMessage("读取位置信息返回数据出错")
-                # return None
-                return [random.randint(660, 3200),random.randint(660, 3200)]
+                return self.getRandom()
         except:
             self.logMessage("读取串口出错")            
-            return [random.randint(660, 3200),random.randint(660, 3200)]
+            return self.getRandom()
         
-        
+    def getRandom(self):
+            start = 2000
+            end = 2050
+            return [random.randint(start, end),random.randint(start, end),random.randint(start, end)] 
+    
     def read(self,terminator='\n', size=None):
         try:
             res=self.comm.read_until()
@@ -196,7 +210,7 @@ class UIAction():
             self.errorMessage("串口"+commName+"被其他程序占用")
             return
          
-        self.SendCommand(self._U_GetVotage)
+        self.SendDataCommand(self._U_GetVotage,0)
         res=self.read() 
         if res is not None and len(res)>2 and str(res)[:2] == "@P" :
             self.isDeviceReady = True
@@ -214,8 +228,8 @@ class UIAction():
     def logMessage(self,str):
         print('-'*10+str)
     def log(self,str):
-        pass
-        #print('-'*10+str)
+        #pass
+        print('-'*10+str)
     def errorMessage(self,str):
         print('!'*10+str)
     def warnningMessage(self,str):

@@ -56,9 +56,8 @@ public class Kernel {
 				double lon = Double.valueOf((((Element) trkpt.get(j)).getAttributeValue("lon"))).doubleValue();
 				double att = Double.valueOf(((Element) trkpt.get(j)).getChildren().get(0).getValue());
 				String time =((Element) trkpt.get(j)).getChildren().get(1).getValue();
-				String[] temp = time.substring(11,19).split(":");
-				double dtime =  Double.valueOf(temp[0]).doubleValue()*3600+Double.valueOf(temp[1]).doubleValue()*60+Double.valueOf(temp[2]).doubleValue();
-
+				String[] temp = time.substring(11,19).split(":");				
+				double dtime =  Double.valueOf(temp[0]).doubleValue()*3600+Double.valueOf(temp[1]).doubleValue()*60+Double.valueOf(temp[2]).doubleValue();				
 				System.out.print(j);
 				System.out.print("\t");
 				System.out.print(time.substring(11,19)+"\r\n");

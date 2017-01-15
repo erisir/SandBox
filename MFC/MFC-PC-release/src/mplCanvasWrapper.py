@@ -19,40 +19,64 @@ X_MINUTES = 0.1
 Y_MAX = 3200
 Y_MIN = 1
 INTERVAL = 0.01
-MAXCOUNTER = int(X_MINUTES * 60*2/ 0.04)
+MAXCOUNTER = int(X_MINUTES * 60*2/ 0.1)
 
 class MplCanvas(FigureCanvas):
     def __init__(self):
         self.fig = Figure()
-        self.ax = self.fig.add_subplot(111)
+        self.ax = self.fig.add_subplot(211)
+        self.ax1 = self.fig.add_subplot(212)
         FigureCanvas.__init__(self, self.fig)
         FigureCanvas.setSizePolicy(self, QSizePolicy.Expanding, QSizePolicy.Expanding)
         FigureCanvas.updateGeometry(self)
-        self.ax.set_xlabel("time (sec)")
-        self.ax.set_ylabel('Voltage(mv)')
-        self.ax.legend()
-        self.ax.set_ylim(Y_MIN,Y_MAX)
-        #self.ax.xaxis.set_major_locator(MinuteLocator())  # every minute is a major locator
-        self.ax.xaxis.set_major_locator(SecondLocator([5,10,15,20,25,30,35,40,45,50,55]))
-        self.ax.xaxis.set_minor_locator(SecondLocator())
-        #self.ax.xaxis.set_minor_locator(SecondLocator([10,20,30,40,50])) # every 10 second is a minor locator
-        self.ax.xaxis.set_major_formatter( DateFormatter('%M:%S') ) #tick label formatter
         self.curveObj = None # draw object
         self.curveObj1= None # draw object
+        self.curveObj2= None # draw object
         
-    def plot(self, datax, datay,datay1):
+        self.initFigureUI(self.ax,"time (sec)",'Voltage(mv)')
+        self.initFigureUI(self.ax1,"time (sec)",'OutPut(pwm)')
+        
+    def initFigureUI(self,ax,xlabel,ylabel):   
+        ax.set_xlabel(xlabel)
+        ax.set_ylabel(ylabel)
+        ax.legend()
+        ax.set_ylim(Y_MIN,Y_MAX)
+        #self.ax.xaxis.set_major_locator(MinuteLocator())  # every minute is a major locator
+        ax.xaxis.set_major_locator(SecondLocator([0,5,10,15,20,25,30,35,40,45,50,55]))
+        ax.xaxis.set_minor_locator(SecondLocator())
+        #self.ax.xaxis.set_minor_locator(SecondLocator([10,20,30,40,50])) # every 10 second is a minor locator
+        ax.xaxis.set_major_formatter( DateFormatter('%M:%S') ) #tick label formatter
+        
+        
+    def plot(self, datax, datay,datay1,datay2):
         if self.curveObj is None:
             #create draw object once
             self.curveObj, = self.ax.plot_date(np.array(datax), np.array(datay),'b-')
             self.curveObj1, = self.ax.plot_date(np.array(datax), np.array(datay),'r-')
-           # self.ax.legend(self.curveObj, "电曲线")
-            #self.ax.legend(self.curveObj1, "气曲线")
+            self.curveObj2, = self.ax1.plot_date(np.array(datax), np.array(datay),'r-')
+
         else:
             #update data of draw object
-            self.curveObj.set_data(np.array(datax), np.array(datay))
-            self.curveObj1.set_data(np.array(datax), np.array(datay1))
+            npx = np.array(datax)
+            npy =  np.array(datay)
+            npy1 =  np.array(datay1)
+            npy2 =  np.array(datay2)
+           
+            meany = np.mean(datay2)
+            std = np.std(datay2)*10
+            ystart = meany-std
+            if ystart <0:
+                ystart = 0
+            yend = meany+std
+            
+            self.curveObj.set_data(npx,npy)
+            self.curveObj1.set_data(npx, npy1)
+            self.curveObj2.set_data(npx, npy2)
             #update limit of X axis,to make sure it can move
             self.ax.set_xlim(datax[0],datax[-1])
+            self.ax1.set_xlim(datax[0],datax[-1])
+            self.ax1.set_ylim(ystart,yend)
+            
         ticklabels = self.ax.xaxis.get_ticklabels()
         for tick in ticklabels:
             tick.set_rotation(5)
@@ -73,6 +97,7 @@ class  MyDynamicMplCanvas(QWidget):
         self.dataX= []
         self.dataY= []
         self.dataY1 = []
+        self.dataY2 = []
         self.initDataGenerator()
         #self.startTime = date2num(datetime.now())
         
@@ -120,11 +145,14 @@ class  MyDynamicMplCanvas(QWidget):
                     self.dataX.append(newTime)
                     self.dataY.append(newData[0])
                     self.dataY1.append(newData[1])
-                    self.canvas.plot(self.dataX, self.dataY,self.dataY1)   
+                    self.dataY2.append(newData[2])
+                    self.getpoint.setProperty("value", newData[0])
+                    self.canvas.plot(self.dataX, self.dataY,self.dataY1,self.dataY2)   
                     if counter >= MAXCOUNTER:
                         self.dataX.pop(0)
                         self.dataY.pop(0) 
                         self.dataY1.pop(0) 
+                        self.dataY2.pop(0) 
                     else:
                         counter+=1
                 except:
