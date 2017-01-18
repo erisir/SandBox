@@ -38,8 +38,7 @@ class UIMainWindow(QDialog):
         tabWidget.addTab(w1,"控制信息")  
         tabWidget.addTab(w4,"其他项目")  
         tabWidget.resize(520,560)
-        
-        self.uiAction = UIAction(self.firstUIComm,self.secondUIDetail,self.thirdUIControl,self.fourUIOther)
+        self.uiAction = UIAction(self.firstUIComm,self.secondUIDetail,self.thirdUIControl,self.fourUIOther,self.UIControlProf)
         self.ConnectEvent()
         #QThread.sleep(3)
         
@@ -63,21 +62,28 @@ class UIMainWindow(QDialog):
         self.thirdUIControl.Clear.clicked.connect(self.Clear)
         self.UIControlProf.PID_AutoInc.clicked.connect(self.uiAction.Set_PID_AutoInc)
         self.UIControlProf.PID_ManuInc.clicked.connect(self.uiAction.Set_PID_ManuInc)
+        self.UIControlProf.PID_ByPC.clicked.connect(self.uiAction.Set_PID_ControlByPC)
         
         self.UIControlProf.PID_Kp.valueChanged.connect(self.uiAction.PID_Kp_valueChanged ) 
         self.UIControlProf.PID_Ki.valueChanged.connect(self.uiAction.PID_Ki_valueChanged ) 
         self.UIControlProf.PID_Kd.valueChanged.connect(self.uiAction.PID_Kd_valueChanged ) 
-        self.UIControlProf.PID_Kd.valueChanged.connect(self.uiAction.PID_Kd_valueChanged ) 
+
         self.UIControlProf.PID_Inteval.valueChanged.connect(self.uiAction.PID_Inteval_valueChanged ) 
-        self.UIControlProf.PID_SetPoint.valueChanged.connect(self.uiAction.PID_SetPoint_valueChanged ) 
+        self.UIControlProf.PID_SetPoint.valueChanged.connect(self.uiAction.PID_SetPoint_valueChanged )
+        self.UIControlProf.PID_ThredHold.valueChanged.connect(self.uiAction.PID_ThredHold_valueChanged )
+        self.UIControlProf.PID_VotageChanel.valueChanged.connect(self.uiAction.PID_VotageChanel_valueChanged ) 
+        
         self.UIControlProf.SmoothWindow.valueChanged.connect(self.uiAction.SmoothWindow_valueChanged ) 
         self.UIControlProf.Prescaler.valueChanged.connect(self.uiAction.Prescaler_valueChanged ) 
         self.UIControlProf.PWMValue.valueChanged.connect(self.uiAction.PWMValue_valueChanged ) 
         self.UIControlProf.PWMRate.valueChanged.connect(self.uiAction.PWMRate_valueChanged ) 
         self.UIControlProf.Slope.valueChanged.connect(self.uiAction.Slope_valueChanged ) 
         self.UIControlProf.Interception.valueChanged.connect(self.uiAction.Interception_valueChanged ) 
-
-        self.UIControlProf.PID_Kp.value()
+        
+        self.UIControlProf.savePVFDtoMCU.clicked.connect(self.uiAction.savePVFDtoMCU) 
+        self.UIControlProf.getVoltageVsPWMCurse.clicked.connect(self.uiAction.getPWMVSVotage) 
+        self.UIControlProf.StopVoltageVsPWMCurse.clicked.connect(self.uiAction.stopVoltageVsPWMCurse) 
+              
         self.firstUIComm.connectTest.clicked.connect(self.uiAction.ConnectTest)
         self.fourUIOther.ProfControl.clicked.connect(self.showProfControlDlg)
         self.Debug()
@@ -89,6 +95,7 @@ class UIMainWindow(QDialog):
         self.UIControlProf.PID_Kp.value(200)
     def Clear(self):
         self.showProfControlDlg()
+        #self.uiAction.getPWMVSVotage()
         pass
      
     def showProfControlDlg(self):

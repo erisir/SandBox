@@ -7,9 +7,9 @@
 uint32_t SDADC1_Config(void);
 void GetPosition(void);
 float GetADCVoltage(unsigned char ch);
-void SetVotageTimes(unsigned int val);
+void SetVotageTimes(float val);
 float ADC_Filter(unsigned char ch) ;
-float ADC_Mean(unsigned char ch);
+int16_t ADC_Mean(unsigned char ch);
 
 #endif /* __ADC_H */
 

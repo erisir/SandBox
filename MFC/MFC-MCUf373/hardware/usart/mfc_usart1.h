@@ -19,6 +19,13 @@
 #define _U_SetPIDPeriod   'c'
 #define _U_SetTIM4Prescaler 'd'
 #define _U_SetPIDVotageChanel 'e'
+#define _U_SetForwardA   'f'
+#define _U_SetForwardB   'g'
+#define _U_SetForwardC   'h'
+#define _U_SetBackwardA   'i'
+#define _U_SetBackwardB   'j'
+#define _U_SetBackwardC   'k'
+#define _U_SetPIDThredHold 'l'
 
 void USART1_Config(void);
 void NVIC_Configuration(void);

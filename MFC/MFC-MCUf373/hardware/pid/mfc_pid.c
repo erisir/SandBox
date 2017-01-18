@@ -8,19 +8,22 @@
 
 //xdata struct PID spid; // PID Control Structure
 struct PID spid; // PID Control Structure
-
+struct PWMVotageFitPara sPVFP;
 unsigned int PIDVotageChanel = 1;
 unsigned int PIDMode = 0;
 unsigned char PIDEnable=0;
-void SetPIDMode(unsigned int mode){
+void SetPIDMode(float mode){
 	PIDMode = mode;
 }
-void SetPIDVotageChanel(unsigned int ch){
+void SetPIDVotageChanel(float ch){
 	PIDVotageChanel = ch;
 }
-
+uint32_t GetPIDOutput(){
+	return spid.Output;
+}
 void GetPIDStatu(){
 	printf("%.3f,%.3f,%.3f,%d,%d,%d,%d,%d,%d,%d\n",spid.Proportion  ,spid.Integral ,spid.Derivative  ,spid.DeadZone ,spid.SetPoint ,spid.Output,spid.LastError,spid.PrevError,spid.SetPoint-spid.LastError,spid.SumError );	
+	printf("FA:%.3f,FB:%.3f,FC:%.3f,BA:%.3f,BB:%.3f,BC:%.3f\n",sPVFP.ForwardA,sPVFP.ForwardB,sPVFP.ForwardC,sPVFP.BackwardA,sPVFP.BackwardB,sPVFP.BackwardC );	
 }  
 /*********************************************************** 
               PID温度控制动作函数
@@ -29,16 +32,13 @@ void PIDStart()
 {  
 	switch(PIDMode){
 	case 0:
-		spid.Output += IncAutoPIDCalc ( &spid,GetADCVoltage(PIDVotageChanel) );
+		IncAutoPIDCalc ( &spid,GetADCVoltage(PIDVotageChanel) );
 		break;
 	case 1:
-		spid.Output += IncPIDCalc ( &spid,GetADCVoltage(PIDVotageChanel) );
+		IncPIDCalc ( &spid,GetADCVoltage(PIDVotageChanel) );
 		break;
-	case 2:
-		spid.Output = LocPIDCalc ( &spid,GetADCVoltage(PIDVotageChanel) );
-		break; 
 	default:
-		spid.Output += IncPIDCalc ( &spid,GetADCVoltage(PIDVotageChanel) );
+		IncPIDCalc ( &spid,GetADCVoltage(PIDVotageChanel) );
 		break;
 	}		
 	if(spid.Output >PWM_HIGH_MAX)
@@ -55,6 +55,7 @@ void PIDInit()
 { 
 
 	memset (&spid,0,sizeof(struct PID)); 	// Initialize Structure 
+	memset (&sPVFP,0,sizeof(struct PWMVotageFitPara)); 	// Initialize Structure 
 
 	spid.Proportion = 0.2;  
 	spid.Integral =   0.00; 
@@ -62,21 +63,52 @@ void PIDInit()
 	spid.Output = 0;
 	spid.SetPoint = 3200;
 	spid.DeadZone = 20;
-	spid.Period = 1000;
+	spid.Period = 100;
 	spid.sumMax=999999;
 	spid.sumMin=10;
+	spid.Thredhold = 200;
+	
+	sPVFP.ForwardA = 0;
+	sPVFP.ForwardB = 0;
+	sPVFP.ForwardC = 0;
+	sPVFP.BackwardA = 0;
+	sPVFP.BackwardB = 0;
+	sPVFP.BackwardC = 0;
 }
 unsigned int getPeriod(){
 return spid.Period;
 }
-void SetPIDPeriod(unsigned int v_data){
+
+void SetPIDPeriod(float v_data){
 	spid.Period = v_data;
 }
-void SetSetPoint(unsigned int v_data)
+void SetPIDThredHold(float v_data){
+	spid.Thredhold = v_data;
+}
+void SetSetPoint(float v_data)
 {
 	spid.SetPoint =v_data; 	 
 }
-void SetPWMValue(unsigned int v_data)
+void SetForwardA(float v_data){
+	sPVFP.ForwardA = v_data;
+} 
+void SetForwardB(float v_data){
+	sPVFP.ForwardB = v_data;
+} 
+void SetForwardC(float v_data){
+	sPVFP.ForwardC = v_data;
+}
+void SetBackwardA(float v_data){
+	sPVFP.BackwardA = v_data;
+}
+void SetBackwardB(float v_data){
+	sPVFP.BackwardB = v_data;
+}
+void SetBackwardC(float v_data){
+	sPVFP.BackwardC = v_data;
+}
+
+void SetPWMValue(float v_data)
 {
 	unsigned int manuPWM =   v_data;	
 	if(manuPWM >PWM_HIGH_MAX)
@@ -87,31 +119,20 @@ void SetPWMValue(unsigned int v_data)
 	spid.Output = manuPWM;
 
 }  
-void SetPIDparam_P_inc(unsigned int v_data)
+void SetPIDparam_P_inc(float v_data)
 {
-
-	if(PIDMode != 2)
-		spid.Proportion = 	v_data/1000.0;
-	else
 		spid.Proportion = v_data;
-
 } 
-void SetPIDparam_I_inc(unsigned int v_data)
+void SetPIDparam_I_inc(float v_data)
 {
-	if(PIDMode != 2)
-		spid.Integral   = 	 v_data/1000.0;
-	else
+
 		spid.Integral   = 	 v_data;
 
-
 } 
-void SetPIDparam_D_inc(unsigned int v_data)
+void SetPIDparam_D_inc(float v_data)
 {
-	if(PIDMode != 2)
-		spid.Derivative  = 	 v_data/1000.0;
-	else
-		spid.Derivative  = 	 v_data;
 
+		spid.Derivative  = 	 v_data;
 
 } 
 void  SetTClose()
@@ -132,12 +153,27 @@ void  SetTPID()
 unsigned char isPIDEnable(){
 	return PIDEnable;
 } 
+unsigned int getPWMByVotage(unsigned int votage,char forBackward){
+	if(forBackward>0)
+		return (unsigned int)((float)sPVFP.ForwardA*votage*votage+(float)sPVFP.ForwardB*votage+(float)sPVFP.ForwardC);
+	else
+		return (unsigned int)((float)sPVFP.BackwardA*votage*votage+(float)sPVFP.BackwardB*votage+(float)sPVFP.BackwardC);
+}
+//位置式PID控制设计
+unsigned int abs( int val){
+	return val>0?val:(-1*val);
+}
+ 
 //增量式PID控制设计
 int IncPIDCalc(struct PID *spid,int NextPoint)
 {
 	register int iError, iIncpid;
 	//当前误差
 	iError = spid->SetPoint - NextPoint;
+	if(abs(iError) >spid->Thredhold){
+		spid->Output = getPWMByVotage(spid->SetPoint,iError);
+		return 0;
+	}
 	//增量计算
 	iIncpid = spid->Proportion * iError //E[k]项
 			- spid->Integral * spid->LastError //E[k－1]项
@@ -146,7 +182,8 @@ int IncPIDCalc(struct PID *spid,int NextPoint)
 	spid->PrevError = spid->LastError;
 	spid->LastError = iError;
 	//返回增量值
-	return(iIncpid);
+	spid->Output += iIncpid;
+	return 0;
 }
 
 //增量式自适应PID控制设计
@@ -155,6 +192,10 @@ int IncAutoPIDCalc(struct PID *spid,int NextPoint)
 	register int iError, iIncpid;
 	//当前误差
 	iError = spid->SetPoint - NextPoint;
+	if(abs(iError) >spid->Thredhold){
+		spid->Output = getPWMByVotage(spid->SetPoint,iError);
+		return 0;
+	}
 	//增量计算
 	iIncpid = spid->Proportion * (2.45*iError //E[k]项
 			- 3.5*spid->LastError //E[k－1]项
@@ -163,23 +204,7 @@ int IncAutoPIDCalc(struct PID *spid,int NextPoint)
 	spid->PrevError = spid->LastError;
 	spid->LastError = iError;
 	//返回增量值
-	return(iIncpid);
+	spid->Output += iIncpid;
+	return 0;
 }
-//位置式PID控制设计
-unsigned int abs( int val){
-	return val>0?val:(-1*val);
-}
-unsigned int LocPIDCalc(struct PID *spid,int NextPoint)
-{
-	register int iError,dError;
-	iError = spid->SetPoint - NextPoint; //偏差
-	spid->SumError += iError; //积分
-	if(abs(spid->SumError)>spid->sumMax)
-		spid->SumError= spid->SumError>0?spid->sumMax:(-1*spid->sumMax);	
-	dError = iError - spid->LastError; //微分
-	spid->LastError = iError;
 
-	return(spid->Proportion * iError //比例项
-			+ spid->Integral * spid->SumError //积分项
-			+ spid->Derivative * dError); //微分项
-} 

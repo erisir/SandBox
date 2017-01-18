@@ -17,6 +17,7 @@
 
 #include "mfc_adc.h"
 #include "../../user/main.h"
+#include "../pid/mfc_pid.h"
 #include <stdio.h>
 
 // ADC1转换的电压值通过MDA方式传到SRAM
@@ -24,7 +25,7 @@ int16_t InjectedConvData[2];
 uint16_t ADC_ConvertedSumWindow;
 // 局部变量，用于保存转换计算后的电压值
 
-void SetVotageTimes(unsigned int val){
+void SetVotageTimes(float val){
 	ADC_ConvertedSumWindow = val;
 }
 /**
@@ -40,16 +41,17 @@ void SetVotageTimes(unsigned int val){
  * @retval 无
  */
 void GetPosition(void){//串口调用
-	printf("@P%.3f,%.3f\n",GetADCVoltage(0),GetADCVoltage(1));
+	printf("@P%.3f,%.3f,%d\n",GetADCVoltage(0),GetADCVoltage(1),GetPIDOutput());
 } 
 float  GetADCVoltage(unsigned char ch){//PID调用
 	float votage = 0.0; 
-	votage = (((ADC_Mean(ch) + 32768) * SDADC_VREF) / (SDADC_GAIN * SDADC_RESOL));
+	//votage = (((ADC_Mean(ch) + 32768) * SDADC_VREF) / (SDADC_GAIN * SDADC_RESOL));
+	votage = (((InjectedConvData[ch] + 32768) * SDADC_VREF) / (SDADC_GAIN * SDADC_RESOL));
 	if(votage>SDADC_VREF)
 		votage =0;
 	return votage; // 读取转换的AD值	 
 }
-float ADC_Mean(unsigned char ch) {//去掉最大最小值
+int16_t ADC_Mean(unsigned char ch) {//去掉最大最小值
 	int i = 0;
 	uint32_t sum=0;
 	int16_t min=InjectedConvData[ch];
@@ -67,7 +69,7 @@ float ADC_Mean(unsigned char ch) {//去掉最大最小值
 	}
 	sum -=(min+max);
 	
-	return (float)sum/(ADC_ConvertedSumWindow-2); 
+	return (int16_t)(sum/(ADC_ConvertedSumWindow-2)); 
 }
 /*****************************************
 ---------------ADC中值滤波----------------

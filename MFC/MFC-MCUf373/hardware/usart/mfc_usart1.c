@@ -113,44 +113,114 @@ unsigned char checksumCalc(unsigned char rec[])
 
 	return (( unsigned char)rec[0])^(( unsigned char)rec[1])^(( unsigned char)rec[2])^(( unsigned char)rec[3]);
 } 
+//4 byte to float
+float Byte2Float(unsigned char* byteArry)
+{
+ return *((float*)byteArry);
+}
 void parseCMD(){
-	unsigned int v_data;
+	float v_data;
+	unsigned char  byteArry[4];
 	uart_flag = 0;
-
-	v_data =  receive[2]*256+receive[3] ;
-
-
+	
+	byteArry[0] = receive[2];
+	byteArry[1] = receive[3];
+	byteArry[2] = receive[4];
+	byteArry[3] = receive[5];
+	
+	v_data =  Byte2Float(byteArry);//receive[2]*256+receive[3] ;
+	//printf("v_data=%.4f\n",v_data);
 	switch(receive[1]){
 
-	case _U_SetVotage:SetSetPoint(v_data);break;//0 
-
-	case _U_SetPTerm:SetPIDparam_P_inc(v_data);break;//2
-
-	case _U_SetITerm:SetPIDparam_I_inc(v_data);break;//4
-
-	case _U_SetDTerm:SetPIDparam_D_inc(v_data);break;//6
-
-	case _U_SetPWMVal:SetPWMValue(v_data);break;//8
-
-	case _U_GetVotage:GetPosition();break;//8
-
-	case _U_SetDura:GetPIDStatu();break;//8
-
-	case _U_SetTClose:SetTClose();break;//8
-
-	case _U_SetTOpen:SetTOpen();break;//8
-
-	case _U_SetTPID:SetTPID();break;//8
-
-	case _U_SetVotageTimes:SetVotageTimes(v_data);break;//8
-
-	case _U_SetPIDMode:SetPIDMode(v_data);break;//8
-	
-	case _U_SetPIDPeriod: SetPIDPeriod(v_data);break;//8
-	
-	case _U_SetTIM4Prescaler: TIM2_Set_Prescaler(v_data);break;//8TIM4_Set_Prescaler(unsigned int Prescaler)
-	case _U_SetPIDVotageChanel: SetPIDVotageChanel(v_data);break;
-	default:break;
+	case _U_SetVotage:
+		SetSetPoint(v_data);
+		printf("SetSetPoint:%.3f\n",v_data);
+		break;//0 
+	case _U_SetPTerm:
+		SetPIDparam_P_inc(v_data);
+		printf("SetPIDparam_P_inc:%.3f\n",v_data);
+		break;//2
+	case _U_SetITerm:
+		SetPIDparam_I_inc(v_data);
+		printf("SetPIDparam_I_inc:%.3f\n",v_data);
+		break;//4
+	case _U_SetDTerm:
+		SetPIDparam_D_inc(v_data);
+		printf("SetPIDparam_D_inc:%.3f\n",v_data);
+		break;//6
+	case _U_SetPWMVal:
+		SetPWMValue(v_data);
+		printf("SetPWMValue:%.3f\n",v_data);
+		break;//8
+	case _U_GetVotage:
+		GetPosition();
+		break;//8
+	case _U_SetDura:
+		GetPIDStatu();
+		break;//8
+	case _U_SetTClose:
+		SetTClose();
+		printf("SetTClose OK\n");
+		break;//8
+	case _U_SetTOpen:
+		SetTOpen();
+		printf("SetTOpen OK\n");
+		break;//8
+	case _U_SetTPID:
+		SetTPID();
+		printf("SetTPID OK\n");
+		break;//8
+	case _U_SetVotageTimes:
+		SetVotageTimes(v_data);
+		printf("SetVotageTimes:%.3f\n",v_data);
+		break;//8
+	case _U_SetPIDMode:
+		SetPIDMode(v_data);
+		printf("SetPIDMode:%.3f\n",v_data);
+		break;//8
+	case _U_SetPIDPeriod: 
+		SetPIDPeriod(v_data);
+		printf("SetPIDPeriod:%.3f\n",v_data);
+		break;//8
+	case _U_SetTIM4Prescaler: 
+		TIM2_Set_Prescaler(v_data);
+		printf("TIM2_Set_Prescaler:%.3f\n",v_data);
+		break;
+	case _U_SetPIDVotageChanel: 
+		SetPIDVotageChanel(v_data);
+		printf("SetPIDVotageChanel:%.3f\n",v_data);
+		break;
+	case _U_SetPIDThredHold: 
+		SetPIDThredHold(v_data);
+		printf("SetPIDThredHold:%.3f\n",v_data);
+		break;
+	case _U_SetForwardA: 
+		SetForwardA(v_data);
+		printf("SetForwardA:%.3f\n",v_data);
+		break;
+	case _U_SetForwardB:  
+		SetForwardB(v_data);
+		printf("SetForwardB:%.3f\n",v_data);
+		break;
+	case _U_SetForwardC:  
+		SetForwardC(v_data);
+		printf("SetForwardC:%.3f\n",v_data);
+		break;
+	case _U_SetBackwardA:  
+		SetBackwardA(v_data);
+		printf("SetBackwardA:%.3f\n",v_data);
+		break;
+	case _U_SetBackwardB:  
+		SetBackwardB(v_data);
+		printf("SetBackwardB:%.3f\n",v_data);
+		break;
+	case _U_SetBackwardC:  
+		SetBackwardC(v_data);
+		printf("SetBackwardC:%.3f\n",v_data);
+		break;
+	default:
+		printf("unknow cmd\n");
+		break;
 	}	    
 }
 unsigned char cmd_ready()

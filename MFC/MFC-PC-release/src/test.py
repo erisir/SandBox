@@ -1,16 +1,26 @@
-
-from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtWidgets import  *
-import serial  #pip install pyserial
-import sys
+from struct import pack,unpack
+import serial,time
+from PyQt5 import  QtGui
+from matplotlib.backends.backend_qt5agg import  FigureCanvasQTAgg as FigureCanvas
+from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolbar
+from matplotlib.figure import Figure
+import numpy as np
+from array import array
 import time
 import random
-import binascii,encodings; 
-from sympy.strategies.core import switch
+import threading
+from datetime import datetime
+from matplotlib.dates import  date2num, MinuteLocator, SecondLocator, DateFormatter,\
+    num2date
+from PyQt5.QtGui import *  
+from PyQt5.QtGui import *  
+from PyQt5.QtCore import *  
+from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5.QtWidgets import  * 
 _U_SetVotage     = '0';
 _U_SetPTerm      = '1';
 _U_SetITerm      = '2';
-_U_SetDTerm        = '3';
+_U_SetDTerm      = '3';
 _U_SetDura       = '4';
 _U_SetPWMVal     = '5';
 _U_GetVotage     = '6';
@@ -21,19 +31,40 @@ _U_SetVotageTimes= 'a';
 _U_SetPIDMode= 'b';
 _U_SetPIDPeriod = 'c';
 _U_SetTIM4Prescaler = 'd';
-_U_SetPIDMode= 'b';
-value = 65534
+_U_SetPIDVotageChanel =  'e'
+_U_SetForwardA = 'f';
+_U_SetForwardB = 'g';
+_U_SetForwardC = 'h';
+_U_SetBackwardA = 'i';
+_U_SetBackwardB = 'j';
+_U_SetBackwardC = 'k';
+_U_SetPIDThredHold='l';
 
-cmd = _U_GetVotage
-High = int(((value/256)%256))
-Low = int((value%256))
-buf = bytes([ord('@'),ord(cmd),High,Low])
-comm = None
-try:   
-    comm = serial.Serial("COM4",115200)              
-except:
-    print("串口被其他程序占用")
-comm.write(buf) 
-res=comm.read_until()
-print(res)
+ 
+def setPWM(comm,value):
+    byteArr = pack('f',value)
+    checkSum = 'X'
+    buf = bytes([ord('@'),ord(_U_SetPWMVal),byteArr[0],byteArr[1],byteArr[2],byteArr[3],ord(checkSum)])
+    comm.write(buf)
+    time.sleep(0.1)
+    res = comm.read_until()
+    print(res)   
+def getVotage(comm):
+    byteArr = pack('f',0)
+    checkSum = 'X'
+    buf = bytes([ord('@'),ord(_U_GetVotage),byteArr[0],byteArr[1],byteArr[2],byteArr[3],ord(checkSum)])
+    comm.write(buf)
+    time.sleep(0.1)
+    res = comm.read_until()
+    print(res)     
+comm = serial.Serial("COM4",int(115200))   
+for x in range(2000,65535,20000):
+    continue
+    setPWM(comm,x)
+    getVotage(comm)
+    time.sleep(0.01)
+    print('*'*10)
+ 
+#res = comm.read_until()
+#print(res)
 comm.close()

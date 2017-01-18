@@ -6,8 +6,8 @@
  * @date    2013-xx-xx
  * @brief   MFC
 	资源：串口：PA9,PA10
-	      ADC PB1
-				ADC outer PB0
+	      ADC PB0----sensor
+				ADC PB1----refence
 		    PWM PA6
 				LED PB9
 				采样定时器:TIM4 B8/B9
