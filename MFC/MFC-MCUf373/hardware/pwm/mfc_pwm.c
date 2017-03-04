@@ -104,7 +104,7 @@ void TIM2_Mode_Config(unsigned int Prescaler)
 void TIM2_PWM_Init(void)
 {
 	TIM2_GPIO_Config();//引脚
-	TIM2_Mode_Config(2);	//TIMER 相关
+	TIM2_Mode_Config(0);	//TIMER 相关
 	NVIC_Config_PWM();//中断优先级					
 }
 void TIM2_Set_Prescaler(unsigned int Prescaler){

@@ -47,12 +47,15 @@ int main(void)
 {	
 	uint32_t ret = 0;
 	__IO float InputVoltageMv = 0;
-	RCC_ClocksTypeDef RCC_Clocks;
 	/* SysTick end of count event each 1ms */
+	
+	RCC_ClocksTypeDef RCC_Clocks;
   RCC_GetClocksFreq(&RCC_Clocks);
   SysTick_Config(RCC_Clocks.HCLK_Frequency / 1000);
+	
 	USART1_Config();	
-	printf("welcome!!\n");
+	printf("Welcome!!\n");
+	printf("System Clock[%d]\n",RCC_Clocks.HCLK_Frequency);
 	printf("USART1_Config OK\n");
 	TIM2_PWM_Init();
 	printf("TIM2_PWM_Init OK\n");

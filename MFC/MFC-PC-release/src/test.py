@@ -1,70 +1,35 @@
-from struct import pack,unpack
-import serial,time
-from PyQt5 import  QtGui
-from matplotlib.backends.backend_qt5agg import  FigureCanvasQTAgg as FigureCanvas
-from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolbar
-from matplotlib.figure import Figure
-import numpy as np
-from array import array
+
+from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5.QtWidgets import  *
+import UIComm,UIControl,UIDetail,UIOther
+import matplotlib.pyplot as pl
+import serial  #pip install pyserial
+import sys
 import time
 import random
-import threading
-from datetime import datetime
-from matplotlib.dates import  date2num, MinuteLocator, SecondLocator, DateFormatter,\
-    num2date
-from PyQt5.QtGui import *  
-from PyQt5.QtGui import *  
-from PyQt5.QtCore import *  
-from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtWidgets import  * 
-_U_SetVotage     = '0';
-_U_SetPTerm      = '1';
-_U_SetITerm      = '2';
-_U_SetDTerm      = '3';
-_U_SetDura       = '4';
-_U_SetPWMVal     = '5';
-_U_GetVotage     = '6';
-_U_SetTClose     = '7';
-_U_SetTOpen      = '8';
-_U_SetTPID       = '9';
-_U_SetVotageTimes= 'a';
-_U_SetPIDMode= 'b';
-_U_SetPIDPeriod = 'c';
-_U_SetTIM4Prescaler = 'd';
-_U_SetPIDVotageChanel =  'e'
-_U_SetForwardA = 'f';
-_U_SetForwardB = 'g';
-_U_SetForwardC = 'h';
-_U_SetBackwardA = 'i';
-_U_SetBackwardB = 'j';
-_U_SetBackwardC = 'k';
-_U_SetPIDThredHold='l';
+import binascii,encodings; 
+import numpy as np
+from sympy.strategies.core import switch
+from struct import pack,unpack
+from scipy.optimize import curve_fit  
+a = [40,20,10,4]
+b = [1.92,6.16,6.91,15.1]
+def func(x, a, b, c):  
+    return a * np.exp(-b * x) + c  
+#ForwardFunc = np.polyfit(np.array(a),np.array(b) , 1)#用2次多项式拟合
+popt, pcov =curve_fit(func, a, b)  
+pl.cla()
+pl.grid() #开启网格
+ax = pl.gca()
+pl.xlabel("PWM")
+pl.ylabel("Votage")
+pl.title("PWM => Votage")
+pl.legend()
 
+pl.plot(a, b, 'b*')
+pl.hold(True)
+fitX = range(2,100,10)  
+y2 = [func(i, popt[0],popt[1],popt[2]) for i in fitX]  
+pl.plot(fitX,y2,'r--')  
  
-def setPWM(comm,value):
-    byteArr = pack('f',value)
-    checkSum = 'X'
-    buf = bytes([ord('@'),ord(_U_SetPWMVal),byteArr[0],byteArr[1],byteArr[2],byteArr[3],ord(checkSum)])
-    comm.write(buf)
-    time.sleep(0.1)
-    res = comm.read_until()
-    print(res)   
-def getVotage(comm):
-    byteArr = pack('f',0)
-    checkSum = 'X'
-    buf = bytes([ord('@'),ord(_U_GetVotage),byteArr[0],byteArr[1],byteArr[2],byteArr[3],ord(checkSum)])
-    comm.write(buf)
-    time.sleep(0.1)
-    res = comm.read_until()
-    print(res)     
-comm = serial.Serial("COM4",int(115200))   
-for x in range(2000,65535,20000):
-    continue
-    setPWM(comm,x)
-    getVotage(comm)
-    time.sleep(0.01)
-    print('*'*10)
- 
-#res = comm.read_until()
-#print(res)
-comm.close()
+pl.show()
