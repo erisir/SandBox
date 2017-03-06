@@ -22,7 +22,7 @@
 
 // ADC1转换的电压值通过MDA方式传到SRAM
 int16_t InjectedConvData[2];
-uint16_t ADC_ConvertedSumWindow;
+uint16_t ADC_ConvertedSumWindow=20;
 // 局部变量，用于保存转换计算后的电压值
 
 void SetVotageTimes(float val){
@@ -45,42 +45,23 @@ void GetPosition(void){//串口调用
 } 
 float  GetADCVoltage(unsigned char ch){//PID调用
 	float votage = 0.0; 
-	//votage = (((ADC_Mean(ch) + 32768) * SDADC_VREF) / (SDADC_GAIN * SDADC_RESOL));
+	//votage = (((ADC_Filter(ch) + 32768) * SDADC_VREF) / (SDADC_GAIN * SDADC_RESOL));
 	votage = (((InjectedConvData[ch] + 32768) * SDADC_VREF) / (SDADC_GAIN * SDADC_RESOL));
 	if(votage>SDADC_VREF)
 		votage =0;
 	return votage; // 读取转换的AD值	 
 }
-int16_t ADC_Mean(unsigned char ch) {//去掉最大最小值
-	int i = 0;
-	uint32_t sum=0;
-	int16_t min=InjectedConvData[ch];
-	int16_t max=InjectedConvData[ch];
-	int16_t temp;
 
-	
-	for(i=0;i<ADC_ConvertedSumWindow;i++){
-		temp = InjectedConvData[ch];
-		sum+=temp;
-		if(temp>max)
-			max = temp;
-		if(temp<min)
-			min = temp;
-	}
-	sum -=(min+max);
-	
-	return (int16_t)(sum/(ADC_ConvertedSumWindow-2)); 
-}
 /*****************************************
 ---------------ADC中值滤波----------------
 采样N点，排序，去掉最大最小值，取平均
 *****************************************/
-#define N 40 
-float ADC_Filter(unsigned char ch) 
+#define N 80 
+int16_t ADC_Filter(unsigned char ch) 
 { 
 	unsigned int count,i,j; 
 	int16_t value_buf[N],temp; 
-	unsigned int trimEnd = 5;
+	unsigned int trimEnd = ADC_ConvertedSumWindow;
 	uint32_t  sum=0; 
 	for  (count=0;count<N;count++) 
 	{ 
@@ -100,7 +81,7 @@ float ADC_Filter(unsigned char ch)
 	} 
 	for(count=trimEnd;count<N-trimEnd;count++) 
 		sum += value_buf[count]; 
-	return (float)(sum/(N-trimEnd*2));  
+	return (int16_t)(sum/(N-trimEnd*2));  
 }
  
 /* Private function prototypes -----------------------------------------------*/

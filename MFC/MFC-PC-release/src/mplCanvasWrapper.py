@@ -25,15 +25,16 @@ class MplCanvas(FigureCanvas):
     def __init__(self):
         self.fig = Figure()
         self.ax = self.fig.add_subplot(111)
-        #self.ax1 = self.fig.add_subplot(212)
         self.ax1 =  self.ax .twinx()
+        #self.ax1 = self.fig.add_subplot(212)
         FigureCanvas.__init__(self, self.fig)
         FigureCanvas.setSizePolicy(self, QSizePolicy.Expanding, QSizePolicy.Expanding)
         FigureCanvas.updateGeometry(self)
-        self.curveObj = None # draw object
-        self.curveObj1= None # draw object
-        self.curveObj2= None # draw object
-        
+        self.curveVRef = None # draw object
+        self.curveVSetpoint= None # draw object
+        self.curveVSensor= None # draw object
+        self.curvePWMOut= None # draw object
+            
         self.initFigureUI(self.ax,"time (sec)",'Voltage(mv)')
         self.initFigureUI(self.ax1,"time (sec)",'OutPut(pwm)')
         
@@ -47,48 +48,50 @@ class MplCanvas(FigureCanvas):
         #self.ax.xaxis.set_minor_locator(SecondLocator([10,20,30,40,50])) # every 10 second is a minor locator
         ax.xaxis.set_major_formatter( DateFormatter('%M:%S') ) #tick label formatter
         
-        
-    def plot(self, datax, datay,datay0,datay1,datay2):
-        if self.curveObj is None:
+    
+    def plot(self,dataX,ydataVRef,ydataVSetPoint,ydataVSensor,ydataPWMOut):
+        if self.curveVRef is None:
             #create draw object once
-            self.curveObj, = self.ax.plot_date(np.array(datax), np.array(datay),'b-',label=u"G")
-            self.curveObj0, = self.ax.plot_date(np.array(datax), np.array(datay),'k-',label=u"S")
-            self.curveObj1, = self.ax.plot_date(np.array(datax), np.array(datay),'r-',label=u"S")
-            self.curveObj2, = self.ax1.plot_date(np.array(datax), np.array(datay),'g-',label=u"PWM")
+            self.curveVRef, = self.ax.plot_date(np.array(dataX), np.array(ydataVRef),'b-',label=u"VRef")
+            self.curveVSetpoint, = self.ax.plot_date(np.array(dataX), np.array(ydataVRef),'k-',label=u"VSetpoint")
+            self.curveVSensor, = self.ax.plot_date(np.array(dataX), np.array(ydataVRef),'r-',label=u"VSensor")
+            self.curvePWMOut, = self.ax1.plot_date(np.array(dataX), np.array(ydataVRef),'g-',label=u"PWM")
             #self.ax.legend()
             self.ax.grid()
              
         else:
             #update data of draw object
-            npx = np.array(datax)
-            npy =  np.array(datay)
-            npy0 =  np.array(datay0)
-            npy1 =  np.array(datay1)
-            npy2 =  np.array(datay2)
-           
-            meany = np.mean(datay1)
-            std = np.std(datay1)*10
+            npx = np.array(dataX)
+            npy =  np.array(ydataVRef)
+            npy0 =  np.array(ydataVSetPoint)
+            npy1 =  np.array(ydataVSensor)
+            npy2 =  np.array(ydataPWMOut)
+            meany = int(np.mean(ydataVSensor))
+            std = np.std(ydataVSensor)*10
+            if std <5:
+                std =5
             if std >2500:
                 std =2500
             ystart = meany-std
             if ystart <0:
                 ystart = 0
             yend = meany+std
-            meany = np.mean(datay2)
-            std = np.std(datay2)*10
-            
+            meany = int(np.mean(ydataPWMOut))
+            std = np.std(ydataPWMOut)*10
+            if std <5:
+                std =5
             ystart1 = meany-std
             if ystart1 <0:
                 ystart1 = 0
             yend1 = meany+std
-            
-            self.curveObj.set_data(npx,npy)
-            self.curveObj0.set_data(npx,npy0)
-            self.curveObj1.set_data(npx, npy1)
-            self.curveObj2.set_data(npx, npy2)
+
+            self.curveVRef.set_data(npx,npy)
+            self.curveVSetpoint.set_data(npx,npy0)
+            self.curveVSensor.set_data(npx, npy1)
+            self.curvePWMOut.set_data(npx, npy2)
             #update limit of X axis,to make sure it can move
             
-            self.ax.set_xlim(datax[0],datax[-1]+(datax[-1]-datax[0])/10)
+            self.ax.set_xlim(dataX[0],dataX[-1]+(dataX[-1]-dataX[0])/10)
             
             self.ax.set_ylim(ystart,yend)
             self.ax1.set_ylim(ystart1,yend1)
@@ -96,7 +99,8 @@ class MplCanvas(FigureCanvas):
         ticklabels = self.ax.xaxis.get_ticklabels()
         for tick in ticklabels:
             tick.set_rotation(5)
-        self.draw()
+        self.draw()   
+    
        
 class  MyDynamicMplCanvas(QWidget):
     Interception=655
@@ -111,10 +115,10 @@ class  MyDynamicMplCanvas(QWidget):
         self.vbl.addWidget(self.canvas)
         self.setLayout(self.vbl)
         self.dataX= []
-        self.dataY= []
-        self.dataY0 = []
-        self.dataY1 = []
-        self.dataY2 = []
+        self.ydataVRef= []
+        self.ydataVSetPoint = []
+        self.ydataVSensor = []
+        self.ydataPWMOut = []
         self.initDataGenerator()
         #self.startTime = date2num(datetime.now())
         
@@ -157,18 +161,20 @@ class  MyDynamicMplCanvas(QWidget):
                     continue
                 try:                            
                     self.dataX.append(newTime)
-                    self.dataY.append(newData[0])
-                    self.dataY0.append(newData[1])
-                    self.dataY1.append(newData[2])
-                    self.dataY2.append(newData[3])
+                    self.ydataVRef.append(newData[0])
+                    self.ydataVSetPoint.append(newData[1])
+                    self.ydataVSensor.append(newData[2])
+                    self.ydataPWMOut.append(newData[3])
+                    
                     self.getpoint.setProperty("value", newData[2])
-                    self.canvas.plot(self.dataX, self.dataY,self.dataY0,self.dataY1,self.dataY2)   
+                    
+                    self.canvas.plot(self.dataX,self.ydataVRef,self.ydataVSetPoint,self.ydataVSensor,self.ydataPWMOut)   
                     if counter >= MAXCOUNTER:
                         self.dataX.pop(0)
-                        self.dataY.pop(0) 
-                        self.dataY0.pop(0) 
-                        self.dataY1.pop(0) 
-                        self.dataY2.pop(0) 
+                        self.ydataVRef.pop(0) 
+                        self.ydataVSetPoint.pop(0) 
+                        self.ydataVSensor.pop(0) 
+                        self.ydataPWMOut.pop(0) 
                     else:
                         counter+=1
                 except:

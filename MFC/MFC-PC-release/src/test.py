@@ -1,35 +1,56 @@
 
+from PyQt5.QtGui import *  
+from PyQt5.QtCore import *  
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import  *
-import UIComm,UIControl,UIDetail,UIOther
-import matplotlib.pyplot as pl
-import serial  #pip install pyserial
-import sys
+import UIComm,UIControl,UIDetail,UIOther,UIControlProf
+import sys  
 import time
-import random
-import binascii,encodings; 
-import numpy as np
-from sympy.strategies.core import switch
-from struct import pack,unpack
-from scipy.optimize import curve_fit  
-a = [40,20,10,4]
-b = [1.92,6.16,6.91,15.1]
-def func(x, a, b, c):  
-    return a * np.exp(-b * x) + c  
-#ForwardFunc = np.polyfit(np.array(a),np.array(b) , 1)#用2次多项式拟合
-popt, pcov =curve_fit(func, a, b)  
-pl.cla()
-pl.grid() #开启网格
-ax = pl.gca()
-pl.xlabel("PWM")
-pl.ylabel("Votage")
-pl.title("PWM => Votage")
-pl.legend()
+from UIAction import   UIAction
+class Form(QDialog):
+    def __init__(self, parent=None):
+        super(Form, self).__init__(parent)
+        self.browser = QTextBrowser()
+        self.setWindowTitle('Just a dialog')
+        self.lineedit = QLineEdit("Write something and press Enter")
+        self.lineedit.selectAll()
+        layout = QVBoxLayout()
+        layout.addWidget(self.browser)
+        layout.addWidget(self.lineedit)
+        self.setLayout(layout)
+        self.lineedit.setFocus()
+    def update_ui(self):
+        self.browser.append(self.lineedit.text())
+if __name__ == "__main__":
+    import sys, time
+    app = QApplication(sys.argv)
+    # Create and display the splash screen
+    splash_pix = QPixmap('../image/logo.png')
 
-pl.plot(a, b, 'b*')
-pl.hold(True)
-fitX = range(2,100,10)  
-y2 = [func(i, popt[0],popt[1],popt[2]) for i in fitX]  
-pl.plot(fitX,y2,'r--')  
- 
-pl.show()
+    splash = QSplashScreen(splash_pix, Qt.WindowStaysOnTopHint)
+    # adding progress bar
+    
+    height= splash_pix.height()*0.85
+    width = splash_pix.width()*0.8
+    progressBar = QProgressBar(splash)
+    progressBar.setGeometry(QtCore.QRect(60, height, width, 10))
+    progressBar.setProperty("value", 24)
+    progressBar.setObjectName("progressBar")
+    
+    tipLabel = QtWidgets.QLabel(splash)
+    tipLabel.setGeometry(QtCore.QRect(60, height-30, width, 20))
+    tipLabel.setObjectName("label")
+    tipLabel.setText( "发的说法")
+    splash.setMask(splash_pix.mask())
+    splash.show()
+    for i in range(0, 100):
+        progressBar.setValue(i)
+        t = time.time()
+        while time.time() < t + 0.1:
+            app.processEvents()
+    # Simulate something that takes time
+    time.sleep(2)
+    form = Form()
+    form.show()
+    splash.finish(form)
+    app.exec_()

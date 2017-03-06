@@ -67,7 +67,6 @@ int main(void)
 	printf("TIM4_PID_Init OK\n");
 	PIDInit() ;
 	printf("PIDInit OK\n");
-	SetVotageTimes(200);
 	ret = SDADC1_Config();
   if( ret != 0){
 		printf("SDADC1_Config false!!error code[%d]\n",ret);
@@ -84,7 +83,6 @@ int main(void)
     {
       time = 0;
 			PIDStart();
-		  LED1_TOGGLE
     } 
 
 	}

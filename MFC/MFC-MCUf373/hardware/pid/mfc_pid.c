@@ -63,7 +63,7 @@ void PIDInit()
 	spid.Output = 0;
 	spid.SetPoint = 3200;
 	spid.DeadZone = 20;
-	spid.Period = 100;
+	spid.Period = 2000;
 	spid.sumMax=999999;
 	spid.sumMin=10;
 	spid.Thredhold = 200;

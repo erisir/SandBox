@@ -5,6 +5,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import  *
 import UIComm,UIControl,UIDetail,UIOther,UIControlProf
 import sys  
+import time
 from UIAction import   UIAction
 
 class UIMainWindow(QDialog):  
@@ -86,10 +87,10 @@ class UIMainWindow(QDialog):
               
         self.firstUIComm.connectTest.clicked.connect(self.uiAction.ConnectTest)
         self.fourUIOther.ProfControl.clicked.connect(self.showProfControlDlg)
-        self.Debug()
+ 
     def Debug(self):
-        self.uiAction.ConnectTest()
-        self.showProfControlDlg()
+        return self.uiAction.ConnectTest()
+        #self.showProfControlDlg()
         
     def PIDControlDataInit(self):
         self.UIControlProf.PID_Kp.value(200)
@@ -102,11 +103,37 @@ class UIMainWindow(QDialog):
         #self.ProfControldlg.exec_()  #遮挡
         self.ProfControldlg.show()  #不遮挡
           
-app=QApplication (sys.argv)  
-#splash=QSplashScreen(QPixmap("../image/logo.png"))  
-#splash.show()  
-#app.processEvents()  
-dialog=UIMainWindow()  
+app=QApplication (sys.argv)
+# Create and display the splash screen
+splash_pix = QPixmap('../image/logo.png')
+splash = QSplashScreen(splash_pix, Qt.WindowStaysOnTopHint)
+# adding progress bar
+height= splash_pix.height()*0.85
+width = splash_pix.width()*0.8
+progressBar = QProgressBar(splash)
+progressBar.setGeometry(QtCore.QRect(60, height, width, 10))
+progressBar.setProperty("value", 24)
+progressBar.setObjectName("progressBar")
+
+tipLabel = QtWidgets.QLabel(splash)
+tipLabel.setGeometry(QtCore.QRect(60, height-30, width, 20))
+tipLabel.setObjectName("label")
+splash.setMask(splash_pix.mask())
+splash.show()
+time.sleep(0.1)
+tipLabel.setText( "程序正在启动...")
+time.sleep(1)
+tipLabel.setText( "正在尝试连接下位机...")
+dialog=UIMainWindow() 
+conectRes = dialog.Debug()
+progressBar.setValue(50)
+app.processEvents()
+tipLabel.setText( conectRes)
+time.sleep(0.5)
+progressBar.setValue(99)
+app.processEvents()
+time.sleep(0.5)
+
 dialog.show()  
-#splash.finish(dialog)  
+splash.finish(dialog)  
 app.exec_()  

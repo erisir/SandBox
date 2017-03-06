@@ -142,87 +142,27 @@
     <property name="title">
      <string>总流量</string>
     </property>
-    <widget class="QWidget" name="horizontalLayoutWidget_2">
+    <widget class="QLCDNumber" name="SetPoint">
      <property name="geometry">
       <rect>
-       <x>5</x>
-       <y>12</y>
+       <x>3</x>
+       <y>15</y>
        <width>141</width>
        <height>31</height>
       </rect>
      </property>
-     <layout class="QHBoxLayout" name="horizontalLayout_2">
-      <item>
-       <widget class="QLCDNumber" name="SetPoint">
-        <property name="autoFillBackground">
-         <bool>false</bool>
-        </property>
-        <property name="value" stdset="0">
-         <double>123.400000000000006</double>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QLabel" name="label_3">
-        <property name="text">
-         <string>% of F.S.</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
-   </widget>
-   <widget class="QGroupBox" name="groupBox_5">
-    <property name="geometry">
-     <rect>
-      <x>73</x>
-      <y>70</y>
-      <width>151</width>
-      <height>51</height>
-     </rect>
-    </property>
-    <property name="title">
-     <string>瞬时流量</string>
-    </property>
-    <widget class="QWidget" name="horizontalLayoutWidget_3">
-     <property name="geometry">
-      <rect>
-       <x>5</x>
-       <y>13</y>
-       <width>141</width>
-       <height>31</height>
-      </rect>
+     <property name="autoFillBackground">
+      <bool>false</bool>
      </property>
-     <layout class="QHBoxLayout" name="horizontalLayout_3">
-      <item>
-       <widget class="QLCDNumber" name="GetPoint">
-        <property name="autoFillBackground">
-         <bool>false</bool>
-        </property>
-        <property name="styleSheet">
-         <string notr="true">color: rgb(85, 255, 0);
-selection-color: rgb(255, 0, 0);
-font: 75 9pt &quot;Aharoni&quot;;
-gridline-color: rgb(85, 0, 0);
-border-color: rgb(0, 0, 255);
-background-color: rgb(170, 255, 0);</string>
-        </property>
-        <property name="smallDecimalPoint">
-         <bool>false</bool>
-        </property>
-        <property name="value" stdset="0">
-         <double>123.500000000000000</double>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QLabel" name="label_4">
-        <property name="text">
-         <string>% of F.S.</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
+     <property name="numDigits">
+      <number>8</number>
+     </property>
+     <property name="segmentStyle">
+      <enum>QLCDNumber::Flat</enum>
+     </property>
+     <property name="value" stdset="0">
+      <double>123456.789000000004307</double>
+     </property>
     </widget>
    </widget>
    <widget class="QGroupBox" name="BoxUnit">
@@ -375,6 +315,53 @@ background-color: rgb(170, 255, 0);</string>
       </widget>
      </item>
     </layout>
+   </widget>
+   <widget class="QGroupBox" name="groupBox_5">
+    <property name="geometry">
+     <rect>
+      <x>70</x>
+      <y>70</y>
+      <width>151</width>
+      <height>51</height>
+     </rect>
+    </property>
+    <property name="title">
+     <string>瞬时流量 % of F.S.</string>
+    </property>
+    <widget class="QLCDNumber" name="GetPoint">
+     <property name="geometry">
+      <rect>
+       <x>5</x>
+       <y>15</y>
+       <width>141</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="autoFillBackground">
+      <bool>false</bool>
+     </property>
+     <property name="styleSheet">
+      <string notr="true"/>
+     </property>
+     <property name="smallDecimalPoint">
+      <bool>false</bool>
+     </property>
+     <property name="numDigits">
+      <number>8</number>
+     </property>
+     <property name="digitCount">
+      <number>8</number>
+     </property>
+     <property name="segmentStyle">
+      <enum>QLCDNumber::Flat</enum>
+     </property>
+     <property name="value" stdset="0">
+      <double>123456.779999999998836</double>
+     </property>
+     <property name="intValue" stdset="0">
+      <number>123457</number>
+     </property>
+    </widget>
    </widget>
   </widget>
   <widget class="MyDynamicMplCanvas" name="mplCanvas" native="true">

@@ -43,6 +43,7 @@ class UIAction():
     fourUIOther= None
     isDeviceReady = False
     
+    lastError = ""
     spid = Pid()
     sPVFD = PWMVotageFitPara()
 
@@ -273,10 +274,12 @@ class UIAction():
         if votage is None:
             return None
         
-        vCh0 = self.GetShowValue(1.25*votage[0])
-        vSetPoint = self.GetShowValue(self.spid.setPoint)
+        vCh0 = self.GetShowValue(votage[0])
         vCh1 = self.GetShowValue(votage[1])
+        
+        vSetPoint = self.GetShowValue(self.spid.setPoint)
         pwmOut = votage[2]
+        
         if self.spid.PIDByPCEnable:
             self.Set_PID_ControlByPC(votage[1])
             pwmOut = self.spid.PWMOut
@@ -333,15 +336,35 @@ class UIAction():
             if self.stopVoltageVsPWMCurse :
                 return 
             self.SendDataCommand(self._U_SetPWMVal,x)
-            pl.pause(0.01)
+            pl.pause(0.02)
             ret = self.GetVotage()
  
             pwmBackward.append(x)
             votageBackward.append(ret[1])
             pl.plot(pwmBackward, votageBackward, 'b*')
+        pwmForwardFit = []
+        votageForwardFit = []
+        pwmBackwardFit = []
+        votageBackwardFit = []
+        vmax =2000
+        vmin= 200
+        ind= 0
+        for x in votageForward:
+            if x >vmin and x<vmax:
+                pwmForwardFit.append(pwmForward[ind])
+                votageForwardFit.append(votageForward[ind])
+            ind= ind+1
+        ind= 0 
+        for x in votageBackward:
+            if x >vmin and x<vmax:
+                pwmBackwardFit.append(pwmBackward[ind])
+                votageBackwardFit.append(votageBackward[ind])
+            ind= ind+1
+        pl.plot(pwmForwardFit, votageForwardFit, 'k-')
+        pl.plot(pwmBackwardFit, votageBackwardFit, 'k-')
         
-        ForwardFunc = np.polyfit(np.array(votageForward),np.array(pwmForward) , 2)#用2次多项式拟合
-        BackwardFunc = np.polyfit(np.array(votageBackward), np.array(pwmBackward), 2)#用2次多项式拟合     
+        ForwardFunc = np.polyfit(np.array(votageForwardFit),np.array(pwmForwardFit) , 2)#用2次多项式拟合
+        BackwardFunc = np.polyfit(np.array(votageBackwardFit), np.array(pwmBackwardFit), 2)#用2次多项式拟合     
         
         print(ForwardFunc)
         print(BackwardFunc)
@@ -418,11 +441,10 @@ class UIAction():
             return self.getRandom()
         
     def getRandom(self):
-            start = int(self.spid.PWMOut/20)
-            if start <10:
-                start = 10
-            end = start+20
-            return [random.randint(start, end),random.randint(start, end),random.randint(start, end)] 
+            mid=1084
+            start = 1
+            end = 100
+            return [mid+random.randint(start, end)/100,mid+random.randint(start, end)/100,mid+random.randint(start, end)/100] 
     
     def read(self,terminator='\n', size=None):
         try:
@@ -441,7 +463,7 @@ class UIAction():
             self.comm = serial.Serial(commName,int(Baudrate))              
         except:
             self.errorMessage("串口"+commName+"被其他程序占用")
-            return
+            return self.lastError
          
         self.SendDataCommandWithAnswer(self._U_GetVotage,0)
         res=self.read() 
@@ -451,6 +473,8 @@ class UIAction():
         else:
             self.isDeviceReady = False
             self.errorMessage("连接失败，请检查串口参数")
+
+        return self.lastError
         #self.comm.close()
     def CloseComm(self):
         if  self.comm is None:
@@ -458,11 +482,13 @@ class UIAction():
         else:
             self.comm.close()
     def logMessage(self,str):
+        self.lastError = str
         print('-'*10+str)
     def log(self,str):
         pass
         #print('-'*10+str)
     def errorMessage(self,str):
+        self.lastError = str
         print('!'*10+str)
     def warnningMessage(self,str):
         print('?'*10+str)
