@@ -5,6 +5,7 @@ from matplotlib.figure import Figure
 import numpy as np
 from array import array
 import time
+import win32api
 import random
 import threading
 from datetime import datetime
@@ -18,7 +19,7 @@ from PyQt5.QtWidgets import  *
 X_MINUTES = 0.15
 Y_MAX = 3200
 Y_MIN = 1
-INTERVAL = 0.01
+INTERVAL = 0.05
 MAXCOUNTER = 50
 
 class MplCanvas(FigureCanvas):
@@ -106,6 +107,10 @@ class  MyDynamicMplCanvas(QWidget):
     Interception=655
     Slope=25
     startTime =0
+    app = None
+    def on_close(self):
+        print("close")
+        self.tData.Close()
     def __init__(self , parent =None):
         QWidget.__init__(self, parent)
         self.canvas = MplCanvas()
@@ -120,9 +125,12 @@ class  MyDynamicMplCanvas(QWidget):
         self.ydataVSensor = []
         self.ydataPWMOut = []
         self.initDataGenerator()
+        win32api.SetConsoleCtrlHandler(self.on_close, True)
+
         #self.startTime = date2num(datetime.now())
         
-    def InitGUI(self,action,getpoint,getpointbar):
+    def InitGUI(self,action,getpoint,getpointbar,appHandle):
+        self.app = appHandle
         self.UIAction = action
         self.getpoint=getpoint
         self.getpointbar = getpointbar
@@ -157,7 +165,7 @@ class  MyDynamicMplCanvas(QWidget):
             if self.__generating:
                 newTime= date2num(datetime.now())
                 newData = self.UIAction.GetPlotData()
-                if(newData == None):
+                if newData is None :
                     continue
                 try:                            
                     self.dataX.append(newTime)
@@ -166,9 +174,11 @@ class  MyDynamicMplCanvas(QWidget):
                     self.ydataVSensor.append(newData[2])
                     self.ydataPWMOut.append(newData[3])
                     
-                    self.getpoint.setProperty("value", newData[2])
-                    
+                    #self.getpoint.setProperty("value", newData[2])
+                    self.getpoint.display(str(newData[2]))
+                    #self.getpointbar.setValue(int(newData[2]/2500))
                     self.canvas.plot(self.dataX,self.ydataVRef,self.ydataVSetPoint,self.ydataVSensor,self.ydataPWMOut)   
+                    self.app.processEvents()
                     if counter >= MAXCOUNTER:
                         self.dataX.pop(0)
                         self.ydataVRef.pop(0) 
@@ -181,3 +191,5 @@ class  MyDynamicMplCanvas(QWidget):
                     self.UIAction.errorMessage("绘图出错")
                     continue 
             time.sleep(INTERVAL)
+
+    # do something here

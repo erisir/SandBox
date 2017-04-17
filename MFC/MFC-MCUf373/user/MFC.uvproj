@@ -459,16 +459,6 @@
               <FilePath>..\hardware\adc\mfc_adc.h</FilePath>
             </File>
             <File>
-              <FileName>mfc_led.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\hardware\Led\mfc_led.c</FilePath>
-            </File>
-            <File>
-              <FileName>mfc_led.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\hardware\Led\mfc_led.h</FilePath>
-            </File>
-            <File>
               <FileName>mfc_pid.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\hardware\pid\mfc_pid.c</FilePath>
@@ -487,16 +477,6 @@
               <FileName>mfc_pwm.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\hardware\pwm\mfc_pwm.h</FilePath>
-            </File>
-            <File>
-              <FileName>mfc_TiMbase.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\hardware\TimBase\mfc_TiMbase.c</FilePath>
-            </File>
-            <File>
-              <FileName>mfc_TiMbase.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\hardware\TimBase\mfc_TiMbase.h</FilePath>
             </File>
           </Files>
         </Group>

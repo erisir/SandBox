@@ -53,7 +53,7 @@
 #define SDADC_RESOL          (uint32_t) 65535 /* 2e16 - 1 */
 #define SDADC_INIT_TIMEOUT   30 /* ~ about two SDADC clock cycles after INIT is set */
 #define SDADC_CAL_TIMEOUT    4*30720 /*  ~5.12 ms at 6 MHz  in a single calibration sequence */
-#define SDADC_VREF           (float) 2500  /* SDADC external reference is set to 3.3V */
+#define SDADC_VREF           (float) 3008  /* SDADC external reference is set to 3.3V */
 /* Exported macro ------------------------------------------------------------*/
 /* Exported functions ------------------------------------------------------- */
 void TimingDelay_Decrement(void);

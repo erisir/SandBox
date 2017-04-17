@@ -31,22 +31,19 @@
 #include "stm32f37x_it.h"
 #include "main.h"
 extern int16_t InjectedConvData[2];
-extern volatile u32 time;
 
 __IO unsigned char busy; 
 __IO char uart_flag;
 __IO unsigned char uart_start_flag;  
-__IO unsigned char receive[16];// ??????????idata,??????32
-  			  	   //??64??????unsigned char idata receive[16]={0};  
+__IO unsigned char receive[16];
 unsigned char rec;				       
 u8 boardaddress; 
 u8 cmd_len=8; //@aXXXXa
 static u8 uart_cnt=0;//????????? 
+
 /** @addtogroup STM32F37x_StdPeriph_Examples
   * @{
   */
-// volatile uint32_t time=0; //计时变量
- volatile unsigned char touch_flag=0;
 /** @addtogroup ADC_AnalogWatchdog
   * @{
   */
@@ -226,19 +223,7 @@ void TIM3_IRQHandler(void)
 		TIM_ClearITPendingBit (TIM3, TIM_IT_Update);	//??????????
 	}
 }
-/**
-  * @brief  This function handles TIM2 interrupt request.
-  * @param  None
-  * @retval None
-  */
-void TIM4_IRQHandler(void)
-{
-	if ( TIM_GetITStatus(TIM4 , TIM_IT_Update) != RESET ) 
-	{	
-		time++;
-		TIM_ClearITPendingBit(TIM4 , TIM_FLAG_Update);  		 
-	}		 	
-}
+
 /**
   * @brief  This function handles SDADC1 interrupt request.
   * @param  None

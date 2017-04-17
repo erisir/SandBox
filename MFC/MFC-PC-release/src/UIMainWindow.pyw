@@ -9,9 +9,9 @@ import time
 from UIAction import   UIAction
 
 class UIMainWindow(QDialog):  
-    def __init__(self,parent=None):  
+    def __init__(self,appHandle,parent=None):  
         super(UIMainWindow,self).__init__(parent)  
-          
+        self.app = appHandle
         self.firstUIComm=UIComm.Ui_Dialog()  
         self.secondUIDetail=UIDetail.Ui_Dialog()  
         self.thirdUIControl=UIControl.Ui_Dialog()
@@ -56,7 +56,7 @@ class UIMainWindow(QDialog):
         self.thirdUIControl.ShowUnit_slm.clicked.connect(self.uiAction.ShowUnit_slm)
         self.thirdUIControl.ShowUnit_V.clicked.connect(self.uiAction.ShowUnit_V)
         self.thirdUIControl.ShowUnit_mv.clicked.connect(self.uiAction.ShowUnit_mv)
-        self.thirdUIControl.mplCanvas.InitGUI(self.uiAction,self.thirdUIControl.GetPoint,self.thirdUIControl.GetPointBar)
+        self.thirdUIControl.mplCanvas.InitGUI(self.uiAction,self.thirdUIControl.GetPoint,self.thirdUIControl.GetPointBar,self.app)
         self.thirdUIControl.startPlot.clicked.connect(self.thirdUIControl.mplCanvas.startPlot)
         self.thirdUIControl.pausePlot.setEnabled(False)
         self.thirdUIControl.pausePlot.clicked.connect(self.thirdUIControl.mplCanvas.pausePlot)
@@ -124,7 +124,7 @@ time.sleep(0.1)
 tipLabel.setText( "程序正在启动...")
 time.sleep(1)
 tipLabel.setText( "正在尝试连接下位机...")
-dialog=UIMainWindow() 
+dialog=UIMainWindow(app) 
 conectRes = dialog.Debug()
 progressBar.setValue(50)
 app.processEvents()
@@ -136,4 +136,4 @@ time.sleep(0.5)
 
 dialog.show()  
 splash.finish(dialog)  
-app.exec_()  
+app.exec_()

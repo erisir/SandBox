@@ -64,7 +64,6 @@ void SetForwardC(float v_data);
 void SetBackwardA(float v_data);
 void SetBackwardB(float v_data);
 void SetBackwardC(float v_data);
-
 unsigned int getPWMByVotage(unsigned int votage,char forBackward);
 uint32_t GetPIDOutput(void);
 void GetPIDStatu(void); 

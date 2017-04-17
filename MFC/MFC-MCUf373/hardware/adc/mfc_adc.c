@@ -1,68 +1,46 @@
-/**
- ******************************************************************************
- * @file    bsp_xxx.c
- * @author  fire
- * @version V1.0
- * @date    2013-xx-xx
- * @brief   adc1 Ó¦ÓÃbsp / DMA Ä£Ê½
- ******************************************************************************
- * @attention
- *
- * ÊµÑéÆ½Ì¨:Ò°»ð iSO STM32 ¿ª·¢°å 
- * ÂÛÌ³    :http://www.chuxue123.com
- * ÌÔ±¦    :http://firestm32.taobao.com
- *
- ******************************************************************************
- */ 
-
 #include "mfc_adc.h"
 #include "../../user/main.h"
 #include "../pid/mfc_pid.h"
 #include <stdio.h>
 
-// ADC1×ª»»µÄµçÑ¹ÖµÍ¨¹ýMDA·½Ê½´«µ½SRAM
-int16_t InjectedConvData[2];
-uint16_t ADC_ConvertedSumWindow=20;
-// ¾Ö²¿±äÁ¿£¬ÓÃÓÚ±£´æ×ª»»¼ÆËãºóµÄµçÑ¹Öµ
+// SDADC×ª»»µÄµçÑ¹ÖµÍ¨¹ýinject·½Ê½´«µ½SRAM
+int16_t InjectedConvData[2]={0};
+int16_t ADC_ConvertedValue = 0;
+uint16_t ADC_ConvertedSumWindow=10000;
+#define ADC1_DR_Address    ((uint32_t)0x4001244C)
 
 void SetVotageTimes(float val){
 	ADC_ConvertedSumWindow = val;
 }
-/**
- * @brief  Ê¹ÄÜADC1ºÍDMA1µÄÊ±ÖÓ£¬³õÊ¼»¯PB.0/1
- * @param  ÎÞ
- * @retval ÎÞ
- */
 
-
-/**
- * @brief  ADC1³õÊ¼»¯
- * @param  ÎÞ
- * @retval ÎÞ
- */
 void GetPosition(void){//´®¿Úµ÷ÓÃ
 	printf("@P%.3f,%.3f,%d\n",GetADCVoltage(0),GetADCVoltage(1),GetPIDOutput());
 } 
 float  GetADCVoltage(unsigned char ch){//PIDµ÷ÓÃ
 	float votage = 0.0; 
-	//votage = (((ADC_Filter(ch) + 32768) * SDADC_VREF) / (SDADC_GAIN * SDADC_RESOL));
-	votage = (((InjectedConvData[ch] + 32768) * SDADC_VREF) / (SDADC_GAIN * SDADC_RESOL));
-	if(votage>SDADC_VREF)
-		votage =0;
+	votage =2* (((ADC_Mean(ch) + 32768) * SDADC_VREF) / (SDADC_GAIN * SDADC_RESOL));	
 	return votage; // ¶ÁÈ¡×ª»»µÄADÖµ	 
 }
 
+float ADC_Mean(unsigned char ch) {
+	int i = 0;
+	int32_t sum=0;
+	for(i=0;i<ADC_ConvertedSumWindow;i++){
+		sum+=InjectedConvData[ch];	
+	}
+	return ((float)sum/(ADC_ConvertedSumWindow)); 
+}
 /*****************************************
 ---------------ADCÖÐÖµÂË²¨----------------
 ²ÉÑùNµã£¬ÅÅÐò£¬È¥µô×î´ó×îÐ¡Öµ£¬È¡Æ½¾ù
 *****************************************/
-#define N 80 
+#define N 180 
 int16_t ADC_Filter(unsigned char ch) 
 { 
 	unsigned int count,i,j; 
 	int16_t value_buf[N],temp; 
 	unsigned int trimEnd = ADC_ConvertedSumWindow;
-	uint32_t  sum=0; 
+	int32_t  sum=0; 
 	for  (count=0;count<N;count++) 
 	{ 
 		value_buf[count] = InjectedConvData[ch];	   //È¥µô×îµÍÎ»
@@ -187,5 +165,94 @@ uint32_t SDADC1_Config(void)
   SDADC_SoftwareStartInjectedConv(POT_SDADC);
   
   return 0;
+}
+
+static void ADC1_GPIO_Config(void)
+{
+	GPIO_InitTypeDef GPIO_InitStructure;
+	
+	/* Enable DMA clock */
+	RCC_AHBPeriphClockCmd(RCC_AHBPeriph_DMA1, ENABLE);
+	
+	/* Enable ADC1 and GPIOC clock */
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_ADC1 | RCC_AHBPeriph_GPIOB, ENABLE);
+	
+	/* Configure PB.01  as analog input */
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_1;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AN;
+	GPIO_Init(GPIOB, &GPIO_InitStructure);				// PC1,ÊäÈë?²»ÓÃÉèÖÃËÙÂÊ
+}
+
+/**
+  * @brief  ÅäÖÃADC1µL¤×÷g??MDAg?
+  * @param  ÎÞ
+  * @retval ÎÞ
+  */
+static void ADC1_Mode_Config(void)
+{
+	DMA_InitTypeDef DMA_InitStructure;
+	ADC_InitTypeDef ADC_InitStructure;
+	
+	/* DMA channel1 configuration */
+	DMA_DeInit(DMA1_Channel1);
+	
+	DMA_InitStructure.DMA_PeripheralBaseAddr = ADC1_DR_Address;	 			//ADCµØ?
+	DMA_InitStructure.DMA_MemoryBaseAddr = (u32)&ADC_ConvertedValue;	//Ä?æµØ?
+	DMA_InitStructure.DMA_DIR = DMA_DIR_PeripheralSRC;
+	DMA_InitStructure.DMA_BufferSize = 1;
+	DMA_InitStructure.DMA_PeripheralInc = DMA_PeripheralInc_Disable;	//ÍâÉèµØ?¹?¨
+	DMA_InitStructure.DMA_MemoryInc = DMA_MemoryInc_Disable;  				//Ä?æµØ?¹?¨
+	DMA_InitStructure.DMA_PeripheralDataSize = DMA_PeripheralDataSize_HalfWord;	//°ë×Ö
+	DMA_InitStructure.DMA_MemoryDataSize = DMA_MemoryDataSize_HalfWord;
+	DMA_InitStructure.DMA_Mode = DMA_Mode_Circular;										//?»·´«Êä
+	DMA_InitStructure.DMA_Priority = DMA_Priority_High;
+	DMA_InitStructure.DMA_M2M = DMA_M2M_Disable;
+	DMA_Init(DMA1_Channel1, &DMA_InitStructure);
+	
+	/* Enable DMA channel1 */
+	DMA_Cmd(DMA1_Channel1, ENABLE);
+	
+	/* ADC1 configuration */	
+	ADC_InitStructure.ADC_ScanConvMode = DISABLE ; 	 				//½û??Ãèg?£¬?Ãèg?ÓÃÓ?à?µ2?¯
+	ADC_InitStructure.ADC_ContinuousConvMode = ENABLE;			//¿ªÆôlÐø?»»g?£¬¼´²»?µ?øÐÐADC?»»
+	ADC_InitStructure.ADC_ExternalTrigConv = ADC_ExternalTrigConv_None;	//²»'ÓÃÍ?´¥·¢?»»
+	ADC_InitStructure.ADC_DataAlign = ADC_DataAlign_Right; 	//²?¯Êý¾ÝÓ?ÔÆë
+	ADC_InitStructure.ADC_NbrOfChannel = 1;	 								//??»»µÄ?µÀÊý?1
+	ADC_Init(ADC1, &ADC_InitStructure);
+	
+	/*ÅäÖÃADC?Ö?¬?PCLK2µÄ8·Ö?£¬¼´9MHz*/
+	RCC_ADCCLKConfig(RCC_PCLK2_Div4); 
+	/*ÅäÖÃADC1µÄ?µÀ11?55.	5¸ö²ÉÑùÖÜÆ?¬ÐòÁÐ?1 */ 
+	ADC_RegularChannelConfig(ADC1, ADC_Channel_9, 1, ADC_SampleTime_55Cycles5);
+	
+	/* Enable ADC1 DMA */
+	ADC_DMACmd(ADC1, ENABLE);
+	
+	/* Enable ADC1 */
+	ADC_Cmd(ADC1, ENABLE);
+	
+	/*¸´???¼JæÆ÷ */   
+	ADC_ResetCalibration(ADC1);
+	/*µ?ý??¼JæÆ÷¸´?Íê³É */
+	while(ADC_GetResetCalibrationStatus(ADC1));
+	
+	/* ADC?? */
+	ADC_StartCalibration(ADC1);
+	/* µ?ý??Íê³É*/
+	while(ADC_GetCalibrationStatus(ADC1));
+	
+	/* ÓÉÓÚûÓ?ÉÓÃÍ?´¥·¢£¬ËùÒÔ'ÓÃÈí¼þ´¥·¢ADC?»» */ 
+	ADC_Cmd(ADC1, ENABLE);
+}
+
+/**
+  * @brief  ADC1³õ'»¯
+  * @param  ÎÞ
+  * @retval ÎÞ
+  */
+void ADC_Config(void)
+{
+	ADC1_GPIO_Config();
+	ADC1_Mode_Config();
 }
 /*********************************************END OF FILE**********************/

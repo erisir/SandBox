@@ -1,29 +1,16 @@
 /**
  ******************************************************************************
  * @file    main.c
- * @author  fire
+ * @author  DeadNight
  * @version V1.0
- * @date    2013-xx-xx
+ * @date    2016-xx-xx
  * @brief   MFC
 	资源：串口：PA9,PA10
-	      ADC PB0----sensor
-				ADC PB1----refence
-		    PWM PA6
-				LED PB9
-				采样定时器:TIM4 B8/B9
- ******************************************************************************
- * @attention
- *
- * 实验平台:野火 iSO STM32 开发板 
- * 论坛    :http://www.chuxue123.com
- * 淘宝    :http://firestm32.taobao.com
- *
+	      SDADC PB0----sensor/ADC ch8
+				SDADC PB1----refence/ADC ch9
+		    PWM TIM,PA6
  ******************************************************************************
  */
-
-//time : pc1-1 0      1us
-//       pc1-2 0 0.5us    1.5us
-//			 pc1-3 0 0.5us 0.8us
 
 #include "stm32f37x.h"
 #include <stdio.h>
@@ -35,9 +22,7 @@
 #include "../hardware/led/mfc_led.h"
 #include "../hardware/TimBase/mfc_TiMbase.h"
 
-volatile u32 time = 0; // ms 计时变量 
 __IO uint32_t TimingDelay = 0;
-char led = 0;
 /**
  * @brief  主函数
  * @param  无
@@ -45,13 +30,10 @@ char led = 0;
  */
 int main(void)
 {	
-	uint32_t ret = 0;
-	__IO float InputVoltageMv = 0;
-	/* SysTick end of count event each 1ms */
-	
+
 	RCC_ClocksTypeDef RCC_Clocks;
   RCC_GetClocksFreq(&RCC_Clocks);
-  SysTick_Config(RCC_Clocks.HCLK_Frequency / 1000);
+  SysTick_Config(RCC_Clocks.HCLK_Frequency / 1000L);
 	
 	USART1_Config();	
 	printf("Welcome!!\n");
@@ -59,29 +41,21 @@ int main(void)
 	printf("USART1_Config OK\n");
 	TIM2_PWM_Init();
 	printf("TIM2_PWM_Init OK\n");
-	/* led 端口配置 */ 
-	LED_GPIO_Config();
-	printf("LED_GPIO_Config OK\n");
-	/* PID采样周期使用time4中断 */ 
-	TIM4_PID_Init();
-	printf("TIM4_PID_Init OK\n");
 	PIDInit() ;
 	printf("PIDInit OK\n");
-	ret = SDADC1_Config();
-  if( ret != 0){
-		printf("SDADC1_Config false!!error code[%d]\n",ret);
-	}else{
+	SDADC1_Config();
+	//ADC_Config();
   printf("SDADC1_Config OK\n");
-	}
+
 
 	while (1)
 	{ 
 		if(cmd_ready()){
 			parseCMD();
 		}	
-		if (isPIDEnable() && time >= getPeriod() ) /* 1000 * 1 ms = 1s 时间到 */
+		if (isPIDEnable() /*&& TimingDelay == 0*/ ) /* 1000 * 1 ms = 1s 时间到 */
     {
-      time = 0;
+      //TimingDelay = getPeriod();
 			PIDStart();
     } 
 
@@ -90,7 +64,7 @@ int main(void)
 
 /**
   * @brief  Inserts a delay time.
-  * @param  nTime: specifies the delay time length, in 1 ms.
+  * @param  nTime: specifies the delay time length, in *10 us.
   * @retval None
   */
 void Delay(__IO uint32_t nTime)

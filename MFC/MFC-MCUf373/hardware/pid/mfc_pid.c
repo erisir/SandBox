@@ -1,5 +1,6 @@
 #include "../pid/mfc_pid.h"
 #include "../adc/mfc_adc.h"
+#include "../../user/main.h"
 
 #include "../pwm/mfc_pwm.h"
 #include "../usart/mfc_usart1.h"
@@ -12,15 +13,18 @@ struct PWMVotageFitPara sPVFP;
 unsigned int PIDVotageChanel = 1;
 unsigned int PIDMode = 0;
 unsigned char PIDEnable=0;
+float PWMDelayRate = 0.1;
 void SetPIDMode(float mode){
 	PIDMode = mode;
 }
 void SetPIDVotageChanel(float ch){
-	PIDVotageChanel = ch;
+	//PIDVotageChanel = ch;
+	PWMDelayRate = ch;
 }
 uint32_t GetPIDOutput(){
 	return spid.Output;
 }
+
 void GetPIDStatu(){
 	printf("%.3f,%.3f,%.3f,%d,%d,%d,%d,%d,%d,%d\n",spid.Proportion  ,spid.Integral ,spid.Derivative  ,spid.DeadZone ,spid.SetPoint ,spid.Output,spid.LastError,spid.PrevError,spid.SetPoint-spid.LastError,spid.SumError );	
 	printf("FA:%.3f,FB:%.3f,FC:%.3f,BA:%.3f,BB:%.3f,BC:%.3f\n",sPVFP.ForwardA,sPVFP.ForwardB,sPVFP.ForwardC,sPVFP.BackwardA,sPVFP.BackwardB,sPVFP.BackwardC );	
@@ -29,16 +33,17 @@ void GetPIDStatu(){
               PID温度控制动作函数
  ***********************************************************/ 
 void PIDStart() 		 
-{  
+{ 
+	int iIncpid = 0;
 	switch(PIDMode){
 	case 0:
-		IncAutoPIDCalc ( &spid,GetADCVoltage(PIDVotageChanel) );
+		iIncpid=IncAutoPIDCalc ( &spid,GetADCVoltage(PIDVotageChanel) );
 		break;
 	case 1:
-		IncPIDCalc ( &spid,GetADCVoltage(PIDVotageChanel) );
+		iIncpid=IncPIDCalc ( &spid,GetADCVoltage(PIDVotageChanel) );
 		break;
 	default:
-		IncPIDCalc ( &spid,GetADCVoltage(PIDVotageChanel) );
+		iIncpid=IncPIDCalc ( &spid,GetADCVoltage(PIDVotageChanel) );
 		break;
 	}		
 	if(spid.Output >PWM_HIGH_MAX)
@@ -46,7 +51,53 @@ void PIDStart()
 	if(spid.Output <PWM_HIGH_MIN)
 		spid.Output = PWM_HIGH_MIN;  
 	LoadPWM(spid.Output) ;
+	Delay(abs(iIncpid)*PWMDelayRate);
 
+}
+
+//增量式PID控制设计
+int IncPIDCalc(struct PID *spid,int NextPoint)
+{
+	register int iError, iIncpid;
+	//当前误差
+	iError = spid->SetPoint - NextPoint;
+	/*if(abs(iError) >spid->Thredhold){
+		spid->Output = getPWMByVotage(spid->SetPoint,iError);
+		return 0;
+	}*/
+	//增量计算
+	iIncpid = spid->Proportion * iError //E[k]项
+			- spid->Integral * spid->LastError //E[k－1]项
+			+ spid->Derivative * spid->PrevError; //E[k－2]项
+	//存储误差，用于下次计算
+	spid->PrevError = spid->LastError;
+	spid->LastError = iError;
+	//返回增量值
+	spid->Output += iIncpid;
+	return iIncpid;
+}
+
+//增量式自适应PID控制设计
+int IncAutoPIDCalc(struct PID *spid,int NextPoint)
+{
+	register int iError, iIncpid;
+	//当前误差
+	iError = spid->SetPoint - NextPoint;
+
+	//增量计算
+	iIncpid = spid->Proportion * (2.45*iError //E[k]项
+			- 3.5*spid->LastError //E[k－1]项
+			+ 1.25*spid->PrevError); //E[k－2]项
+	//存储误差，用于下次计算
+	spid->PrevError = spid->LastError;
+	spid->LastError = iError;
+	//返回增量值
+	
+	if(abs(iIncpid) >spid->Thredhold){
+		iIncpid = iIncpid>0?spid->Thredhold:(-1*spid->Thredhold);
+	}
+	spid->Output += iIncpid;
+	return iIncpid;
 }
 /************************************************
 				PID函数初始化
@@ -57,16 +108,16 @@ void PIDInit()
 	memset (&spid,0,sizeof(struct PID)); 	// Initialize Structure 
 	memset (&sPVFP,0,sizeof(struct PWMVotageFitPara)); 	// Initialize Structure 
 
-	spid.Proportion = 0.2;  
+	spid.Proportion = 5;  
 	spid.Integral =   0.00; 
 	spid.Derivative =3; 
 	spid.Output = 0;
-	spid.SetPoint = 3200;
-	spid.DeadZone = 20;
-	spid.Period = 2000;
+	spid.SetPoint = 4000;
+	spid.DeadZone = 0;
+	spid.Period = 100;
 	spid.sumMax=999999;
 	spid.sumMin=10;
-	spid.Thredhold = 200;
+	spid.Thredhold = 5000;
 	
 	sPVFP.ForwardA = 0;
 	sPVFP.ForwardB = 0;
@@ -138,11 +189,13 @@ void SetPIDparam_D_inc(float v_data)
 void  SetTClose()
 {
 	PIDEnable = 0;
+	spid.Output = PWM_HIGH_MIN;
 	LoadPWM(PWM_HIGH_MIN) ;
 }
 void  SetTOpen()
 {
 	PIDEnable = 0;
+	spid.Output = PWM_HIGH_MAX;
 	LoadPWM(PWM_HIGH_MAX) ;
 }
 void  SetTPID()
@@ -159,52 +212,10 @@ unsigned int getPWMByVotage(unsigned int votage,char forBackward){
 	else
 		return (unsigned int)((float)sPVFP.BackwardA*votage*votage+(float)sPVFP.BackwardB*votage+(float)sPVFP.BackwardC);
 }
-//位置式PID控制设计
+
 unsigned int abs( int val){
 	return val>0?val:(-1*val);
 }
- 
-//增量式PID控制设计
-int IncPIDCalc(struct PID *spid,int NextPoint)
-{
-	register int iError, iIncpid;
-	//当前误差
-	iError = spid->SetPoint - NextPoint;
-	if(abs(iError) >spid->Thredhold){
-		spid->Output = getPWMByVotage(spid->SetPoint,iError);
-		return 0;
-	}
-	//增量计算
-	iIncpid = spid->Proportion * iError //E[k]项
-			- spid->Integral * spid->LastError //E[k－1]项
-			+ spid->Derivative * spid->PrevError; //E[k－2]项
-	//存储误差，用于下次计算
-	spid->PrevError = spid->LastError;
-	spid->LastError = iError;
-	//返回增量值
-	spid->Output += iIncpid;
-	return 0;
-}
+//**********************************end of file**************************************
 
-//增量式自适应PID控制设计
-int IncAutoPIDCalc(struct PID *spid,int NextPoint)
-{
-	register int iError, iIncpid;
-	//当前误差
-	iError = spid->SetPoint - NextPoint;
-	if(abs(iError) >spid->Thredhold){
-		spid->Output = getPWMByVotage(spid->SetPoint,iError);
-		return 0;
-	}
-	//增量计算
-	iIncpid = spid->Proportion * (2.45*iError //E[k]项
-			- 3.5*spid->LastError //E[k－1]项
-			+ 1.25*spid->PrevError); //E[k－2]项
-	//存储误差，用于下次计算
-	spid->PrevError = spid->LastError;
-	spid->LastError = iError;
-	//返回增量值
-	spid->Output += iIncpid;
-	return 0;
-}
 

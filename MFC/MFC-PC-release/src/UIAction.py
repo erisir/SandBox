@@ -6,7 +6,7 @@ import matplotlib.pyplot as pl
 import serial  #pip install pyserial
 import sys
 import time
-import random
+import random #pip install random
 import binascii,encodings; 
 import numpy as np
 from sympy.strategies.core import switch
@@ -347,8 +347,9 @@ class UIAction():
         pwmBackwardFit = []
         votageBackwardFit = []
         vmax =2000
-        vmin= 200
+        vmin= 500
         ind= 0
+
         for x in votageForward:
             if x >vmin and x<vmax:
                 pwmForwardFit.append(pwmForward[ind])
@@ -362,7 +363,7 @@ class UIAction():
             ind= ind+1
         pl.plot(pwmForwardFit, votageForwardFit, 'k-')
         pl.plot(pwmBackwardFit, votageBackwardFit, 'k-')
-        
+
         ForwardFunc = np.polyfit(np.array(votageForwardFit),np.array(pwmForwardFit) , 2)#用2次多项式拟合
         BackwardFunc = np.polyfit(np.array(votageBackwardFit), np.array(pwmBackwardFit), 2)#用2次多项式拟合     
         
@@ -377,7 +378,7 @@ class UIAction():
         self.sPVFD.SetBackwardA = BackwardFunc[0]
         self.sPVFD.SetBackwardB = BackwardFunc[1]
         self.sPVFD.SetBackwardC = BackwardFunc[2]
-        
+  
         fitX = range(20,2700,200)  
               
         fitBackwardPWM=np.polyval(BackwardFunc,fitX)
@@ -385,7 +386,7 @@ class UIAction():
         
         pl.plot(fitForwardPWM,fitX,'r-')
         pl.plot(fitBackwardPWM,fitX,'b-')
-        
+
         pl.pause(1)
             
     def savePVFDtoMCU(self):
@@ -460,7 +461,7 @@ class UIAction():
         commName = self.firstUIComm.CommName.currentText()
         Baudrate = self.firstUIComm.Baudrate.currentText()   
         try:   
-            self.comm = serial.Serial(commName,int(Baudrate))              
+            self.comm = serial.Serial(commName,int(Baudrate),timeout=1)              
         except:
             self.errorMessage("串口"+commName+"被其他程序占用")
             return self.lastError
