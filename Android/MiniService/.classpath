@@ -4,6 +4,8 @@
 	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.LIBRARIES"/>
 	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.DEPENDENCIES"/>
 	<classpathentry kind="lib" path="libs/TencentMapSDK_Vector_v_3.0.5.jar"/>
+	<classpathentry kind="lib" path="libs/VoiceRecognition-2.1.20.jar"/>
+	<classpathentry kind="lib" path="libs/com.baidu.tts_2.3.0.jar"/>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="gen"/>
 	<classpathentry kind="output" path="bin/classes"/>
