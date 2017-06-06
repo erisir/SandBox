@@ -2,7 +2,6 @@
  * Copyright (C) 2015 Baidu, Inc. All Rights Reserved.
  */
 package com.lkworm.miniservice;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;

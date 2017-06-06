@@ -37,7 +37,6 @@ public class GPSTrackService extends Service {
 	private static final int NOTIFICATION_ID = 1017;
 	private static final String TAG = "GPSTrackManager";
 	private Context context;
-
 	private RandomAccessFile randFileWriter = null;	
 	private ArrayList<TencentLocation> locations;	 
 	private TencentLocationManager locationManager;

@@ -16,7 +16,6 @@ public class MyBroadcastReceiver extends BroadcastReceiver {
 	final String  TAG = "MyBroadcastReceiver";
 	private int MSGCODE[] = new int[]{1111,9999};
 	private Message  message = new Message();
-	
 	@Override
 	public void onReceive(Context context, Intent intent) {
 		//如果收到短信
